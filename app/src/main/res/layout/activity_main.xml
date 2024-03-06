@@ -4,35 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@drawable/main_activity_img"
     app:layout_constrainedHeight="false"
-    tools:context=".MainActivity"
-    android:background="@drawable/main_activity_image"
-    >
+    tools:context=".MainActivity">
 
     <Button
         android:id="@+id/signInUpbtnId"
-        android:layout_width="382dp"
-        android:layout_height="93dp"
-        android:layout_marginBottom="92dp"
+        android:layout_width="313dp"
+        android:layout_height="79dp"
+        android:layout_marginBottom="72dp"
         android:backgroundTint="#FBFBFB"
-        android:text="Sign up/ Sign in"
+        android:onClick="goToSignForm"
+        android:text="Enter"
         android:textColor="#0C0C76"
         android:textSize="30sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
         app:layout_constraintStart_toStartOf="parent"
         app:strokeColor="#0C0C75"
         app:strokeWidth="3dp" />
-
-    <ImageButton
-        android:id="@+id/imageButton3"
-        android:layout_width="90dp"
-        android:layout_height="90dp"
-        android:background="#00FEFEFE"
-        app:srcCompat="@android:drawable/ic_lock_silent_mode_off"
-        tools:layout_editor_absoluteX="16dp"
-        tools:layout_editor_absoluteY="16dp" />
 
     <TextView
         android:id="@+id/gameTitleId"
@@ -50,7 +40,20 @@
         app:autoSizeStepGranularity="2sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.478"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/muteBtnId"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:layout_marginStart="28dp"
+        android:layout_marginTop="28dp"
+        android:onClick="muteUnmute"
+        android:scaleType="centerInside"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@drawable/audio_on_off_dark" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
