@@ -26,21 +26,21 @@
 
     <TextView
         android:id="@+id/gameTitleId"
-        android:layout_width="0dp"
-        android:layout_height="189dp"
-        android:layout_marginTop="120dp"
+        android:layout_width="410dp"
+        android:layout_height="132dp"
+        android:layout_marginTop="176dp"
         android:fontFamily="monospace"
-        android:text="BATTLSHIP GAME"
+        android:text="BATTLESHIP"
         android:textAlignment="center"
         android:textColor="#F3FEFE"
         android:textSize="50sp"
         android:textStyle="bold|italic"
-        app:autoSizeMaxTextSize="70sp"
+        app:autoSizeMaxTextSize="60sp"
         app:autoSizeMinTextSize="12sp"
         app:autoSizeStepGranularity="2sp"
         app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.478"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -55,5 +55,7 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@drawable/audio_on_off_dark" />
+
+
 
 </androidx.constraintlayout.widget.ConstraintLayout>

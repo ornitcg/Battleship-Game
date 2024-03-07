@@ -13,5 +13,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "BattlshipClient"
+rootProject.name = "BattleshipClient"
 include(":app")

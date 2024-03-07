@@ -1,4 +1,4 @@
-package com.clientapp.battlshipclient;
+package com.clientapp.battleshipclient;
 
 import android.content.Context;
 
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
     public void useAppContext() {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getInstrumentation().getTargetContext();
-        assertEquals("com.clientapp.battlshipclient", appContext.getPackageName());
+        assertEquals("com.clientapp.battleshipclient", appContext.getPackageName());
     }
 }

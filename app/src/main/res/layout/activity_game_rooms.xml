@@ -8,8 +8,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gameRommsLayoutId"
-        android:layout_width="409dp"
-        android:layout_height="729dp"
+        android:layout_width="413dp"
+        android:layout_height="816dp"
         android:background="@drawable/dark_sea"
         tools:layout_editor_absoluteX="1dp"
         tools:layout_editor_absoluteY="1dp">
@@ -36,7 +36,7 @@
             android:id="@+id/createNewRoomBtnId"
             android:layout_width="295dp"
             android:layout_height="59dp"
-            android:layout_marginBottom="16dp"
+            android:layout_marginBottom="28dp"
             android:backgroundTint="@color/navy"
             android:cursorVisible="false"
             android:fontFamily="monospace"
@@ -47,22 +47,12 @@
             app:cornerRadius="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.504"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/scrollView3"
             app:strokeColor="#0C0C75"
             app:strokeWidth="3dp" />
 
-        <ScrollView
-            android:id="@+id/scrollView3"
-            android:layout_width="409dp"
-            android:layout_height="507dp"
-            tools:layout_editor_absoluteX="1dp"
-            tools:layout_editor_absoluteY="128dp">
 
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="vertical" />
-        </ScrollView>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

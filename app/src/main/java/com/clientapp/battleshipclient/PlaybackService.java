@@ -1,4 +1,4 @@
-package com.clientapp.battlshipclient;
+package com.clientapp.battleshipclient;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;

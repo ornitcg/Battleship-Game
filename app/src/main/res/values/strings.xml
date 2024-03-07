@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">BattlshipClient</string>
+    <string name="app_name">BattleshipClient</string>
     <string name="title_activity_board_arrange">BoardArrange</string>
     <!-- Strings used for fragments for navigation -->
     <string name="first_fragment_label">First Fragment</string>

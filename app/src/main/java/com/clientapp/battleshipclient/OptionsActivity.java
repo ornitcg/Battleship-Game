@@ -1,4 +1,4 @@
-package com.clientapp.battlshipclient;
+package com.clientapp.battleshipclient;
 
 import androidx.appcompat.app.AppCompatActivity;
 

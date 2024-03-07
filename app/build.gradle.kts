@@ -3,11 +3,11 @@ plugins {
 }
 
 android {
-    namespace = "com.clientapp.battlshipclient"
+    namespace = "com.clientapp.battleshipclient"
     compileSdk = 34
 
     defaultConfig {
-        applicationId = "com.clientapp.battlshipclient"
+        applicationId = "com.clientapp.battleshipclient"
         minSdk = 24
         targetSdk = 34
         versionCode = 1
