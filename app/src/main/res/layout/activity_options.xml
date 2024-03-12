@@ -8,11 +8,11 @@ tools:context=".OptionsActivity">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/OptionsActivityId"
-        android:layout_width="409dp"
-        android:layout_height="729dp"
+        android:layout_width="432dp"
+        android:layout_height="899dp"
         android:background="@drawable/dark_sea"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
+        tools:layout_editor_absoluteX="-6dp"
+        tools:layout_editor_absoluteY="-3dp">
 
         <TextView
             android:id="@+id/titleViewId"
@@ -41,8 +41,8 @@ tools:context=".OptionsActivity">
             android:backgroundTint="@color/navy"
             android:cursorVisible="false"
             android:fontFamily="monospace"
-            android:text="START PLAYING"
             android:onClick="goToGameRooms"
+            android:text="START PLAYING"
             android:textColor="@color/white"
             android:textSize="20sp"
             android:textStyle="bold|italic"

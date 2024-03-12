@@ -8,11 +8,11 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:id="@+id/gameRommsLayoutId"
-        android:layout_width="413dp"
-        android:layout_height="816dp"
+        android:layout_width="421dp"
+        android:layout_height="891dp"
         android:background="@drawable/dark_sea"
-        tools:layout_editor_absoluteX="1dp"
-        tools:layout_editor_absoluteY="1dp">
+        tools:layout_editor_absoluteX="-5dp"
+        tools:layout_editor_absoluteY="0dp">
 
         <TextView
             android:id="@+id/titleViewId"
@@ -36,7 +36,7 @@
             android:id="@+id/createNewRoomBtnId"
             android:layout_width="295dp"
             android:layout_height="59dp"
-            android:layout_marginBottom="28dp"
+            android:layout_marginBottom="64dp"
             android:backgroundTint="@color/navy"
             android:cursorVisible="false"
             android:fontFamily="monospace"
