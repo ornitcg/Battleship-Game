@@ -1,7 +1,7 @@
 plugins {
     id("com.android.application")
 }
-
+//ornit
 android {
     namespace = "com.clientapp.battleshipclient"
     compileSdk = 34
