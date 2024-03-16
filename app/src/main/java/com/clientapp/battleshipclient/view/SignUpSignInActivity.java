@@ -1,10 +1,12 @@
-package com.clientapp.battleshipclient;
+package com.clientapp.battleshipclient.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
+
+import com.clientapp.battleshipclient.R;
 
 public class SignUpSignInActivity extends AppCompatActivity {
 

@@ -5,8 +5,8 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_activity_img"
-    app:layout_constrainedHeight="false"
-    tools:context=".MainActivity">
+    app:layout_constrainedHeight="true"
+    tools:context=".view.MainActivity">
 
     <Button
         android:id="@+id/enterBtnId"
@@ -26,8 +26,8 @@
 
     <TextView
         android:id="@+id/gameTitleId"
-        android:layout_width="410dp"
-        android:layout_height="132dp"
+        android:layout_width="0dp"
+        android:layout_height="136dp"
         android:layout_marginTop="176dp"
         android:fontFamily="monospace"
         android:text="BATTLESHIP"

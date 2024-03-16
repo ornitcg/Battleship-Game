@@ -1,8 +1,10 @@
-package com.clientapp.battleshipclient;
+package com.clientapp.battleshipclient.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.os.Bundle;
+
+import com.clientapp.battleshipclient.R;
 
 public class GameRooms extends AppCompatActivity {
 

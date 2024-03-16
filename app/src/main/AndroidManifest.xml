@@ -13,13 +13,19 @@
         android:theme="@style/Theme.BattleshipClient"
         tools:targetApi="31">
         <activity
-            android:name=".leaderboardAndStats"
+            android:name=".nofar"
             android:exported="false" />
         <activity
-            android:name=".OptionsActivity"
+            android:name=".view.place_ships"
             android:exported="false" />
         <activity
-            android:name=".GameRooms"
+            android:name=".view.leaderboardAndStats"
+            android:exported="false" />
+        <activity
+            android:name=".view.OptionsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".view.GameRooms"
             android:exported="false" />
 
         <service
@@ -28,11 +34,11 @@
             android:exported="true" />
 
         <activity
-            android:name=".SignUpSignInActivity"
+            android:name=".view.SignUpSignInActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".MainActivity"
+            android:name=".view.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

@@ -4,15 +4,10 @@ xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
-tools:context=".OptionsActivity">
+android:background="@drawable/sea_water_background"
+tools:context=".view.OptionsActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/OptionsActivityId"
-        android:layout_width="432dp"
-        android:layout_height="899dp"
-        android:background="@drawable/dark_sea"
-        tools:layout_editor_absoluteX="-6dp"
-        tools:layout_editor_absoluteY="-3dp">
+
 
         <TextView
             android:id="@+id/titleViewId"
@@ -129,5 +124,4 @@ tools:context=".OptionsActivity">
             app:strokeColor="#0C0C75"
             app:strokeWidth="3dp" />
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>

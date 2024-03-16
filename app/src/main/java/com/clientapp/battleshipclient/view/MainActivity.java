@@ -1,4 +1,4 @@
-package com.clientapp.battleshipclient;
+package com.clientapp.battleshipclient.view;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -8,6 +8,9 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+
+import com.clientapp.battleshipclient.PlaybackService;
+import com.clientapp.battleshipclient.R;
 
 public class MainActivity extends AppCompatActivity {
 

@@ -4,23 +4,18 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".GameRooms">
+    android:background="@drawable/dark_sea"
+    tools:context=".view.GameRooms">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/gameRommsLayoutId"
-        android:layout_width="421dp"
-        android:layout_height="891dp"
-        android:background="@drawable/dark_sea"
-        tools:layout_editor_absoluteX="-5dp"
-        tools:layout_editor_absoluteY="0dp">
 
         <TextView
             android:id="@+id/titleViewId"
-            android:layout_width="346dp"
+            android:layout_width="0dp"
             android:layout_height="75dp"
             android:layout_marginTop="52dp"
             android:fontFamily="monospace"
             android:text="PLAY ROOMS"
+            android:textAlignment="center"
             android:textColor="@color/white"
             android:textSize="50sp"
             android:textStyle="bold|italic"
@@ -49,10 +44,8 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.504"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/scrollView3"
             app:strokeColor="#0C0C75"
             app:strokeWidth="3dp" />
 
 
-    </androidx.constraintlayout.widget.ConstraintLayout>
 </androidx.constraintlayout.widget.ConstraintLayout>
