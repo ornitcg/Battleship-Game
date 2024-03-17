@@ -12,21 +12,23 @@ import android.widget.ImageButton;
 
 import com.clientapp.battleshipclient.PlaybackService;
 import com.clientapp.battleshipclient.R;
+import com.clientapp.battleshipclient.utils.AudioUtils;
 
 public class MainActivity extends AppCompatActivity {
 
-    private boolean isMuted = false; // Initial state
+    private boolean isMuted = true; // Initial state
     private Button startbtn;
+    private ImageButton muteButton ;
     private MediaPlayer buttonSound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-//        startbtn = findViewById(R.id.enterBtnId);
 
         // before onClick for faster response
         buttonSound = MediaPlayer.create(MainActivity.this,R.raw.enter_button_sound);
-
+        muteButton = findViewById(R.id.muteBtnId);
 
 //        buttonSound = MediaPlayer.create(this,R.raw.sign_in_button);
         startService(new Intent(this, PlaybackService.class));  //call for playback to play music
@@ -37,46 +39,24 @@ public class MainActivity extends AppCompatActivity {
 //                goToSignForm(v);
 //            }
 //        });
+        muteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isMuted=!isMuted;
+                AudioUtils.muteUnmute( MainActivity.this, muteButton,isMuted ); // mute the music
+            }
+        });
     }
 
-//    public void goToSignForm(View v) {
-//        Intent intent = new Intent(MainActivity.this, SignUpSignInActivity.class);
-//        startActivity(intent);
-//    }
+
     public void goToSignForm(View v) {
         Intent intent = new Intent(MainActivity.this, SignUpSignInActivity.class);
         intent.putExtra("buttonSound", R.raw.enter_button_sound);
+        intent.putExtra("isMuted", isMuted);
         startActivity(intent);
     }
 
 
-    public void muteUnmute(View v) {
-        // Toggle the mute state
-        isMuted = !isMuted;
-
-        //save mute state across app
-        SharedPreferences prefs = getSharedPreferences("appSettings", MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("isMuted", isMuted); // add the mute state to preferences "appSettings" file
-
-        //request mute change
-        ImageButton muteButton = (ImageButton) v; //casting for v
-        Intent muteOrUnmute = new Intent();
-        if (isMuted) {
-            muteOrUnmute.setAction(PlaybackService.ACTION_PAUSE); // sets the intent's action to be PlaybackService.ACTION_PAUSE
-            muteButton.setImageResource(R.drawable.music_off_icon); // replace with your mute icon
-
-        }
-        else {
-            muteOrUnmute.setAction(PlaybackService.ACTION_PLAY); // sets the intent's action to be PlaybackService.ACTION_PLAY
-            muteButton.setImageResource(R.drawable.music_icon);
-
-        }
-
-
-//
-        sendBroadcast(muteOrUnmute);
-    }
 
     public void onPause() {
         // Register the receiver

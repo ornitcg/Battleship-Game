@@ -12,8 +12,6 @@ public class PlaybackService extends Service {
     public static final String ACTION_PLAY = "com.example.action.PLAY";
     public static final String ACTION_PAUSE = "com.example.action.PAUSE";
     private MediaPlayer mediaPlayer;
-    private boolean musicStarted = false;
-    private boolean musicPlaying = false;
     public PlaybackService() {
     }
 
@@ -24,8 +22,10 @@ public class PlaybackService extends Service {
     }
 
     public int onStartCommand(Intent intent, int flags, int startId) {
-        if  (mediaPlayer == null )
+        if  (mediaPlayer == null ) {
             mediaPlayer = MediaPlayer.create(this, R.raw.main_activity_music);
+            mediaPlayer.setLooping(true);
+        }
 
         if (intent != null  && intent.getAction() != null) {
             String action = intent.getAction();
@@ -42,40 +42,46 @@ public class PlaybackService extends Service {
             }
         }
         return START_STICKY;
-//        return super.onStartCommand(intent, flags, startId);
     }
 
-    private final BroadcastReceiver muteOrPlayReceiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            if(mediaPlayer != null && intent !=null) {
-                String action = intent.getAction();
+//    private final BroadcastReceiver muteOrPlayReceiver = new BroadcastReceiver() {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//            if(mediaPlayer != null && intent !=null) {
+//                String action = intent.getAction();
+//
+//                if (action.equals(ACTION_PAUSE)) { // Check for the 'mute' extra value
+//                    mediaPlayer.setVolume(0, 0); // Mute
+//                } else {
+//                    mediaPlayer.setVolume(1, 1); // Unmute
+//                }
+//            }
+//        }
+//    };
 
-                if (action.equals(ACTION_PAUSE)) { // Check for the 'mute' extra value
-                    mediaPlayer.setVolume(0, 0); // Mute
-                } else {
-                    mediaPlayer.setVolume(1, 1); // Unmute
-                }
-            }
-        }
-    };
-
-    @Override
-    public void onCreate() {
-        super.onCreate();
-        // Register the receiver for both play and pause actions
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_PLAY);
-        filter.addAction(ACTION_PAUSE);
-        registerReceiver(muteOrPlayReceiver, filter);
-    }
+//    @Override
+//    public void onCreate() {
+//        super.onCreate();
+//        // Register the receiver for both play and pause actions
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction(ACTION_PLAY);
+//        filter.addAction(ACTION_PAUSE);
+//        registerReceiver(muteOrPlayReceiver, filter);
+//    }
 
 
-    @Override
+//    @Override
+//    public void onDestroy() {
+//        super.onDestroy();
+//        // Unregister the receiver
+//        unregisterReceiver(muteOrPlayReceiver);
+//    }
     public void onDestroy() {
         super.onDestroy();
-        // Unregister the receiver
-        unregisterReceiver(muteOrPlayReceiver);
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
     }
 
 }

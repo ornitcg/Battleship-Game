@@ -12,21 +12,25 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BattleshipClient"
         tools:targetApi="31">
-        <activity
-            android:name=".nofar"
-            android:exported="false" />
+
         <activity
             android:name=".view.activities.place_ships"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
         <activity
             android:name=".view.activities.leaderboardAndStats"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".view.activities.OptionsActivity"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
+
         <activity
             android:name=".view.activities.GameRooms"
-            android:exported="false" />
+            android:exported="false"
+            android:screenOrientation="portrait" />
 
         <service
             android:name=".PlaybackService"
@@ -37,6 +41,7 @@
             android:name=".view.activities.SignUpSignInActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
+
         <activity
             android:name=".view.activities.MainActivity"
             android:exported="true"

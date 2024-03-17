@@ -7,7 +7,17 @@ android:layout_height="match_parent"
 android:background="@drawable/sea_water_background"
 tools:context=".view.activities.OptionsActivity">
 
-
+        <ImageButton
+            android:id="@+id/muteBtnId"
+            android:layout_width="34dp"
+            android:layout_height="32dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/music_icon" />
 
         <TextView
             android:id="@+id/titleViewId"
