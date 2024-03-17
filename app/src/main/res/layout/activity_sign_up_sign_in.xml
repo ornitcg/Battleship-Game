@@ -22,21 +22,13 @@
 
     <TextView
         android:id="@+id/signUpInTitleId"
+        style="@style/LargeTextViewAppearance"
         android:layout_width="0dp"
         android:layout_height="78dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="96dp"
         android:layout_marginEnd="16dp"
-        android:fontFamily="monospace"
-        android:text="SIGN UP/SIGN IN"
-        android:textAlignment="center"
-        android:textColor="#FFFFFF"
-
-        android:textStyle="bold|italic"
-        app:autoSizeMaxTextSize="45sp"
-        app:autoSizeMinTextSize="20sp"
-        app:autoSizeStepGranularity="1sp"
-        app:autoSizeTextType="uniform"
+        android:text="SIGN UP / SIGN IN"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
@@ -77,41 +69,29 @@
 
     <Button
         android:id="@+id/signUpBtnId"
+        style="@style/ButtonTextAppearance"
+        android:background="@drawable/custom_navigation_button_background"
         android:layout_width="203dp"
         android:layout_height="60dp"
         android:layout_marginTop="164dp"
-        android:backgroundTint="@color/navy"
-        android:fontFamily="monospace"
         android:text="SIGN UP"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold|italic"
-        app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/userPasswordInputViewId"
-        app:strokeColor="#0C0C75"
-        app:strokeWidth="3dp" />
+        />
 
     <Button
         android:id="@+id/signInBtnId"
+        style="@style/ButtonTextAppearance"
+        android:background="@drawable/custom_navigation_button_background"
         android:layout_width="203dp"
         android:layout_height="60dp"
         android:layout_marginTop="20dp"
-        android:backgroundTint="@color/navy"
-        android:cursorVisible="false"
-        android:fontFamily="monospace"
-        android:onClick="goToOptionsActivity"
         android:text="SIGN IN"
-        android:textColor="@color/white"
-        android:textSize="20sp"
-        android:textStyle="bold|italic"
-        app:cornerRadius="20dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.496"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signUpBtnId"
-        app:strokeColor="#0C0C75"
-        app:strokeWidth="3dp" />
+        />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

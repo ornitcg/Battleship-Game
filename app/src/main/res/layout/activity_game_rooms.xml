@@ -10,42 +10,28 @@
 
         <TextView
             android:id="@+id/titleViewId"
-            android:layout_width="0dp"
-            android:layout_height="75dp"
+            style="@style/LargeTextViewAppearance"
+            android:layout_width="369dp"
+            android:layout_height="74dp"
             android:layout_marginTop="52dp"
-            android:fontFamily="monospace"
-            android:text="PLAY ROOMS"
-            android:textAlignment="center"
-            android:textColor="@color/white"
-            android:textSize="50sp"
-            android:textStyle="bold|italic"
-            app:autoSizeMaxTextSize="70sp"
-            app:autoSizeMinTextSize="12sp"
-            app:autoSizeStepGranularity="2sp"
-            app:autoSizeTextType="uniform"
+            android:text="Choose A Room "
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <Button
             android:id="@+id/createNewRoomBtnId"
+            style="@style/ButtonTextAppearance"
+            android:background="@drawable/custom_navigation_button_background"
             android:layout_width="295dp"
             android:layout_height="59dp"
             android:layout_marginBottom="64dp"
-            android:backgroundTint="@color/navy"
-            android:cursorVisible="false"
-            android:fontFamily="monospace"
             android:text="CREATE NEW ROOM"
-            android:textColor="@color/white"
-            android:textSize="20sp"
-            android:textStyle="bold|italic"
-            app:cornerRadius="20dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.504"
             app:layout_constraintStart_toStartOf="parent"
-            app:strokeColor="#0C0C75"
-            app:strokeWidth="3dp" />
+             />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
