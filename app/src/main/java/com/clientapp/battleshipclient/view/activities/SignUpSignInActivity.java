@@ -27,16 +27,17 @@ public class SignUpSignInActivity extends AppCompatActivity {
         isMuted = prefs.getBoolean("isMuted", true);
 
 
-        if (!isMuted) {
-            Intent playIntent = new Intent(this, PlaybackService.class);
-            playIntent.setAction(PlaybackService.ACTION_PLAY);
-            startService(playIntent);
-        }
+//        if (!isMuted) {
+//            Intent playIntent = new Intent(this, PlaybackService.class);
+//            playIntent.setAction(PlaybackService.ACTION_PLAY);
+//            startService(playIntent);
+//        }
 
         muteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 isMuted=!isMuted;
+
                 AudioUtils.muteUnmute( SignUpSignInActivity.this, muteButton, isMuted ); // mute the music
             }
         });
