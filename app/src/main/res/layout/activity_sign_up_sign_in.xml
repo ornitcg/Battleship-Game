@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/sign_up_in_img"
-    tools:context=".view.SignUpSignInActivity">
+    tools:context=".view.activities.SignUpSignInActivity">
 
 
     <ImageButton

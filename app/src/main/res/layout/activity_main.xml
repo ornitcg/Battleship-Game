@@ -6,18 +6,26 @@
     android:layout_height="match_parent"
     android:background="@drawable/main_activity_img"
     app:layout_constrainedHeight="true"
-    tools:context=".view.MainActivity">
+    tools:context=".view.activities.MainActivity">
+
 
     <Button
         android:id="@+id/enterBtnId"
-        android:layout_width="313dp"
-        android:layout_height="79dp"
-        android:layout_marginBottom="72dp"
+        android:layout_width="295dp"
+        android:layout_height="59dp"
+        android:layout_marginBottom="84dp"
         android:backgroundTint="@color/navy"
-        android:onClick="goToSignForm"
-        android:text="Enter"
+        android:cursorVisible="false"
+        android:fontFamily="monospace"
+        android:text="ENTER"
         android:textColor="@color/white"
-        android:textSize="30sp"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        app:autoSizeMaxTextSize="20sp"
+        app:autoSizeMinTextSize="12sp"
+        app:autoSizeStepGranularity="2sp"
+        app:autoSizeTextType="uniform"
+        app:cornerRadius="20dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

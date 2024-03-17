@@ -6,13 +6,14 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/sea_water_background"
-    tools:context=".view.leaderboardAndStats">
+    tools:context=".view.activities.leaderboardAndStats">
 
     <TextView
         android:id="@+id/placeFleet"
         android:layout_width="0dp"
         android:layout_height="59dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="56dp"
+        android:text="Place your fleet"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="40sp"
@@ -28,23 +29,42 @@
         android:id="@+id/myBoard"
         android:layout_width="0dp"
         android:layout_height="297dp"
-        android:layout_marginTop="44dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/sea_water_background"
         android:columnWidth="40dp"
         android:gravity="center"
         android:horizontalSpacing="1dp"
-        android:numColumns="auto_fit"
+        android:numColumns="10"
         android:stretchMode="columnWidth"
         android:verticalSpacing="1dp"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/placeFleet"
-        />
+        app:layout_constraintTop_toBottomOf="@+id/placeFleet" />
 
 
-
-
+    <Button
+        android:id="@+id/ReadyBtnId"
+        android:layout_width="295dp"
+        android:layout_height="59dp"
+        android:layout_marginBottom="40dp"
+        android:backgroundTint="@color/navy"
+        android:cursorVisible="false"
+        android:fontFamily="monospace"
+        android:text="I'm Ready"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        app:autoSizeMaxTextSize="20sp"
+        app:autoSizeMinTextSize="12sp"
+        app:autoSizeStepGranularity="2sp"
+        app:autoSizeTextType="uniform"
+        app:cornerRadius="20dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.491"
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="#0C0C75"
+        app:strokeWidth="3dp" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

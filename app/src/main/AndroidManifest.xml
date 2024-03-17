@@ -16,16 +16,16 @@
             android:name=".nofar"
             android:exported="false" />
         <activity
-            android:name=".view.place_ships"
+            android:name=".view.activities.place_ships"
             android:exported="false" />
         <activity
-            android:name=".view.leaderboardAndStats"
+            android:name=".view.activities.leaderboardAndStats"
             android:exported="false" />
         <activity
-            android:name=".view.OptionsActivity"
+            android:name=".view.activities.OptionsActivity"
             android:exported="false" />
         <activity
-            android:name=".view.GameRooms"
+            android:name=".view.activities.GameRooms"
             android:exported="false" />
 
         <service
@@ -34,11 +34,11 @@
             android:exported="true" />
 
         <activity
-            android:name=".view.SignUpSignInActivity"
+            android:name=".view.activities.SignUpSignInActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.MainActivity"
+            android:name=".view.activities.MainActivity"
             android:exported="true"
             android:screenOrientation="portrait">
             <intent-filter>

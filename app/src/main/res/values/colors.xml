@@ -4,5 +4,7 @@
     <color name="white">#FFFFFFFF</color>
     <color name="navy">#070F2B</color>
     <color name="lightBlue">#BBE2EC</color>
+    <color name="buttonStroke">#1414DA</color>
+
 
 </resources>

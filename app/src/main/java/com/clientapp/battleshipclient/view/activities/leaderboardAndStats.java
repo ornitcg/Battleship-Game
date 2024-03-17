@@ -1,4 +1,4 @@
-package com.clientapp.battleshipclient.view;
+package com.clientapp.battleshipclient.view.activities;
 
 import android.os.Bundle;
 
