@@ -1,9 +1,8 @@
 package com.clientapp.battleshipclient.utils;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
-import android.view.View;
 import android.widget.ImageButton;
 
 import com.clientapp.battleshipclient.PlaybackService;
@@ -11,31 +10,68 @@ import com.clientapp.battleshipclient.R;
 
 public class AudioUtils {
 
-    public static void muteUnmute( Context context,View v, boolean isMuted) {
+    public static void toggleMusic(Context context) {
         //save mute state across app
-        SharedPreferences prefs = context.getSharedPreferences("appSettings", context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = prefs.edit();
-        editor.putBoolean("isMuted", isMuted); // add the mute state to preferences "appSettings" file
-        editor.apply();
+        PreferencesManager prefs = new PreferencesManager(context);
+        Activity currActivity = (Activity) context;
+        ImageButton toggleMuteButton = currActivity.findViewById(R.id.muteBtnId);
+
+        boolean isMuted = prefs.isMusicMuted();
+        isMuted = !isMuted;
+        prefs.setMusicMuted(isMuted);
 
         //request mute change
-        ImageButton muteButton = (ImageButton) v; //casting for v
-//        Intent muteOrUnmute = new Intent();
         Intent serviceIntent = new Intent(context, PlaybackService.class);
-
         if (isMuted) {
             serviceIntent.setAction(PlaybackService.ACTION_PAUSE); // sets the intent's action to be PlaybackService.ACTION_PAUSE
-            muteButton.setImageResource(R.drawable.music_off_icon); // replace with your mute icon
+            toggleMuteButton.setImageResource(R.drawable.music_off_icon); // replace with your mute icon
+        }
+        else {
+            serviceIntent.setAction(PlaybackService.ACTION_PLAY); // sets the intent's action to be PlaybackService.ACTION_PLAY
+            toggleMuteButton.setImageResource(R.drawable.music_icon);
+        }
+        context.startService(serviceIntent);
+    }
+
+
+
+    public static void keepMusicState(Context context) {
+        PreferencesManager prefs = new PreferencesManager(context);
+        Activity currActivity = (Activity) context;
+        ImageButton toggleMuteButton = currActivity.findViewById(R.id.muteBtnId);
+        boolean isMuted = prefs.isMusicMuted();
+
+        //request mute change
+        Intent serviceIntent = new Intent(context, PlaybackService.class);
+        if (isMuted) {
+            serviceIntent.setAction(PlaybackService.ACTION_PAUSE); // sets the intent's action to be PlaybackService.ACTION_PAUSE
+            toggleMuteButton.setImageResource(R.drawable.music_off_icon); // replace with your mute icon
 
         }
         else {
             serviceIntent.setAction(PlaybackService.ACTION_PLAY); // sets the intent's action to be PlaybackService.ACTION_PLAY
-            muteButton.setImageResource(R.drawable.music_icon);
+            toggleMuteButton.setImageResource(R.drawable.music_icon);
 
         }
-
-
-//
-        context.sendBroadcast(serviceIntent);
+        context.startService(serviceIntent);
     }
+
+
+    public static void turnOnMusic(Context context) {
+        Activity currActivity = (Activity) context;
+        ImageButton toggleMuteButton = currActivity.findViewById(R.id.muteBtnId);
+        Intent serviceIntent = new Intent(context, PlaybackService.class);
+        serviceIntent.setAction(PlaybackService.ACTION_PLAY); // sets the intent's action to be PlaybackService.ACTION_PLAY
+        toggleMuteButton.setImageResource(R.drawable.music_icon);
+        context.startService(serviceIntent);
+    }
+
+    public static void pauseMusic(Context context) { //no change of button
+        Activity currActivity = (Activity) context;
+        ImageButton toggleMuteButton = currActivity.findViewById(R.id.muteBtnId);
+        Intent serviceIntent = new Intent(context, PlaybackService.class);
+        serviceIntent.setAction(PlaybackService.ACTION_PAUSE); // sets the intent's action to be PlaybackService.ACTION_PAUSE
+        context.startService(serviceIntent);
+    }
+
 }

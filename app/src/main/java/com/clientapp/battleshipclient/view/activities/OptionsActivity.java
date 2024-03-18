@@ -3,25 +3,38 @@ package com.clientapp.battleshipclient.view.activities;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 
 import com.clientapp.battleshipclient.R;
+import com.clientapp.battleshipclient.utils.AudioUtils;
+import com.clientapp.battleshipclient.utils.PreferencesManager;
 
 public class OptionsActivity extends AppCompatActivity {
 
     private boolean isMuted ; // Initial state
 
-    private ImageButton muteButton ;
+    private ImageButton toogleMuteBtn;
+    private PreferencesManager prefs;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
-        muteButton = findViewById(R.id.muteBtnId);
-        SharedPreferences prefs = getSharedPreferences("appSettings", MODE_PRIVATE);
-        isMuted = prefs.getBoolean("isMuted", true);
+        toogleMuteBtn = findViewById(R.id.muteBtnId);
+        prefs = new PreferencesManager(this);
+        AudioUtils.keepMusicState(this); // keep the music state
+
+
+        toogleMuteBtn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isMuted=!isMuted;
+                prefs.setMusicMuted(!isMuted);
+                AudioUtils.toggleMusic( OptionsActivity.this); // mute the music
+            }
+        });
     }
 
 

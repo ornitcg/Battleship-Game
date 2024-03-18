@@ -44,38 +44,7 @@ public class PlaybackService extends Service {
         return START_STICKY;
     }
 
-//    private final BroadcastReceiver muteOrPlayReceiver = new BroadcastReceiver() {
-//        @Override
-//        public void onReceive(Context context, Intent intent) {
-//            if(mediaPlayer != null && intent !=null) {
-//                String action = intent.getAction();
 //
-//                if (action.equals(ACTION_PAUSE)) { // Check for the 'mute' extra value
-//                    mediaPlayer.setVolume(0, 0); // Mute
-//                } else {
-//                    mediaPlayer.setVolume(1, 1); // Unmute
-//                }
-//            }
-//        }
-//    };
-
-//    @Override
-//    public void onCreate() {
-//        super.onCreate();
-//        // Register the receiver for both play and pause actions
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction(ACTION_PLAY);
-//        filter.addAction(ACTION_PAUSE);
-//        registerReceiver(muteOrPlayReceiver, filter);
-//    }
-
-
-//    @Override
-//    public void onDestroy() {
-//        super.onDestroy();
-//        // Unregister the receiver
-//        unregisterReceiver(muteOrPlayReceiver);
-//    }
     public void onDestroy() {
         super.onDestroy();
         if (mediaPlayer != null) {
