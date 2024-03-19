@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.ImageButton;
+import android.widget.Toast;
 
 import com.clientapp.battleshipclient.PlaybackService;
 import com.clientapp.battleshipclient.R;
@@ -24,7 +25,11 @@ public class AudioUtils {
         Intent serviceIntent = new Intent(context, PlaybackService.class);
         if (isMuted) {
             serviceIntent.setAction(PlaybackService.ACTION_PAUSE); // sets the intent's action to be PlaybackService.ACTION_PAUSE
+//            Toast.makeText(context, "toggle off", Toast.LENGTH_SHORT).show();
+
             toggleMuteButton.setImageResource(R.drawable.music_off_icon); // replace with your mute icon
+//            Toast.makeText(context, "toggle on", Toast.LENGTH_SHORT).show();
+
         }
         else {
             serviceIntent.setAction(PlaybackService.ACTION_PLAY); // sets the intent's action to be PlaybackService.ACTION_PLAY
@@ -45,11 +50,15 @@ public class AudioUtils {
         Intent serviceIntent = new Intent(context, PlaybackService.class);
         if (isMuted) {
             serviceIntent.setAction(PlaybackService.ACTION_PAUSE); // sets the intent's action to be PlaybackService.ACTION_PAUSE
+//            Toast.makeText(context, "keep off", Toast.LENGTH_SHORT).show();
+
             toggleMuteButton.setImageResource(R.drawable.music_off_icon); // replace with your mute icon
 
         }
         else {
             serviceIntent.setAction(PlaybackService.ACTION_PLAY); // sets the intent's action to be PlaybackService.ACTION_PLAY
+//            Toast.makeText(context, "keep on", Toast.LENGTH_SHORT).show();
+
             toggleMuteButton.setImageResource(R.drawable.music_icon);
 
         }
@@ -71,6 +80,7 @@ public class AudioUtils {
         ImageButton toggleMuteButton = currActivity.findViewById(R.id.muteBtnId);
         Intent serviceIntent = new Intent(context, PlaybackService.class);
         serviceIntent.setAction(PlaybackService.ACTION_PAUSE); // sets the intent's action to be PlaybackService.ACTION_PAUSE
+//        Toast.makeText(context, "pauseMusic" + ((Activity) context).getLocalClassName(), Toast.LENGTH_SHORT).show();
         context.startService(serviceIntent);
     }
 

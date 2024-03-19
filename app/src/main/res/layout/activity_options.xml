@@ -2,22 +2,27 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/main"
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:background="@drawable/sea_water_background"
 tools:context=".view.activities.OptionsActivity">
 
-        <ImageButton
-            android:id="@+id/muteBtnId"
-            android:layout_width="34dp"
-            android:layout_height="32dp"
-            android:layout_marginStart="16dp"
-            android:layout_marginTop="16dp"
-            android:background="@android:color/transparent"
-            android:scaleType="centerInside"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            app:srcCompat="@drawable/music_icon" />
+<!--        <ImageButton-->
+<!--            android:id="@+id/muteBtnId"-->
+<!--            android:layout_width="34dp"-->
+<!--            android:layout_height="32dp"-->
+<!--            android:layout_marginStart="16dp"-->
+<!--            android:layout_marginTop="16dp"-->
+<!--            android:background="@android:color/transparent"-->
+<!--            android:scaleType="centerInside"-->
+<!--            app:layout_constraintStart_toStartOf="parent"-->
+<!--            app:layout_constraintTop_toTopOf="parent"-->
+<!--            app:srcCompat="@drawable/music_icon"-->
+<!--            android:contentDescription="@string/toggleMusic" />-->
+
+        <include layout="@layout/image_button_toggle_music" />
+
 
         <TextView
             android:id="@+id/titleViewId"
@@ -25,7 +30,7 @@ tools:context=".view.activities.OptionsActivity">
             android:layout_width="346dp"
             android:layout_height="75dp"
             android:layout_marginTop="52dp"
-            android:text="WHAT WOULD YOU LIKE TO DO?"
+            android:text="@string/choose_option"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -39,7 +44,7 @@ tools:context=".view.activities.OptionsActivity">
             android:layout_marginBottom="84dp"
             android:background="@drawable/custom_navigation_button_background"
             android:onClick="goToGameRooms"
-            android:text="START PLAYING"
+            android:text="@string/start_playing"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -53,24 +58,12 @@ tools:context=".view.activities.OptionsActivity">
             android:layout_height="59dp"
             android:layout_marginTop="40dp"
             android:background="@drawable/custom_navigation_button_background"
-            android:text="WATCH LEADERBOARD"
+            android:text="@string/watch_leaderboard"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/startPlayinhBtnId"
             />
 
-        <Button
-            android:id="@+id/watchProfileId"
-            style="@style/ButtonTextAppearance"
-            android:layout_width="295dp"
-            android:layout_height="59dp"
-            android:layout_marginTop="40dp"
-            android:background="@drawable/custom_navigation_button_background"
-            android:text="WATCH PROFILE"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/goToLeaderboardBtnId"
-             />
 
         <Button
             android:id="@+id/quitBtnId"
@@ -79,10 +72,10 @@ tools:context=".view.activities.OptionsActivity">
             android:layout_height="59dp"
             android:layout_marginTop="40dp"
             android:background="@drawable/custom_navigation_button_background"
-            android:text="QUIT"
+            android:text="@string/quit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/watchProfileId"
+            app:layout_constraintTop_toBottomOf="@+id/goToLeaderboardBtnId"
              />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

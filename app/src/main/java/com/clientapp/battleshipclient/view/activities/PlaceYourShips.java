@@ -1,29 +1,39 @@
 package com.clientapp.battleshipclient.view.activities;
 
+import android.os.Bundle;
+import android.widget.GridView;
+import android.widget.ImageButton;
+import android.widget.Toast;
+
+import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.Toast;
-
 import com.clientapp.battleshipclient.R;
 import com.clientapp.battleshipclient.utils.AudioUtils;
 import com.clientapp.battleshipclient.utils.PreferencesManager;
+import com.clientapp.battleshipclient.view.adapters.SquareAdapter;
 
-public class GameRooms extends BaseActivity {
+public class PlaceYourShips extends BaseActivity {
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game_rooms);
+        EdgeToEdge.enable(this);
         setupMusicToggleButton(this);
         AudioUtils.keepMusicState(this); // keep the music state
+
+        setContentView(R.layout.activity_place_ships);
+
+
+
+        GridView gridView = findViewById(R.id.myBoard);
+        SquareAdapter adapter = new SquareAdapter(this);
+        gridView.setAdapter(adapter);
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -32,12 +42,6 @@ public class GameRooms extends BaseActivity {
         });
     }
 
-
-    public void goToPlaceYourShips(View v) {
-        Intent intent = new Intent(GameRooms.this, PlaceYourShips.class);
-        intent.putExtra("buttonSound", R.raw.enter_button_sound);
-        startActivity(intent);
-    }
 
     public void onDestroy() {
         super.onDestroy();
@@ -51,6 +55,6 @@ public class GameRooms extends BaseActivity {
 
     public void onResume() {
         super.onResume();
-        AudioUtils.keepMusicState( GameRooms.this); // mute the music
+        AudioUtils.keepMusicState( PlaceYourShips.this); // mute the music
     }
 }

@@ -4,23 +4,26 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:id="@+id/main"
     android:background="@drawable/sign_up_in_img"
     tools:context=".view.activities.SignUpSignInActivity">
 
 
 
 
-    <ImageButton
-        android:id="@+id/muteBtnId"
-        android:layout_width="34dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@android:color/transparent"
-        android:scaleType="centerInside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/music_icon" />
+<!--    <ImageButton-->
+<!--        android:id="@+id/muteBtnId"-->
+<!--        android:layout_width="34dp"-->
+<!--        android:layout_height="32dp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:background="@android:color/transparent"-->
+<!--        android:scaleType="centerInside"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:srcCompat="@drawable/music_icon" />-->
+
+    <include layout="@layout/image_button_toggle_music" />
 
 
     <TextView

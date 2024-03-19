@@ -1,21 +1,21 @@
 package com.clientapp.battleshipclient.view.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ImageButton;
 
-import com.clientapp.battleshipclient.PlaybackService;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+
 import com.clientapp.battleshipclient.R;
 import com.clientapp.battleshipclient.utils.AudioUtils;
 import com.clientapp.battleshipclient.utils.PreferencesManager;
 
-public class SignUpSignInActivity extends AppCompatActivity {
+public class SignUpSignInActivity extends BaseActivity {
 
-    private boolean isMuted ; // Initial state
-
+    private boolean isMuted; // Initial state
     private ImageButton toogleMuteBtn;
     private PreferencesManager prefs;
 
@@ -24,6 +24,14 @@ public class SignUpSignInActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up_sign_in);
+        setupMusicToggleButton(this);
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
+            Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
+            return insets;
+        });
+
         toogleMuteBtn = findViewById(R.id.muteBtnId);
         prefs = new PreferencesManager(this);
         AudioUtils.keepMusicState(this); // keep the music state
@@ -47,12 +55,35 @@ public class SignUpSignInActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    public void onResume() {
-        // Register the receiver
-        super.onResume();
-        Intent playIntent = new Intent(SignUpSignInActivity.this, PlaybackService.class);
+
+    public void onRestart() {
+        super.onRestart();
+        AudioUtils.keepMusicState( SignUpSignInActivity.this); // mute the music
+    }
+
+//    public void onDestroy() {
+//        super.onDestroy();
+//        AudioUtils.pauseMusic(this);
+//    }
+
+    public void onStop() {
+        super.onStop();
+            AudioUtils.pauseMusic( SignUpSignInActivity.this); // mute the music
+    }
+    public void onPause() {
+        super.onPause();
+        AudioUtils.pauseMusic( SignUpSignInActivity.this); // mute the music
+
+    }
+    public void onUserLeaveHint() {
+        super.onUserLeaveHint();
         AudioUtils.keepMusicState( SignUpSignInActivity.this); // mute the music
 
+    }
+
+    public void onResume() {
+        super.onResume();
+        AudioUtils.keepMusicState( SignUpSignInActivity.this); // mute the music
     }
 
 

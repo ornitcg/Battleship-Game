@@ -2,40 +2,40 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/main_activity_img"
     app:layout_constrainedHeight="true"
     tools:context=".view.activities.MainActivity">
 
-    <Button
-        android:id="@+id/enterBtnId"
-        style="@style/ButtonTextAppearance"
-        android:background="@drawable/custom_navigation_button_background"
-        android:layout_width="295dp"
-        android:layout_height="59dp"
-        android:layout_marginBottom="84dp"
-        android:text="ENTER"
-        android:onClick="goToSignForm"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.551"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.982" />
+<!--    <ImageButton-->
+<!--        android:id="@+id/muteBtnId"-->
+<!--        android:layout_width="34dp"-->
+<!--        android:layout_height="32dp"-->
+<!--        android:layout_marginStart="16dp"-->
+<!--        android:layout_marginTop="16dp"-->
+<!--        android:background="@android:color/transparent"-->
+<!--        android:scaleType="centerInside"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:srcCompat="@drawable/music_icon" />-->
+    <include layout="@layout/image_button_toggle_music" />
+
 
     <TextView
         android:id="@+id/gameTitleId"
         android:layout_width="0dp"
-        android:layout_height="136dp"
+        android:layout_height="91dp"
         android:layout_marginTop="176dp"
         android:fontFamily="monospace"
-        android:text="BATTLESHIP"
+        android:paddingHorizontal="5dp"
+        android:text="@string/gameTitle"
         android:textAlignment="center"
-        android:textColor="#F3FEFE"
+        android:textColor="@color/white"
         android:textSize="50sp"
         android:textStyle="bold|italic"
-        app:autoSizeMaxTextSize="60sp"
+        app:autoSizeMaxTextSize="50sp"
         app:autoSizeMinTextSize="12sp"
         app:autoSizeStepGranularity="2sp"
         app:autoSizeTextType="uniform"
@@ -44,19 +44,18 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-    <ImageButton
-        android:id="@+id/muteBtnId"
-        android:layout_width="34dp"
-        android:layout_height="32dp"
-        android:layout_marginStart="16dp"
-        android:layout_marginTop="16dp"
-        android:background="@android:color/transparent"
-        android:scaleType="centerInside"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/music_icon" />
-
-
+    <Button
+        android:id="@+id/enterBtnId"
+        style="@style/ButtonTextAppearance"
+        android:layout_width="295dp"
+        android:layout_height="59dp"
+        android:layout_marginBottom="64dp"
+        android:background="@drawable/custom_navigation_button_background"
+        android:onClick="goToSignForm"
+        android:text="@string/Enter"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

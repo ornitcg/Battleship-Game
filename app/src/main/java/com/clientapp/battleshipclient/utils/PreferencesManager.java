@@ -19,6 +19,13 @@ public class PreferencesManager {
         prefs.edit().putBoolean("isMuted", isMuted).apply();
     }
 
+//    public void setBackgroundFlag(boolean inBackground) {
+//        prefs.edit().putBoolean("inBackground", inBackground).apply();
+//    }
+//    public boolean isInBackground() {
+//        return prefs.getBoolean("inBackground", false);
+//    }
+
 //    public boolean isResumedFromNavigation() {
 //        return prefs.getBoolean("isNavigation", false);
 //    }

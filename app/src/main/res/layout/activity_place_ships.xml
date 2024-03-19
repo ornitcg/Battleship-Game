@@ -6,14 +6,29 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@drawable/sea_water_background"
-    tools:context=".view.activities.leaderboardAndStats">
+    tools:context=".view.activities.LeaderboardAndStats">
+
+<!--    <ImageButton-->
+<!--        android:id="@+id/muteBtnId"-->
+<!--        android:layout_width="34dp"-->
+<!--        android:layout_height="32dp"-->
+<!--        android:layout_marginStart="20dp"-->
+<!--        android:layout_marginTop="36dp"-->
+<!--        android:background="@android:color/transparent"-->
+<!--        android:scaleType="centerInside"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent"-->
+<!--        app:srcCompat="@drawable/music_icon" />-->
+
+    <include layout="@layout/image_button_toggle_music" />
+
 
     <TextView
         android:id="@+id/placeFleet"
         android:layout_width="0dp"
         android:layout_height="59dp"
-        android:layout_marginTop="56dp"
-        android:text="Place your fleet"
+        android:layout_marginTop="80dp"
+        android:text="@string/place_your_fleet"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="40sp"
@@ -21,16 +36,16 @@
         app:autoSizeMaxTextSize="50sp"
         app:autoSizeMinTextSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <GridView
         android:id="@+id/myBoard"
         android:layout_width="0dp"
-        android:layout_height="297dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="12dp"
         android:layout_marginTop="12dp"
-        android:background="@drawable/sea_water_background"
         android:columnWidth="40dp"
         android:gravity="center"
         android:horizontalSpacing="1dp"
@@ -39,9 +54,55 @@
         android:verticalSpacing="1dp"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.666"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/placeFleet" />
 
+    <LinearLayout
+        android:id="@+id/shipInventory"
+        android:layout_width="406dp"
+        android:layout_height="170dp"
+        android:layout_marginBottom="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/ReadyBtnId"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent">
+
+        <!-- Example ship icons -->
+        <ImageView
+            android:id="@+id/ship5id"
+            android:layout_width="40dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ship5" />
+
+        <ImageView
+            android:id="@+id/ship4id"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ship4" />
+
+        <ImageView
+            android:id="@+id/ship3_1id"
+            android:layout_width="39dp"
+            android:layout_height="111dp"
+            android:src="@drawable/ship3" />
+
+        <ImageView
+            android:id="@+id/ship3_2id"
+            android:layout_width="41dp"
+            android:layout_height="111dp"
+            android:src="@drawable/ship3" />
+
+
+        <ImageView
+            android:id="@+id/ship2id"
+            android:layout_width="38dp"
+            android:layout_height="71dp"
+            android:src="@drawable/ship2" />
+
+        <!-- Add more ships as needed -->
+    </LinearLayout>
 
     <Button
         android:id="@+id/ReadyBtnId"
@@ -49,9 +110,8 @@
         android:layout_height="59dp"
         android:layout_marginBottom="40dp"
         android:backgroundTint="@color/navy"
-        android:cursorVisible="false"
         android:fontFamily="monospace"
-        android:text="I'm Ready"
+        android:text="@string/i_m_ready"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold|italic"

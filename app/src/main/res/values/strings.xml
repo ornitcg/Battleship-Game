@@ -7,6 +7,12 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
+    <string name="Enter">ENTER</string>
+    <string name="gameTitle">BATTLESHIP</string>
+
+    <!--   -->
+
+
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
@@ -52,4 +58,11 @@
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+    <string name="i_m_ready">I\'m Ready</string>
+    <string name="place_your_fleet">Place your fleet</string>
+    <string name="quit">QUIT APP</string>
+    <string name="start_playing">START PLAYING</string>
+    <string name="watch_leaderboard">WATCH LEADERBOARD</string>
+    <string name="choose_option">WHAT WOULD YOU LIKE TO DO?</string>
+    <string name="toggleMusic">toggleMusic</string>
 </resources>
