@@ -1,19 +1,15 @@
 package com.clientapp.battleshipclient.view.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.View;
-import android.widget.ImageButton;
-import android.widget.Toast;
-
 import com.clientapp.battleshipclient.R;
 import com.clientapp.battleshipclient.utils.AudioUtils;
-import com.clientapp.battleshipclient.utils.PreferencesManager;
 
 public class GameRooms extends BaseActivity {
 
@@ -23,7 +19,6 @@ public class GameRooms extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_rooms);
         setupMusicToggleButton(this);
-        AudioUtils.keepMusicState(this); // keep the music state
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -35,14 +30,11 @@ public class GameRooms extends BaseActivity {
 
     public void goToPlaceYourShips(View v) {
         Intent intent = new Intent(GameRooms.this, PlaceYourShips.class);
-        intent.putExtra("buttonSound", R.raw.enter_button_sound);
+//        intent.putExtra("buttonSound", R.raw.enter_button_sound);
         startActivity(intent);
     }
 
-    public void onDestroy() {
-        super.onDestroy();
-        AudioUtils.pauseMusic(this);
-    }
+
 
     public void onPause() {
         super.onPause();
@@ -51,6 +43,6 @@ public class GameRooms extends BaseActivity {
 
     public void onResume() {
         super.onResume();
-        AudioUtils.keepMusicState( GameRooms.this); // mute the music
+        AudioUtils.resumeMusicState( GameRooms.this); // mute the music
     }
 }

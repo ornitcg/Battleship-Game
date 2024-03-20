@@ -1,18 +1,13 @@
 package com.clientapp.battleshipclient.view.activities;
 
 import android.os.Bundle;
-import android.widget.ImageButton;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
-
 import com.clientapp.battleshipclient.R;
 import com.clientapp.battleshipclient.utils.AudioUtils;
-import com.clientapp.battleshipclient.utils.PreferencesManager;
 
 public class LeaderboardAndStats extends BaseActivity {
 
@@ -23,7 +18,6 @@ public class LeaderboardAndStats extends BaseActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_active_play);
         setupMusicToggleButton(this);
-        AudioUtils.keepMusicState(this); // keep the music state
 
 
 
@@ -35,11 +29,7 @@ public class LeaderboardAndStats extends BaseActivity {
         });
     }
 
-    public void onDestroy() {
-        super.onDestroy();
-        AudioUtils.pauseMusic(this);
-        Toast.makeText(this, "onDestroy", Toast.LENGTH_SHORT).show();
-    }
+
 
     public void onPause() {
         super.onPause();
@@ -50,6 +40,6 @@ public class LeaderboardAndStats extends BaseActivity {
     public void onResume() {
         super.onResume();
         Toast.makeText(this, "onResume", Toast.LENGTH_SHORT).show();
-        AudioUtils.keepMusicState( LeaderboardAndStats.this); // mute the music
+        AudioUtils.resumeMusicState( LeaderboardAndStats.this); // mute the music
     }
 }

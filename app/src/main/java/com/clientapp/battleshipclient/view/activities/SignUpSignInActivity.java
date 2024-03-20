@@ -3,7 +3,7 @@ package com.clientapp.battleshipclient.view.activities;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
+import android.widget.Toast;
 
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -11,13 +11,10 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.clientapp.battleshipclient.R;
 import com.clientapp.battleshipclient.utils.AudioUtils;
-import com.clientapp.battleshipclient.utils.PreferencesManager;
 
 public class SignUpSignInActivity extends BaseActivity {
 
-    private boolean isMuted; // Initial state
-    private ImageButton toogleMuteBtn;
-    private PreferencesManager prefs;
+
 
 
     @Override
@@ -32,19 +29,6 @@ public class SignUpSignInActivity extends BaseActivity {
             return insets;
         });
 
-        toogleMuteBtn = findViewById(R.id.muteBtnId);
-        prefs = new PreferencesManager(this);
-        AudioUtils.keepMusicState(this); // keep the music state
-
-
-        toogleMuteBtn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                isMuted=!isMuted;
-                prefs.setMusicMuted(!isMuted);
-                AudioUtils.toggleMusic( SignUpSignInActivity.this); // mute the music
-            }
-        });
 
     }
 
@@ -56,34 +40,19 @@ public class SignUpSignInActivity extends BaseActivity {
     }
 
 
-    public void onRestart() {
-        super.onRestart();
-        AudioUtils.keepMusicState( SignUpSignInActivity.this); // mute the music
-    }
 
-//    public void onDestroy() {
-//        super.onDestroy();
-//        AudioUtils.pauseMusic(this);
-//    }
-
-    public void onStop() {
-        super.onStop();
-            AudioUtils.pauseMusic( SignUpSignInActivity.this); // mute the music
-    }
     public void onPause() {
         super.onPause();
+        Toast.makeText(this, "on pause SIGN", Toast.LENGTH_SHORT).show();
         AudioUtils.pauseMusic( SignUpSignInActivity.this); // mute the music
 
     }
-    public void onUserLeaveHint() {
-        super.onUserLeaveHint();
-        AudioUtils.keepMusicState( SignUpSignInActivity.this); // mute the music
 
-    }
 
     public void onResume() {
         super.onResume();
-        AudioUtils.keepMusicState( SignUpSignInActivity.this); // mute the music
+       // Toast.makeText(this, "on resume SIGN", Toast.LENGTH_SHORT).show();
+        AudioUtils.resumeMusicState( SignUpSignInActivity.this); // mute the music
     }
 
 

@@ -1,4 +1,4 @@
-package com.clientapp.battleshipclient;
+package com.clientapp.battleshipclient.Services;
 
 import android.app.Service;
 import android.content.BroadcastReceiver;
@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.MediaPlayer;
 import android.os.IBinder;
+
+import com.clientapp.battleshipclient.R;
 
 public class PlaybackService extends Service {
     public static final String ACTION_PLAY = "com.example.action.PLAY";
@@ -44,7 +46,7 @@ public class PlaybackService extends Service {
         return START_STICKY;
     }
 
-//
+//דס
     public void onDestroy() {
         super.onDestroy();
         if (mediaPlayer != null) {

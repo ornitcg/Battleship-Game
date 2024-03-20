@@ -4,9 +4,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.ImageButton;
-import android.widget.Toast;
 
-import com.clientapp.battleshipclient.PlaybackService;
+import com.clientapp.battleshipclient.Services.PlaybackService;
 import com.clientapp.battleshipclient.R;
 
 public class AudioUtils {
@@ -40,7 +39,7 @@ public class AudioUtils {
 
 
 
-    public static void keepMusicState(Context context) {
+    public static void resumeMusicState(Context context) {
         PreferencesManager prefs = new PreferencesManager(context);
         Activity currActivity = (Activity) context;
         ImageButton toggleMuteButton = currActivity.findViewById(R.id.muteBtnId);

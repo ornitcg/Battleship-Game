@@ -12,9 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.BattleshipClient"
         tools:targetApi="31">
-        <activity
-            android:name=".MainActivityBLABLA"
-            android:exported="false" />
+
         <activity
             android:name=".view.activities.BaseActivity"
             android:exported="false" />
@@ -36,7 +34,7 @@
             android:screenOrientation="portrait" />
 
         <service
-            android:name=".PlaybackService"
+            android:name=".Services.PlaybackService"
             android:enabled="true"
             android:exported="true" />
 

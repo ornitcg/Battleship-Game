@@ -1,6 +1,5 @@
 package com.clientapp.battleshipclient.view.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -10,13 +9,11 @@ import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
-import android.widget.ImageButton;
 import android.widget.Toast;
 
-import com.clientapp.battleshipclient.PlaybackService;
+import com.clientapp.battleshipclient.Services.PlaybackService;
 import com.clientapp.battleshipclient.R;
 import com.clientapp.battleshipclient.utils.AudioUtils;
-import com.clientapp.battleshipclient.utils.PreferencesManager;
 
 public class MainActivity extends BaseActivity {
 
@@ -31,9 +28,7 @@ public class MainActivity extends BaseActivity {
         buttonSound = MediaPlayer.create(MainActivity.this,R.raw.enter_button_sound);
         InitializeMusicToggleButton(this);  //call methods from base activity
         setupMusicToggleButton(this);
-
         startService(new Intent(this, PlaybackService.class));  //call for playback to play music
-//        Toast.makeText(this, "on create", Toast.LENGTH_SHORT).show();
 
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
@@ -58,7 +53,7 @@ public class MainActivity extends BaseActivity {
 
 
     public void goToSignForm(View v) {
-        Intent intent = new Intent(MainActivity.this, SignUpSignInActivity.class);
+        Intent intent = new Intent(MainActivity.this, PlaceYourShips.class);
         intent.putExtra("buttonSound", R.raw.enter_button_sound);
         startActivity(intent);
     }
@@ -67,32 +62,21 @@ public class MainActivity extends BaseActivity {
 
     public void onDestroy() {
         super.onDestroy();
+    //    Toast.makeText(this, "on destroy main", Toast.LENGTH_SHORT).show();
         AudioUtils.pauseMusic(this);
     }
 
-    public void onStop() {
-        super.onStop();
-        AudioUtils.pauseMusic( MainActivity.this); // mute the music
-    }
+
     public void onPause() {
         super.onPause();
+        Toast.makeText(this, "on pause main", Toast.LENGTH_SHORT).show();
         AudioUtils.pauseMusic( MainActivity.this); // mute the music
-
-    }
-
-    public void onUserLeaveHint() {
-        super.onUserLeaveHint();
-        AudioUtils.keepMusicState( MainActivity.this); // mute the music
-
     }
 
     public void onResume() {
         super.onResume();
-        AudioUtils.keepMusicState( MainActivity.this); // mute the music
+        AudioUtils.resumeMusicState( MainActivity.this); // mute the music
     }
-    public void onRestart() {
-        super.onRestart();
-        AudioUtils.keepMusicState( MainActivity.this); // mute the music
-    }
+
 
 }

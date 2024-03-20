@@ -1,6 +1,5 @@
 package com.clientapp.battleshipclient.view.activities;
 
-import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
@@ -8,12 +7,9 @@ import androidx.core.view.WindowInsetsCompat;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
-import android.widget.ImageButton;
-import android.widget.Toast;
 
 import com.clientapp.battleshipclient.R;
 import com.clientapp.battleshipclient.utils.AudioUtils;
-import com.clientapp.battleshipclient.utils.PreferencesManager;
 
 public class OptionsActivity extends BaseActivity {
 
@@ -23,7 +19,7 @@ public class OptionsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_options);
         setupMusicToggleButton(this);
-        AudioUtils.keepMusicState(this); // keep the music state
+//        AudioUtils.resumeMusicState(this); // keep the music state
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
@@ -52,20 +48,7 @@ public class OptionsActivity extends BaseActivity {
 //        System.exit(0);
 //    }
 
-    public void onRestart() {
-        super.onRestart();
-        AudioUtils.keepMusicState( OptionsActivity.this); // mute the music
-    }
 
-    public void onDestroy() {
-        super.onDestroy();
-        AudioUtils.pauseMusic(this);
-    }
-
-    public void onStop() {
-        super.onStop();
-        AudioUtils.pauseMusic( OptionsActivity.this); // mute the music
-    }
     public void onPause() {
         super.onPause();
         AudioUtils.pauseMusic(this);
@@ -73,7 +56,7 @@ public class OptionsActivity extends BaseActivity {
 
     public void onResume() {
         super.onResume();
-        AudioUtils.keepMusicState( OptionsActivity.this); // mute the music
+        AudioUtils.resumeMusicState( OptionsActivity.this); // mute the music
     }
 
 }

@@ -39,7 +39,7 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <GridView
-        android:id="@+id/myBoard"
+        android:id="@+id/myBoardGridId"
         android:layout_width="0dp"
         android:layout_height="297dp"
         android:layout_marginTop="44dp"

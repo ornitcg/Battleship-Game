@@ -40,7 +40,7 @@ public class BaseActivity extends AppCompatActivity {
     protected void setupMusicToggleButton(Context context) {
         toogleMuteBtn = findViewById(R.id.muteBtnId);
         prefs = new PreferencesManager(context);
-        AudioUtils.keepMusicState(context); // keep the music state
+        AudioUtils.resumeMusicState(context); // keep the music state
 
         toogleMuteBtn.setOnClickListener(new View.OnClickListener() {
             @Override
