@@ -7,8 +7,7 @@
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
-    <string name="Enter">ENTER</string>
-    <string name="gameTitle">BATTLESHIP</string>
+
 
 
 
@@ -53,10 +52,15 @@
     <string name="prompt_password">Password</string>
     <string name="action_sign_in">Sign in or register</string>
     <string name="action_sign_in_short">Sign in</string>
-    <string name="welcome">"Welcome!"</string>
     <string name="invalid_username">Not a valid username</string>
     <string name="invalid_password">Password must be >5 characters</string>
     <string name="login_failed">"Login failed"</string>
+
+
+    <!-- Strings related to activities -->
+    <string name="gameTitle">BATTLESHIP</string>
+    <string name="Enter">ENTER</string>
+    <string name="welcome">"Welcome!"</string>
     <string name="i_m_ready">Ready to Play</string>
     <string name="place_your_fleet">Place your fleet</string>
     <string name="quit">Quit App</string>
@@ -65,4 +69,5 @@
     <string name="choose_option">WHAT WOULD YOU LIKE TO DO?</string>
     <string name="toggleMusic">toggleMusic</string>
     <string name="Your_Inventory">Your Inventory:</string>
+    <string name="room_card_user_name">user_name</string>
 </resources>
