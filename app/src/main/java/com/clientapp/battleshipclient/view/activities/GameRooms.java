@@ -7,6 +7,7 @@ import android.view.View;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.clientapp.battleshipclient.R;
 import com.clientapp.battleshipclient.utils.AudioUtils;
@@ -19,6 +20,10 @@ public class GameRooms extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_game_rooms);
         setupMusicToggleButton(this);
+
+        RecyclerView roomsList = findViewById(R.id.roomsRecyclerViewId);
+        //create here a list instead of getting from the server
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main), (v, insets) -> {
             Insets systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars());

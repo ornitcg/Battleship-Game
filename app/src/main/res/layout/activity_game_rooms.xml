@@ -9,20 +9,34 @@
     tools:context=".view.activities.GameRooms">
 
 
-        <include layout="@layout/item_button_toggle_music" />
-
+        <include
+            layout="@layout/item_button_toggle_music"
+            tools:layout_editor_absoluteX="-16dp"
+            tools:layout_editor_absoluteY="0dp" />
 
         <TextView
             android:id="@+id/titleViewId"
             style="@style/LargeTextViewAppearance"
-            android:layout_width="369dp"
+            android:layout_width="0dp"
             android:layout_height="74dp"
             android:layout_marginTop="76dp"
-            android:text="Choose A Room "
+            android:layout_marginHorizontal="10dp"
+            android:textSize="20sp"
+            android:autoSizeMaxTextSize="30dp"
+            android:text="@string/rooms_activity_title"
+            android:textAlignment="center"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.619"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/roomsRecyclerViewId"
+            android:layout_width="358dp"
+            android:layout_height="571dp"
+            app:layout_constraintBottom_toTopOf="@+id/createNewRoomBtnId"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/titleViewId" />
 
         <Button
             android:id="@+id/createNewRoomBtnId"
@@ -38,6 +52,8 @@
             app:layout_constraintHorizontal_bias="0.504"
             app:layout_constraintStart_toStartOf="parent"
              />
+
+
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
