@@ -9,7 +9,7 @@
     tools:context=".view.activities.GameRooms">
 
 
-        <include layout="@layout/image_button_toggle_music" />
+        <include layout="@layout/item_button_toggle_music" />
 
 
         <TextView
