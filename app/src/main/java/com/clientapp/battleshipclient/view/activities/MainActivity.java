@@ -62,7 +62,7 @@ public class MainActivity extends BaseActivity {
 
     public void onDestroy() {
         super.onDestroy();
-        AudioUtils.pauseMusic(this);
+        stopService(new Intent(this, PlaybackService.class));
     }
 
 

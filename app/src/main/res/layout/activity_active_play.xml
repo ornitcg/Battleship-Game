@@ -16,24 +16,24 @@
         android:id="@+id/turnTextViewId"
         android:layout_width="0dp"
         android:layout_height="59dp"
-        android:layout_marginTop="68dp"
+        android:layout_marginTop="36dp"
+        android:text="@string/your_turn"
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="40sp"
         android:textStyle="bold|italic"
-        android:text="@string/your_turn"
         app:autoSizeMaxTextSize="50sp"
         app:autoSizeMinTextSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintTop_toTopOf="parent" />
 
     <GridView
         android:id="@+id/currPlayerBoardGridId"
         android:layout_width="0dp"
-        android:layout_height="297dp"
-        android:layout_marginTop="44dp"
+        android:layout_height="317dp"
+        android:layout_marginTop="4dp"
         android:background="@drawable/sea_water_background"
         android:gravity="center"
         android:numColumns="10"
@@ -41,8 +41,7 @@
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/turnTextViewId"
-         />
+        app:layout_constraintTop_toBottomOf="@+id/turnTextViewId" />
 
     <GridView
         android:id="@+id/opponentBoardGridId"
@@ -56,8 +55,10 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" />
-
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currPlayerBoardGridId"
+        app:layout_constraintVertical_bias="0.577" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>
