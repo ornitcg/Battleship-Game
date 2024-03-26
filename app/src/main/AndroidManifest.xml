@@ -17,6 +17,10 @@
             android:name=".view.activities.BaseActivity"
             android:exported="false" />
         <activity
+            android:name=".view.activities.ActivePlayActivity"
+            android:exported="false"
+            android:screenOrientation="portrait" />
+        <activity
             android:name=".view.activities.PlaceYourShips"
             android:exported="false"
             android:screenOrientation="portrait" />

@@ -6,7 +6,9 @@ public class Tile {
 
     private Status tileStatus;
     private int position;
-    private boolean isFired, isSunk;
+    private boolean isFired;
+    private boolean isSunk;
+
 
     public Tile(int position){
         this.tileStatus = Status.EMPTY;

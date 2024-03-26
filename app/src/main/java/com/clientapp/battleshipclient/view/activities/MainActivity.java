@@ -62,14 +62,12 @@ public class MainActivity extends BaseActivity {
 
     public void onDestroy() {
         super.onDestroy();
-    //    Toast.makeText(this, "on destroy main", Toast.LENGTH_SHORT).show();
         AudioUtils.pauseMusic(this);
     }
 
 
     public void onPause() {
         super.onPause();
-        Toast.makeText(this, "on pause main", Toast.LENGTH_SHORT).show();
         AudioUtils.pauseMusic( MainActivity.this); // mute the music
     }
 

@@ -9,6 +9,6 @@
 
     <include
         android:id="@+id/muteBtnId"
-        layout="@layout/image_button_toggle_music" />
+        layout="@layout/item_button_toggle_music" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

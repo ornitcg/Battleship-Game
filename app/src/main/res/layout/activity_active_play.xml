@@ -1,29 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/sea_water_background"
-    tools:context=".view.activities.LeaderboardAndStats">
+    android:background="@drawable/sea_water_background">
 
-<!--    <ImageButton-->
-<!--        android:id="@+id/muteBtnId"-->
-<!--        android:layout_width="34dp"-->
-<!--        android:layout_height="32dp"-->
-<!--        android:layout_marginStart="16dp"-->
-<!--        android:layout_marginTop="16dp"-->
-<!--        android:background="@android:color/transparent"-->
-<!--        android:scaleType="centerInside"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:srcCompat="@drawable/music_icon" />-->
-    <include layout="@layout/image_button_toggle_music" />
+
+    <include layout="@layout/item_button_toggle_music" />
 
 
     <TextView
-        android:id="@+id/placeFleet"
+        android:id="@+id/turnTextViewId"
         android:layout_width="0dp"
         android:layout_height="59dp"
         android:layout_marginTop="68dp"
@@ -31,44 +21,38 @@
         android:textColor="@color/white"
         android:textSize="40sp"
         android:textStyle="bold|italic"
+        android:text="@string/your_turn"
         app:autoSizeMaxTextSize="50sp"
         app:autoSizeMinTextSize="20sp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+        app:layout_constraintTop_toTopOf="parent"/>
 
     <GridView
-        android:id="@+id/myBoardGridId"
+        android:id="@+id/currPlayerBoardGridId"
         android:layout_width="0dp"
         android:layout_height="297dp"
         android:layout_marginTop="44dp"
         android:background="@drawable/sea_water_background"
-        android:columnWidth="40dp"
         android:gravity="center"
-        android:horizontalSpacing="1dp"
-        android:numColumns="auto_fit"
+        android:numColumns="10"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="1dp"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.49"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/placeFleet"
+        app:layout_constraintTop_toBottomOf="@+id/turnTextViewId"
          />
 
     <GridView
-        android:id="@+id/rivalBoard"
+        android:id="@+id/opponentBoardGridId"
         android:layout_width="0dp"
         android:layout_height="262dp"
         android:layout_marginBottom="72dp"
         android:background="@drawable/sea_water_background"
-        android:columnWidth="40dp"
         android:gravity="center"
-        android:horizontalSpacing="1dp"
-        android:numColumns="auto_fit"
+        android:numColumns="10"
         android:stretchMode="columnWidth"
-        android:verticalSpacing="1dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintDimensionRatio="1:1"
         app:layout_constraintEnd_toEndOf="parent"

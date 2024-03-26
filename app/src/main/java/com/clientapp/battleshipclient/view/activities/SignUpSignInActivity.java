@@ -43,7 +43,6 @@ public class SignUpSignInActivity extends BaseActivity {
 
     public void onPause() {
         super.onPause();
-        Toast.makeText(this, "on pause SIGN", Toast.LENGTH_SHORT).show();
         AudioUtils.pauseMusic( SignUpSignInActivity.this); // mute the music
 
     }
@@ -51,7 +50,6 @@ public class SignUpSignInActivity extends BaseActivity {
 
     public void onResume() {
         super.onResume();
-       // Toast.makeText(this, "on resume SIGN", Toast.LENGTH_SHORT).show();
         AudioUtils.resumeMusicState( SignUpSignInActivity.this); // mute the music
     }
 

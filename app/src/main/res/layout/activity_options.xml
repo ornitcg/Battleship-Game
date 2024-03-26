@@ -10,7 +10,7 @@ tools:context=".view.activities.OptionsActivity">
 
 
 
-        <include layout="@layout/image_button_toggle_music" />
+        <include layout="@layout/item_button_toggle_music" />
 
 
         <TextView

@@ -70,4 +70,6 @@
     <string name="toggleMusic">toggleMusic</string>
     <string name="Your_Inventory">Your Inventory:</string>
     <string name="room_card_user_name">user_name</string>
+    <string name="rooms_activity_title">Choose A Room</string>
+    <string name="your_turn">Your Turn</string>
 </resources>

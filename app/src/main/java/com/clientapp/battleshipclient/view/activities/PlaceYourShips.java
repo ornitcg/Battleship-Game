@@ -1,5 +1,6 @@
 package com.clientapp.battleshipclient.view.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -25,8 +26,6 @@ public class PlaceYourShips extends BaseActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_place_ships);
 
-        Log.d("activity place your ships", "activity place your ships " );
-
         setupMusicToggleButton(this);
         setupGridView();    // set the adapter to the grid view
 
@@ -39,18 +38,16 @@ public class PlaceYourShips extends BaseActivity {
     }
 
     public void setupGridView() {  //called by onCreate
-        gridView = findViewById(R.id.myBoardGridId); // get the reference of grid view
+        gridView = findViewById(R.id.currPlayerBoardGridId); // get the reference of grid view
         tilesList = new ArrayList<Tile>();
         for (int i = 0; i < 100; i++) { //initialize the list of tiles with 100 empty tiles
             tilesList.add(new Tile(i));
         }
         fetchData(); // calls parseJSON that fills the tilesList with data
-//        gridView.setVerticalSpacing(0);
-//        gridView.setHorizontalSpacing(0);
-//        gridView.setVerticalScrollBarEnabled(false);
+    }
 
-
-
+    private void fetchData() {  //in the future, this will be replaced with a call to the server
+        parseJSON("response");
     }
 
     public void parseJSON(String response){ //in the future, this will be replaced with a call to the server
@@ -60,10 +57,11 @@ public class PlaceYourShips extends BaseActivity {
 
     }
 
-    private void fetchData() {  //in the future, this will be replaced with a call to the server
-        parseJSON("response");
+    public void goToActivePlay(View v) {
+        Intent intent = new Intent(PlaceYourShips.this, ActivePlayActivity.class);
+//        intent.putExtra("buttonSound", R.raw.enter_button_sound);
+        startActivity(intent);
     }
-
 
     public void onPause() {
         super.onPause();

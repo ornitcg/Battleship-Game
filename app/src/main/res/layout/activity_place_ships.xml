@@ -5,8 +5,7 @@
     android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/sea_water_background"
-    tools:context=".view.activities.LeaderboardAndStats">
+    android:background="@drawable/sea_water_background">
 
 
     <include layout="@layout/item_button_toggle_music" />
@@ -29,21 +28,9 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
-<!--    <GridView-->
-<!--        android:id="@+id/myBoardGridId"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="0dp"-->
-<!--        android:layout_marginHorizontal="12dp"-->
-<!--        android:layout_marginTop="12dp"-->
-<!--        android:gravity="center"-->
-<!--        android:numColumns="10"-->
-<!--        app:layout_constraintDimensionRatio="1:1"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/placeFleet" />-->
 
     <GridView
-        android:id="@+id/myBoardGridId"
+        android:id="@+id/currPlayerBoardGridId"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_marginHorizontal="12dp"
@@ -70,7 +57,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/myBoardGridId" />
+        app:layout_constraintTop_toBottomOf="@+id/currPlayerBoardGridId" />
 
     <LinearLayout
         android:id="@+id/shipInventory"
@@ -130,6 +117,7 @@
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold|italic"
+        android:onClick="goToActivePlay"
         app:autoSizeMaxTextSize="20sp"
         app:autoSizeMinTextSize="12sp"
         app:autoSizeStepGranularity="2sp"
