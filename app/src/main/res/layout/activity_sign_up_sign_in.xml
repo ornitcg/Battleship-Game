@@ -56,7 +56,7 @@
         android:background="@color/white"
         android:cursorVisible="true"
         android:hint="Password"
-        android:maxLength="10"
+        android:maxLength="8"
         android:textAlignment="center"
         android:textColor="@color/navy"
         android:imeOptions="actionDone"

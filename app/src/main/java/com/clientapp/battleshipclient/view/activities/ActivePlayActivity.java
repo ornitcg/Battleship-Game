@@ -1,5 +1,6 @@
 package com.clientapp.battleshipclient.view.activities;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.widget.GridView;
 import androidx.core.graphics.Insets;
@@ -18,9 +19,8 @@ public class ActivePlayActivity extends BaseActivity{
     private GridView opponentGridView;
     private GameBoard currPlayerGameBoard;  // contains the data of the tiles
     private GameBoard opponentGameBoard;  // contains the data of the tiles
-    private User currPlayerUser;
-    private User opponentUser;
-    private User turnUser;
+    private String currPlayerUserId;
+    private String opponentUserId;
     private boolean gameOver = false;
 
 
@@ -30,6 +30,9 @@ public class ActivePlayActivity extends BaseActivity{
     public void onCreate( Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_active_play);
+        Intent intent = this.getIntent();
+        currPlayerUserId = intent.getStringExtra("currPlayerUserId");
+        opponentUserId = intent.getStringExtra("opponentUserId");
         setupMusicToggleButton(this);
         setupGridViews();
 
@@ -51,10 +54,9 @@ public class ActivePlayActivity extends BaseActivity{
     private void setupGridViews() {
         currPlayerGridView = findViewById(R.id.currPlayerBoardGridId);
         opponentGridView = findViewById(R.id.opponentBoardGridId);
-        currPlayerUser = new User("currPlayer", "password"); //  get the current player from the intent
-        opponentUser = new User("opponent", "password"); //  get the opponent from the intent
-        currPlayerGameBoard = new GameBoard(currPlayerUser);
-        opponentGameBoard = new GameBoard(opponentUser);
+
+        currPlayerGameBoard = new GameBoard(currPlayerUserId);
+        opponentGameBoard = new GameBoard(opponentUserId);
 
         fetchData(); // calls parseJSON that fills the tilesList with data
     }

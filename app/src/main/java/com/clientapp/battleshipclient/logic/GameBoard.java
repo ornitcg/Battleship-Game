@@ -2,15 +2,24 @@ package com.clientapp.battleshipclient.logic;
 
 import java.util.ArrayList;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class GameBoard {
-    private User user;
+    private String userId;
     private ArrayList<Tile> tilesList;
     private int totalTilesOccupied;
     private int totalTilesMissed;
     private int totalTilesHit;
 
-    public GameBoard(User user){
-        this.user = user;
+
+
+    public GameBoard(String userId){
+        this.userId = userId;
         this.totalTilesOccupied = 0;
         this.totalTilesMissed = 0;
         this.totalTilesHit = 0;

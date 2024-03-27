@@ -31,7 +31,6 @@ public class SignUpSignInActivity extends BaseActivity {
         Button signUpButton = findViewById(R.id.signUpBtnId);
         Button signInButton = findViewById(R.id.signInBtnId);
 
-
         signUpButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -94,7 +93,6 @@ public class SignUpSignInActivity extends BaseActivity {
     public void goToOptionsActivity(View v) {
         Intent intent = new Intent(SignUpSignInActivity.this, PlaceYourShips.class);
         intent.putExtra("buttonSound", R.raw.enter_button_sound);
-        intent.putExtra("currentUserName", currentPlayer.getUsername());
         startActivity(intent);
     }
 
