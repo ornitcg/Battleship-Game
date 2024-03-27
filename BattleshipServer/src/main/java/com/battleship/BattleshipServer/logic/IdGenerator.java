@@ -1,0 +1,41 @@
+package com.battleship.BattleshipServer.logic;
+
+import com.battleship.BattleshipServer.model.Game;
+import com.battleship.BattleshipServer.model.Room;
+import com.battleship.BattleshipServer.model.User;
+
+import java.util.UUID;
+
+public class IdGenerator {
+    private final static String  DB_USER_PREFIX = "game-";
+    private final static String DB_GAME_PREFIX = "user-";
+    private final static String DB_ROOM_PREFIX = "room-";
+
+    public static String generate(Object object) {
+        String retVal;
+
+        String afterPrefixId = generateAfterPrefixId();
+
+        if (object instanceof Game) {
+            retVal = DB_USER_PREFIX + afterPrefixId;
+        } else if (object instanceof User) {
+            retVal = DB_GAME_PREFIX + afterPrefixId;
+        } else if (object instanceof Room) {
+            retVal = DB_ROOM_PREFIX + afterPrefixId;
+        } else {
+            throw new RuntimeException("Undefined object type: " + object.getClass().getName());
+        }
+
+        return retVal;
+    }
+
+    private static String generateAfterPrefixId() {
+        String retVal;
+
+        UUID uuid = UUID.randomUUID();
+        String uuidString = uuid.toString().replace("-", "");
+        retVal = uuidString.substring(0, 10);
+
+        return retVal;
+    }
+}
