@@ -1,7 +1,5 @@
 package com.clientapp.battleshipclient.logic;
 
-import android.view.View;
-
 public class Tile {
 
     private Status tileStatus;
@@ -11,7 +9,7 @@ public class Tile {
 
 
     public Tile(int position){
-        this.tileStatus = Status.EMPTY;
+        this.tileStatus = Status.SEA;
         setFired(false);
         setSunk(false);
         this.position = position;
@@ -27,7 +25,7 @@ public class Tile {
     }
 
     public enum Status {
-        EMPTY,HIT,MISS,OCCUPIED,SUNK
+        SEA, HIT, MISS, SHIP
     }
 
     public Status getTileStatus(){

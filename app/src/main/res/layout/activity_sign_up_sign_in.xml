@@ -2,19 +2,15 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:id="@+id/main"
     android:background="@drawable/sign_up_in_img"
+    android:clickable="true"
+    android:focusableInTouchMode="true"
     tools:context=".view.activities.SignUpSignInActivity">
 
-
-
-
-
-
     <include layout="@layout/item_button_toggle_music" />
-
 
     <TextView
         android:id="@+id/signUpInTitleId"
