@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <color name="navy">#070F2B</color>
+    <color name="lightBlue">#BBE2EC</color>
+    <color name="buttonStroke">#0C0C75</color>
+    <color name="grey">#b6aeb1</color>
+    <color name="blackTint">#10ffffff</color>
+    <color name="colorPrimary">#3F51B5</color>
+    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="status_bar_color">#FF0000</color>
+
+
+</resources>
