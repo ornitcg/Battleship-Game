@@ -1,22 +1,22 @@
 package com.clientapp.battleshipclient.logic;
 
+import java.util.ArrayList;
+
 public class GameBoard {
-    private String userName;
-    private Tile[][] board;
+    private User user;
+    private ArrayList<Tile> tilesList;
     private int totalTilesOccupied;
     private int totalTilesMissed;
     private int totalTilesHit;
 
-    public GameBoard(String userName){
-        this.userName = userName;
+    public GameBoard(User user){
+        this.user = user;
         this.totalTilesOccupied = 0;
         this.totalTilesMissed = 0;
         this.totalTilesHit = 0;
 
-        for (int i = 0; i < 10; i++){
-            for (int j = 0; j < 10; j++){
-                this.board[i][j] = new Tile(i*10 + j);
-            }
+        for (int i = 0; i < 100; i++){
+            this.tilesList.add(new Tile(i));
         }
 
     }
@@ -24,13 +24,12 @@ public class GameBoard {
     public void setTile(int Position, Tile tile){
         int x = Position / 10;
         int y = Position % 10;
-        this.board[x][y] = tile;
     }
 
     public Tile getTile(int Position){
         int x = Position / 10;
         int y = Position % 10;
-        return this.board[x][y];
+        return null;
     }
 
     public void setTotalTilesOccupied(int totalTilesOccupied){
@@ -58,6 +57,7 @@ public class GameBoard {
     }
 
 
-
-
+    public ArrayList<Tile> getTilesList() {
+        return tilesList;
+    }
 }

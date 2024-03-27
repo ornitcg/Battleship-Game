@@ -53,7 +53,7 @@ public class MainActivity extends BaseActivity {
 
 
     public void goToSignForm(View v) {
-        Intent intent = new Intent(MainActivity.this, PlaceYourShips.class);
+        Intent intent = new Intent(MainActivity.this, SignUpSignInActivity.class);
         intent.putExtra("buttonSound", R.raw.enter_button_sound);
         startActivity(intent);
     }
