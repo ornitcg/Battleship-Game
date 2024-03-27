@@ -3,6 +3,7 @@ package com.battleship.BattleshipServer.model;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.http.ResponseEntity;
 
 @Data
 @AllArgsConstructor

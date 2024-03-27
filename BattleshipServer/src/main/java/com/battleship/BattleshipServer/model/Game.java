@@ -13,8 +13,6 @@ import java.util.Date;
 public class Game {
     private String id;
 
-    private String roomId;
-
     private Date startTime;
 
     private Date endTime;
@@ -24,5 +22,4 @@ public class Game {
     private String winnerUserId;
 
     private String looserUserId;
-
 }

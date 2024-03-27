@@ -5,8 +5,6 @@ import com.battleship.BattleshipServer.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
 public class UserController {
 
@@ -20,9 +18,10 @@ public class UserController {
 //    }
 
     @GetMapping("/user/{userId}")
-    public User getUser(@PathVariable String userId) {
-//        return uDao.get(userId);
-        return null;
+    public ApiResponse<User> getUser(@PathVariable String userId) {
+        ApiResponse<User> retVal = uDao.get(userId);
+
+        return retVal;
     }
 
 //    @PostMapping("/user")

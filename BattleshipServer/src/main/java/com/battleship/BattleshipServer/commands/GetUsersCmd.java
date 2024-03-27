@@ -1,10 +1,7 @@
 package com.battleship.BattleshipServer.commands;
 
 import com.battleship.BattleshipServer.dao.UserDao;
-import com.battleship.BattleshipServer.logic.ResponseFromDb;
-import com.battleship.BattleshipServer.model.User;
-
-import java.util.List;
+import org.springframework.http.ResponseEntity;
 
 public class GetUsersCmd {
     private UserDao userDao;
@@ -13,18 +10,17 @@ public class GetUsersCmd {
         this.userDao = userDao;
     }
 
-    public List<User> execute() {
-        List<User> retVal;
+    public ResponseEntity<Object> execute() {
+        ResponseEntity<Object> retVal = null;
 
-        ResponseFromDb<List<User>> response = userDao.getAll();
-
-        if (response.isSucceeded()) {
-            retVal = response.getValue();
-        }
-        else {
-            retVal = null;
-            System.err.println(response.getErrorMsg());
-        }
+//        ApiResponse<List<User>> response = userDao.getAll();
+//
+//        if (response.isSucceeded()) {
+//            retVal = ResponseEntity.status(HttpStatus.OK).body(response.getValue());
+//        }
+//        else {
+//            retVal = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response.getErrorMsg());
+//        }
 
         return retVal;
     }

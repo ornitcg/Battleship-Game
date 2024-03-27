@@ -1,14 +1,10 @@
 package com.battleship.BattleshipServer.dao;
 
-import com.battleship.BattleshipServer.logic.ResponseFromDb;
-import com.battleship.BattleshipServer.model.User;
-import org.springframework.web.util.pattern.PathPattern;
-
-import java.util.List;
+import com.battleship.BattleshipServer.resources.ApiResponse;
 
 public interface IDao<T> {
     String SELECT = "SELECT * FROM ";
-    String WHERE = "WHERE id=?";
+    String WHERE_ID = "WHERE id=?";
     String INSERT = "INSERT INTO ";
     String UPDATE = "UPDATE ";
 
@@ -18,13 +14,9 @@ public interface IDao<T> {
     String NOT_EXISTS_ERROR_MSG = "Entity doesn't exist";
 
 
-    ResponseFromDb<Integer> save(T entity);
+    ApiResponse<String> create(T entity);
 
-    ResponseFromDb<Integer> update(T entity, String id);
+    ApiResponse<String> update(T entity, String id);
 
-    ResponseFromDb<Integer> delete(String id);
-
-    ResponseFromDb<List<T>> getAll();
-
-    ResponseFromDb<T> get(String id);
+    ApiResponse<String> delete(String id);
 }

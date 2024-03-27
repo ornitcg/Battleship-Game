@@ -1,7 +1,7 @@
 package com.battleship.BattleshipServer.dao;
 
 import com.battleship.BattleshipServer.logic.IdGenerator;
-import com.battleship.BattleshipServer.logic.ResponseFromDb;
+import com.battleship.BattleshipServer.resources.ApiResponse;
 import com.battleship.BattleshipServer.model.Game;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
@@ -21,78 +21,76 @@ public class GameDao implements IDao<Game> {
     private JdbcTemplate jdbcTemplate;
 
     @Override
-    public ResponseFromDb<Integer> save(Game game) {
-        ResponseFromDb<Integer> retVal;
+    public ApiResponse<String> create(Game game) {
+        ApiResponse<String> retVal;
         String gameId = IdGenerator.generate(game);
 
         try {
-            int value = jdbcTemplate.update(INSERT + GAMES_TABLE_NAME + "(id, roomId, startTime, endTime, gameState, " + "winnerUserId, looserUserId) VALUES (?, ?, ?, ?)", new Object[]{gameId, game.getRoomId(), game.getStartTime(), game.getEndTime(), game.getGameState().name(), game.getWinnerUserId(), game.getLooserUserId()});
-            retVal = ResponseFromDb.createSucceededResponse(value);
+            jdbcTemplate.update(INSERT + GAMES_TABLE_NAME + "(id, startTime, endTime, gameState, " + "winnerUserId, looserUserId) VALUES (?, ?, ?, ?)", new Object[]{gameId, game.getStartTime(), game.getEndTime(), game.getGameState().name(), game.getWinnerUserId(), game.getLooserUserId()});
+            retVal = ApiResponse.createSucceededResponse(gameId);
         } catch (DataAccessException e) {
-            retVal = ResponseFromDb.createFailedResponse(GENERAL_ERROR_MSG);
+            retVal = ApiResponse.createFailedResponse(GENERAL_ERROR_MSG);
         }
 
         return retVal;
     }
 
     @Override
-    public ResponseFromDb<Integer> update(Game game, String gameId) {
-        ResponseFromDb<Integer> retVal;
+    public ApiResponse<String> update(Game game, String gameId) {
+        ApiResponse<String> retVal;
 
         try {
-            int value = jdbcTemplate.update(UPDATE + GAMES_TABLE_NAME + "SET roomId=?, startTime=?, endTime=?, gameState=?, winnerUserId=?, looserUserId=? " + WHERE, new Object[]{game.getRoomId(), game.getStartTime(), game.getEndTime(), game.getGameState().name(), game.getWinnerUserId(), game.getLooserUserId(), gameId});
-            retVal = ResponseFromDb.createSucceededResponse(value);
+            jdbcTemplate.update(UPDATE + GAMES_TABLE_NAME + "SET startTime=?, endTime=?, gameState=?, winnerUserId=?, looserUserId=? " + WHERE_ID, new Object[]{game.getStartTime(), game.getEndTime(), game.getGameState().name(), game.getWinnerUserId(), game.getLooserUserId(), gameId});
+            retVal = ApiResponse.createSucceededResponse(gameId);
         } catch (EmptyResultDataAccessException e) {
-            retVal = ResponseFromDb.createFailedResponse(NOT_EXISTS_ERROR_MSG);
+            retVal = ApiResponse.createFailedResponse(NOT_EXISTS_ERROR_MSG);
         } catch (DataAccessException e) {
-            retVal = ResponseFromDb.createFailedResponse(GENERAL_ERROR_MSG);
+            retVal = ApiResponse.createFailedResponse(GENERAL_ERROR_MSG);
         }
 
         return retVal;
     }
 
     @Override
-    public ResponseFromDb<Integer> delete(String gameId) {
-        ResponseFromDb<Integer> retVal;
+    public ApiResponse<String> delete(String gameId) {
+        ApiResponse<String> retVal;
 
         try {
-            int value = jdbcTemplate.update(DELETE + GAMES_TABLE_NAME + WHERE, gameId);
-            retVal = ResponseFromDb.createSucceededResponse(value);
+            jdbcTemplate.update(DELETE + GAMES_TABLE_NAME + WHERE_ID, gameId);
+            retVal = ApiResponse.createSucceededResponse(gameId);
         } catch (EmptyResultDataAccessException e) {
-            retVal = ResponseFromDb.createFailedResponse(NOT_EXISTS_ERROR_MSG);
+            retVal = ApiResponse.createFailedResponse(NOT_EXISTS_ERROR_MSG);
         } catch (DataAccessException e) {
-            retVal = ResponseFromDb.createFailedResponse(GENERAL_ERROR_MSG);
+            retVal = ApiResponse.createFailedResponse(GENERAL_ERROR_MSG);
         }
 
         return retVal;
     }
 
-    @Override
-    public ResponseFromDb<List<Game>> getAll() {
-        ResponseFromDb<List<Game>> retVal;
+    public ApiResponse<List<Game>> getAll() {
+        ApiResponse<List<Game>> retVal;
 
         try {
             List<Game> games = jdbcTemplate.query(SELECT + GAMES_TABLE_NAME, new BeanPropertyRowMapper<Game>(Game.class));
-            retVal = ResponseFromDb.createSucceededResponse(games);
+            retVal = ApiResponse.createSucceededResponse(games);
         } catch (DataAccessException e) {
-            retVal = ResponseFromDb.createFailedResponse(GENERAL_ERROR_MSG);
+            retVal = ApiResponse.createFailedResponse(GENERAL_ERROR_MSG);
         }
 
         return retVal;
     }
 
-    @Override
-    public ResponseFromDb<Game> get(String gameId) {
-        ResponseFromDb<Game> retVal;
+    public ApiResponse<Game> get(String gameId) {
+        ApiResponse<Game> retVal;
 
         try {
-            Game game = jdbcTemplate.queryForObject(SELECT + GAMES_TABLE_NAME + WHERE,
+            Game game = jdbcTemplate.queryForObject(SELECT + GAMES_TABLE_NAME + WHERE_ID,
                     new BeanPropertyRowMapper<Game>(Game.class), gameId);
-            retVal = ResponseFromDb.createSucceededResponse(game);
+            retVal = ApiResponse.createSucceededResponse(game);
         } catch (EmptyResultDataAccessException e) {
-            retVal = ResponseFromDb.createFailedResponse(NOT_EXISTS_ERROR_MSG);
+            retVal = ApiResponse.createFailedResponse(NOT_EXISTS_ERROR_MSG);
         } catch (DataAccessException e) {
-            retVal = ResponseFromDb.createFailedResponse(GENERAL_ERROR_MSG);
+            retVal = ApiResponse.createFailedResponse(GENERAL_ERROR_MSG);
         }
 
         return retVal;
