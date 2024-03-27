@@ -31,7 +31,7 @@ public class User {
 
     public UserState signIn() {
         UserNW  userNW = new UserNW();
-        if (isInList(this))
+        if (userNW.getUsers().contains(this))
             return UserState.SIGNIN_SUCCEDED;
         return UserState.SIGNIN_FAILED;
     }
