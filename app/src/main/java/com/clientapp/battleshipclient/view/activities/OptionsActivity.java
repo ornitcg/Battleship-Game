@@ -34,7 +34,9 @@ public class OptionsActivity extends BaseActivity {
     public void goToGameRooms(View v) {
         Intent intent = new Intent(OptionsActivity.this, GameRooms.class);
         intent.putExtra("buttonSound", R.raw.enter_button_sound);
+//        startActivity(intent);
         startActivity(intent);
+
     }
 
     public void goToLeaderBoard(View v) {
