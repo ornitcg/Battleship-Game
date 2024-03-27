@@ -72,4 +72,9 @@
     <string name="room_card_user_name">user_name</string>
     <string name="rooms_activity_title">Choose A Room</string>
     <string name="your_turn">Your Turn</string>
+    <string name="hint_password">Password</string>
+    <string name="sign_up_btn">SIGN UP</string>
+    <string name="sign_in_btn">SIGN IN</string>
+    <string name="hint_user_name">User Name</string>
+    <string name="activity_title_sign_up_sign_in">SIGN UP / SIGN IN</string>
 </resources>

@@ -21,6 +21,7 @@ public class SignUpSignInActivity extends BaseActivity {
     private User currentPlayer;
     private Button signUpButton; // for easy access of methods
     private Button signInButton; // for easy access of methods
+    private String currentPlayerUserId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,11 +52,11 @@ public class SignUpSignInActivity extends BaseActivity {
                 EditText userPasswordInputView = findViewById(R.id.userPasswordInputViewId);
                 String userName = userNameInputView.getText().toString();
                 String password = userPasswordInputView.getText().toString();
-                Log.d("User", "USERNAME: " + userName);
                 currentPlayer = new User(userName, password);
                 User.UserState userState = currentPlayer.signUp();
                 switch (userState) {
                     case SIGNUP_SUCCEDED:
+                        setUserId(currentPlayer.getUserID());
                         goToOptionsActivity(v);
                         break;
                     case USER_EXISTS:
@@ -87,6 +88,7 @@ public class SignUpSignInActivity extends BaseActivity {
                 User.UserState userState = currentPlayer.signIn();
                 switch (userState) {
                     case SIGNIN_SUCCEDED:
+                        setUserId(currentPlayer.getUserID());
                         goToOptionsActivity(v);
                         break;
                     case SIGNIN_FAILED:
@@ -100,8 +102,12 @@ public class SignUpSignInActivity extends BaseActivity {
         });
     }
 
+    private void setUserId(String userID) {
+        this.currentPlayerUserId = userID;
+    }
+
     public void goToOptionsActivity(View v) {
-        Intent intent = new Intent(SignUpSignInActivity.this, PlaceYourShips.class);
+        Intent intent = new Intent(SignUpSignInActivity.this, OptionsActivity.class);
         intent.putExtra("buttonSound", R.raw.enter_button_sound);
         intent.putExtra("currPlayerUserId", currentPlayer.getUserID());
         startActivity(intent);
