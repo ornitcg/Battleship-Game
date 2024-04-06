@@ -69,6 +69,17 @@ public class GameResource {
         return retVal;
     }
 
+    @PutMapping("/game/{gameId}")
+    private ApiResponse<String> updateGame(@PathVariable String gameId,
+                                           @RequestBody Game gameToUpdate) {
+        ApiResponse<String> retVal;
+
+        UpdateGameCmd cmd = new UpdateGameCmd(gameDao, gameToUpdate, gameId);
+        retVal = cmd.execute();
+
+        return retVal;
+    }
+
     @GetMapping("/getGameBoards/{gameId}")
     private ApiResponse<ArrayList<GameBoard>> getGameBoards(@PathVariable String gameId) {
         ApiResponse<ArrayList<GameBoard>> retVal;
