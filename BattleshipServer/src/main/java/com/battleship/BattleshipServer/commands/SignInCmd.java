@@ -32,10 +32,7 @@ public class SignInCmd {
             String passwordFromRequest = user.getPassword();
 
             // if it wrong password, we want to build different response
-            if (realUserPassword.equals(passwordFromRequest)) {
-                retVal.setMsg("OK");
-            }
-            else {
+            if (realUserPassword.equals(passwordFromRequest) == false) {
                 String msg = String.format("Wrong password for user %s", userName);
                 retVal = ApiResponse.createFailedResponse(msg);
             }

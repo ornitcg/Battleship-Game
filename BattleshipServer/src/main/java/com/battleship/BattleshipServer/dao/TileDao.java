@@ -66,10 +66,10 @@ public class TileDao implements IDao<Tile> {
 
         try {
             jdbcTemplate.update(UPDATE + TILES_TABLE_NAME + "SET position=?, boardId=?, state=? " + "WHERE position=? AND boardId=?",
-                    new Object[] {tile.getPosition(), boardId, tile.getState(), tile.getPosition(), boardId});
+                    new Object[] {tile.getPosition(), boardId, tile.getState().getName(), tile.getPosition(), boardId});
             retVal = ApiResponse.createSucceededResponse(String.format("tile with position %d on board %s", tile.getPosition(), tile.getBoardId()));
         } catch (DataAccessException e) {
-            retVal = ApiResponse.createFailedResponse(GENERAL_ERROR_MSG);
+            retVal = ApiResponse.createFailedResponse(e.getMessage());
         }
 
         return retVal;

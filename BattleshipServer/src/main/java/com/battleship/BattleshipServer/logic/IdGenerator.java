@@ -1,7 +1,7 @@
 package com.battleship.BattleshipServer.logic;
 
 import com.battleship.BattleshipServer.model.Board;
-import com.battleship.BattleshipServer.model.Game;
+import com.battleship.BattleshipServer.model.game.Game;
 import com.battleship.BattleshipServer.model.User;
 
 import java.util.UUID;
