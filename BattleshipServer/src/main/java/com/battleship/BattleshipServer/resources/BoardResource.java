@@ -31,7 +31,7 @@ public class BoardResource {
         return retVal;
     }
 
-    @PutMapping("/updateTile")
+    @PutMapping("/board/tile")
     private ApiResponse<String> updateTile(@RequestBody Tile tileToUpdate) {
         ApiResponse<String> retVal;
 
