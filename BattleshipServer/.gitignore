@@ -1,0 +1,51 @@
+# built application files
+*.apk
+*.ap_
+
+# files for the dex VM
+*.dex
+
+# JUNK
+*.DS_Store
+Thumbs.db
+
+# Java class files
+*.class
+
+# generated files
+bin/
+gen/
+
+# Local configuration file (sdk path, etc)
+local.properties
+
+# Eclipse project files
+.classpath
+.project
+
+# Intellij project files
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# Android Studio
+.gradle
+/*/local.properties
+/*/out
+/build
+/release
+/*/build
+/*/production
+/*/release
+/*/*/build
+/*/*/production
+*~
+*.swp
+/captures
+
+# Fastlane
+fastlane/report.xml
+fastlane/preview.xml
+fastlane/README.md
+fastlane/metadata

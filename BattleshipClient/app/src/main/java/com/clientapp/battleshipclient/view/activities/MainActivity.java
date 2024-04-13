@@ -53,8 +53,10 @@ public class MainActivity extends BaseActivity {
 
 
     public void goToSignForm(View v) {
-        Intent intent = new Intent(MainActivity.this, SignUpSignInActivity.class);
+        Intent intent = new Intent(MainActivity.this, PlaceYourShips.class);
         intent.putExtra("buttonSound", R.raw.enter_button_sound);
+        intent.putExtra("currPlayerUserId", "12345"); // TODO *** for DEBUG , delete this line
+
         startActivity(intent);
     }
 
