@@ -1,0 +1,51 @@
+
+
+    Create users table:
+    CREATE TABLE `users` (
+      `id` varchar(255) NOT NULL,
+      `bestScore` int DEFAULT NULL,
+      `name` varchar(255) DEFAULT NULL,
+      `password` varchar(255) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+    Create games table:
+    CREATE TABLE `games` (
+      `id` varchar(255) NOT NULL,
+      `turnUserId` varchar(255) DEFAULT NULL,
+      `startTime` timestamp NULL DEFAULT NULL,
+      `endTime` timestamp NULL DEFAULT NULL,
+      `gameState` varchar(255) DEFAULT NULL,
+      `winnerUserId` varchar(255) DEFAULT NULL,
+      `looserUserId` varchar(255) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+    Create boards table:
+    CREATE TABLE `boards` (
+      `id` varchar(255) NOT NULL,
+      `gameId` varchar(255) DEFAULT NULL,
+      `userId` varchar(255) DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+    Create tiles table:
+    CREATE TABLE `tiles` (
+      `position` int NOT NULL,
+      `boardId` varchar(255) NOT NULL,
+      `state` varchar(255) DEFAULT NULL,
+      `shipId` varchar(255) DEFAULT NULL,
+      PRIMARY KEY (`position`,`boardId`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+    Create ships table:
+    CREATE TABLE `ships` (
+      `id` varchar(255) NOT NULL,
+      `boardId` varchar(255) DEFAULT NULL,
+      `position` int DEFAULT NULL,
+      `type` varchar(255) DEFAULT NULL,
+      `orientation` varchar(255) DEFAULT NULL,
+      `size` int DEFAULT NULL,
+      `numHits` int DEFAULT NULL,
+      PRIMARY KEY (`id`)
+    ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
