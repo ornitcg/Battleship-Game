@@ -77,4 +77,7 @@
     <string name="sign_in_btn">SIGN IN</string>
     <string name="hint_user_name">User Name</string>
     <string name="activity_title_sign_up_sign_in">SIGN UP / SIGN IN</string>
+    <string name="todo_miss_view">miss view</string>
+    <string name="frame_ships_content_description">frame</string>
+    <string name="inventory_ships_content_description">inventory</string>
 </resources>

@@ -34,7 +34,7 @@ public class OptionsActivity extends BaseActivity {
 
 
     public void goToGameRooms(View v) {
-        Intent intent = new Intent(OptionsActivity.this, GameRooms.class);
+        Intent intent = new Intent(OptionsActivity.this, PlaceYourShips.class);
         intent.putExtra("buttonSound", R.raw.enter_button_sound);
         intent.putExtra("userId", currPlayerUserId);
 //        startActivity(intent);

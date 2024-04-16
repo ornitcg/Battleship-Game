@@ -56,7 +56,7 @@ public class SignUpSignInActivity extends BaseActivity {
                 User.UserState userState = currentPlayer.signUp();
                 switch (userState) {
                     case SIGNUP_SUCCEDED:
-                        setUserId(currentPlayer.getUserID());
+//                        setUserId(currentPlayer.getUserID());
                         goToOptionsActivity(v);
                         break;
                     case USER_EXISTS:
@@ -88,7 +88,6 @@ public class SignUpSignInActivity extends BaseActivity {
                 User.UserState userState = currentPlayer.signIn();
                 switch (userState) {
                     case SIGNIN_SUCCEDED:
-                        setUserId(currentPlayer.getUserID());
                         goToOptionsActivity(v);
                         break;
                     case SIGNIN_FAILED:
@@ -102,9 +101,7 @@ public class SignUpSignInActivity extends BaseActivity {
         });
     }
 
-    private void setUserId(String userID) {
-        this.currentPlayerUserId = userID;
-    }
+
 
     public void goToOptionsActivity(View v) {
         Intent intent = new Intent(SignUpSignInActivity.this, OptionsActivity.class);

@@ -7,14 +7,7 @@
         android:id="@+id/grid_item_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/tile_status_empty" />
-
-    <ImageView
-        android:id="@+id/grid_item_icon"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:src="@drawable/blast"
-        android:contentDescription="@string/todo_miss_view" />
+        android:background="@drawable/tile_status_redundant" />
 </FrameLayout>
 
 

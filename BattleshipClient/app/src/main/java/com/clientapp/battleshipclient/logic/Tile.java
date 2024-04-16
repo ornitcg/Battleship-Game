@@ -1,36 +1,68 @@
 package com.clientapp.battleshipclient.logic;
 
-public class Tile {
+import java.io.Serializable;
 
-    private Status tileStatus;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class Tile implements Serializable {
+    private State tileState;
     private int position;
-    private boolean isFired;
-    private boolean isSunk;
+    private int shipId;
+    private Ship.Orientation orientation
+           ;
 
 
     public Tile(int position){
-        this.tileStatus = Status.SEA;
-        setFired(false);
-        setSunk(false);
+        this.tileState = State.SEA;
         this.position = position;
+        this.shipId = -1;
     }
-
-
 
     public void setFired(boolean isFired){
-        this.isFired = isFired;
-    }
-    private void setSunk(boolean isSunk ){
-        this.isSunk = isSunk;
+
+        if (isFired){
+            if (tileState == State.SHIP){
+                tileState = State.HIT;
+            }
+            else if (tileState == State.SEA){
+                tileState = State.MISS;
+            }
+        }
+        if (tileState == State.SHIP){
+            tileState = State.HIT;
+        }
+        else if (tileState == State.SEA){
+            tileState = State.MISS;
+        }
     }
 
-    public enum Status {
-        SEA, HIT, MISS, SHIP
+    public void resetSingleTileData() {
+        this.setTileState(State.SEA);
+        this.shipId=-1;
     }
 
-    public Status getTileStatus(){
-        return tileStatus;
+//    @Override
+//    public int describeContents() { //TODO: remove this
+//        return 0;
+//    }
+
+//    @Override
+//    public void writeToParcel(@NonNull Parcel dest, int flags) { //TODO: remove this
+//
+//    }
+
+
+    public enum State {
+        SEA, HIT, MISS, SHIP, NEAR_SHIP, VALID_FOR_DROP, INVALID_FOR_DROP
     }
 
+    public void setTileState(State state) {
+        this.tileState = state;
+    }
 
 }
