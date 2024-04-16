@@ -3,6 +3,7 @@ package com.battleship.BattleshipServer.logic;
 import com.battleship.BattleshipServer.model.Board;
 import com.battleship.BattleshipServer.model.game.Game;
 import com.battleship.BattleshipServer.model.User;
+import com.battleship.BattleshipServer.model.ship.Ship;
 
 import java.util.UUID;
 
@@ -11,7 +12,7 @@ public class IdGenerator {
     private final static String DB_GAME_PREFIX = "user-";
     private final static String DB_BOARD_PREFIX = "board-";
 
-
+    private final static String DB_SHIP_PREFIX = "ship-";
     public static String generate(Object object) {
         String retVal;
 
@@ -23,6 +24,8 @@ public class IdGenerator {
             retVal = DB_GAME_PREFIX + afterPrefixId;
         } else if (object instanceof Board) {
             retVal = DB_BOARD_PREFIX + afterPrefixId;
+        } else if (object instanceof Ship) {
+            retVal = DB_SHIP_PREFIX + afterPrefixId;
         } else {
             throw new RuntimeException("Undefined object type: " + object.getClass().getName());
         }

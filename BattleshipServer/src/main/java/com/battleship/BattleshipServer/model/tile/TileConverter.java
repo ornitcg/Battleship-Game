@@ -6,7 +6,8 @@ public class TileConverter {
         Tile retVal = null;
 
         if (dbTile != null) {
-            retVal = new Tile(dbTile.getPosition(), dbTile.getBoardId(), TileStateEnum.fromString(dbTile.getState()));
+            retVal = new Tile(dbTile.getPosition(), dbTile.getBoardId(), TileStateEnum.fromString(dbTile.getState()),
+                    dbTile.getShipId());
         }
 
         return retVal;
@@ -16,7 +17,7 @@ public class TileConverter {
         DbTile retVal = null;
 
         if (tile != null) {
-            retVal = new DbTile(tile.getPosition(), tile.getBoardId(), tile.getState().getName());
+            retVal = new DbTile(tile.getPosition(), tile.getBoardId(), tile.getState().getName(), tile.getShipId());
         }
 
         return retVal;

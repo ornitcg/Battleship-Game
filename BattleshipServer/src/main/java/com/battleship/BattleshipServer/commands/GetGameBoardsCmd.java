@@ -29,27 +29,27 @@ public class GetGameBoardsCmd {
         boolean failedToFetch = false;
         String failMsg = null;
 
-        ApiResponse<List<Board>> boardsResponse = getBoards(gameId);
-
-        if (boardsResponse.isSucceeded()) {
-            List<Board> boards = boardsResponse.getValue();
-
-            for (Board board : boards) {
-                ApiResponse<List<Tile>> tilesResponse = getTiles(board.getId());
-
-                if (tilesResponse.isSucceeded() == false) {
-                    failedToFetch = true;
-                    failMsg = tilesResponse.getMsg();
-                } else {
-                    List<Tile> tiles = tilesResponse.getValue();
-                    GameBoard gameBoard = new GameBoard(gameId, board.getUserId(), new ArrayList<>(tiles));
-                    gameBoards.add(gameBoard);
-                }
-            }
-        } else {
-            failedToFetch = true;
-            failMsg = boardsResponse.getMsg();
-        }
+//        ApiResponse<List<Board>> boardsResponse = getBoards(gameId);
+//
+//        if (boardsResponse.isSucceeded()) {
+//            List<Board> boards = boardsResponse.getValue();
+//
+//            for (Board board : boards) {
+//                ApiResponse<List<Tile>> tilesResponse = getTiles(board.getId());
+//
+//                if (tilesResponse.isSucceeded() == false) {
+//                    failedToFetch = true;
+//                    failMsg = tilesResponse.getMsg();
+//                } else {
+//                    List<Tile> tiles = tilesResponse.getValue();
+//                    GameBoard gameBoard = new GameBoard(gameId, board.getUserId(), new ArrayList<>(tiles));
+//                    gameBoards.add(gameBoard);
+//                }
+//            }
+//        } else {
+//            failedToFetch = true;
+//            failMsg = boardsResponse.getMsg();
+//        }
 
         if (failedToFetch) {
             retVal = ApiResponse.createFailedResponse(failMsg);

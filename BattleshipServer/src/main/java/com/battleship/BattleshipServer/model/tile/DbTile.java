@@ -13,4 +13,6 @@ public class DbTile {
     private String boardId;
 
     private String state;
+
+    private String shipId; //can be null
 }

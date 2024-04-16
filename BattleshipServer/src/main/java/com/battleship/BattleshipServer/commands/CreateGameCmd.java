@@ -102,7 +102,7 @@ public class CreateGameCmd {
     private Game newGame(String opponent) {
         Game retVal = new Game();
 
-        LocalDateTime currentTime = LocalDateTime .now();
+        LocalDateTime currentTime = LocalDateTime.now();
         retVal.setStartTime(currentTime);
         retVal.setGameState(GameStateEnum.IN_PROGRESS);
         retVal.setTurnUserId(opponent);

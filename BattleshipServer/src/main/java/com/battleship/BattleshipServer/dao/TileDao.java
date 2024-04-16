@@ -46,11 +46,11 @@ public class TileDao implements IDao<Tile> {
             List<Object[]> batchArgs = new ArrayList<>();
 
             for (Tile tile : tiles) {
-                Object[] args = new Object[] { tile.getPosition(), tile.getBoardId(), tile.getState().getName() };
+                Object[] args = new Object[] { tile.getPosition(), tile.getBoardId(), tile.getState().getName(), tile.getShipId()};
                 batchArgs.add(args);
             }
 
-            jdbcTemplate.batchUpdate(INSERT + TILES_TABLE_NAME + "(position, boardId, state) VALUES (?, ?, ?)",
+            jdbcTemplate.batchUpdate(INSERT + TILES_TABLE_NAME + "(position, boardId, state, shipId) VALUES (?, ?, ?, ?)",
                     batchArgs);
             retVal = ApiResponse.createSucceededResponse(String.format("tile created for board %s", boardId));
         } catch (DataAccessException e) {

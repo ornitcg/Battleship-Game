@@ -1,15 +1,16 @@
-package com.battleship.BattleshipServer.model.game;
+package com.battleship.BattleshipServer.model;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
-public enum GameStateEnum {
-    IN_PROGRESS("inProgress"),
-    FINISHED("finished");
+public enum AttackResultEnum {
+    HIT("hit"),
+    MISS("miss"),
+    SUNK("sunk");
 
-    private final String name;
+    private String name;
 
-    GameStateEnum(String name) {
+    AttackResultEnum(String name) {
         this.name = name;
     }
 
@@ -19,8 +20,8 @@ public enum GameStateEnum {
     }
 
     @JsonCreator
-    public static GameStateEnum fromString(String name) {
-        for (GameStateEnum state : GameStateEnum.values()) {
+    public static AttackResultEnum fromString(String name) {
+        for (AttackResultEnum state : AttackResultEnum.values()) {
             if (state.name.equalsIgnoreCase(name)) {
                 return state;
             }

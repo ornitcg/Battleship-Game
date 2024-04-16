@@ -50,8 +50,8 @@ public class GameDao implements IDao<Game> {
         ApiResponse<String> retVal;
 
         try {
-            jdbcTemplate.update(UPDATE + GAMES_TABLE_NAME + "SET turnUserId=?, startTime=?, endTime=?, gameState=?, " +
-                    "winnerUserId=?, looserUserId=? " + WHERE_ID, new Object[]{game.getTurnUserId(), game.getStartTime(), game.getEndTime(), game.getGameState().getName(), game.getWinnerUserId(), game.getLooserUserId(), gameId});
+            jdbcTemplate.update(UPDATE + GAMES_TABLE_NAME + "SET turnUserId=?,endTime=?, gameState=?, " +
+                    "winnerUserId=?, looserUserId=? " + WHERE_ID, new Object[]{game.getTurnUserId(), game.getEndTime(), game.getGameState().getName(), game.getWinnerUserId(), game.getLooserUserId(), gameId});
             retVal = ApiResponse.createSucceededResponse(gameId);
         } catch (EmptyResultDataAccessException e) {
             retVal = ApiResponse.createFailedResponse(NOT_EXISTS_ERROR_MSG);

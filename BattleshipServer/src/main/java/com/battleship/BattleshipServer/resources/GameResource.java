@@ -3,15 +3,14 @@ package com.battleship.BattleshipServer.resources;
 import com.battleship.BattleshipServer.commands.*;
 import com.battleship.BattleshipServer.dao.BoardDao;
 import com.battleship.BattleshipServer.dao.GameDao;
+import com.battleship.BattleshipServer.dao.ShipDao;
 import com.battleship.BattleshipServer.dao.TileDao;
 import com.battleship.BattleshipServer.model.GameBoard;
 import com.battleship.BattleshipServer.model.game.Game;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Queue;
+import java.util.*;
 
 @RestController
 public class GameResource {
@@ -25,9 +24,16 @@ public class GameResource {
     @Autowired
     private TileDao tileDao;
 
+    @Autowired
+    private ShipDao shipDao;
+
     public static final Queue<String> waitingUsers = new LinkedList<>();
 
     public static final Object waitingUsersLock = new Object();
+
+    public static final Map<String, Integer> attacks = new HashMap<>();
+
+    public static final Object attacksLock = new Object();
 
     @GetMapping("/opponent/{userId}")
     private ApiResponse<String> getOpponent(@PathVariable String userId) {
@@ -59,22 +65,11 @@ public class GameResource {
         return retVal;
     }
 
-    @PostMapping("/game/{userId}")
-    private ApiResponse<String> createGame(@PathVariable String userId) {
+    @PostMapping("/game")
+    private ApiResponse<String> createGame(@RequestParam String userId) {
         ApiResponse<String> retVal;
 
         CreateGameCmd cmd = new CreateGameCmd(gameDao, userId);
-        retVal = cmd.execute();
-
-        return retVal;
-    }
-
-    @PutMapping("/game/{gameId}")
-    private ApiResponse<String> updateGame(@PathVariable String gameId,
-                                           @RequestBody Game gameToUpdate) {
-        ApiResponse<String> retVal;
-
-        UpdateGameCmd cmd = new UpdateGameCmd(gameDao, gameToUpdate, gameId);
         retVal = cmd.execute();
 
         return retVal;
@@ -85,6 +80,37 @@ public class GameResource {
         ApiResponse<ArrayList<GameBoard>> retVal;
 
         GetGameBoardsCmd cmd = new GetGameBoardsCmd(boardDao, tileDao, gameId);
+        retVal = cmd.execute();
+
+        return retVal;
+    }
+
+    /*
+    Use this endpoint to get the position that the opponent attacked.
+    Send gameId, return the position.
+     */
+    @GetMapping("/attack")
+    private ApiResponse<Integer> getAttack(@RequestParam String gameId) {
+        ApiResponse<Integer> retVal;
+
+        GetAttackCmd cmd = new GetAttackCmd(gameId);
+        retVal = cmd.execute();
+
+        return retVal;
+    }
+
+    /*
+    Use this endpoint to attack opponent.
+    Send userId + gameId + position to attack, in response one od [hit, miss, sunk]
+     */
+    @PostMapping("/attack")
+    private ApiResponse<String> createAttack(@RequestParam String userId,
+                                             @RequestParam String gameId,
+                                             @RequestParam Integer position) {
+
+        ApiResponse<String> retVal;
+
+        CreateAttackCmd cmd = new CreateAttackCmd(gameDao, boardDao, tileDao, shipDao, userId, gameId, position);
         retVal = cmd.execute();
 
         return retVal;

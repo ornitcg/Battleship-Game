@@ -15,4 +15,5 @@ public class Tile {
 
     private TileStateEnum state;
 
+    private String shipId; //can be null
 }
