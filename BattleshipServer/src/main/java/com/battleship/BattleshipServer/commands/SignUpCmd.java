@@ -21,8 +21,8 @@ public class SignUpCmd {
         this.userToCreate = userToCreate;
     }
 
-    public ApiResponse<User> execute() {
-        ApiResponse<User> retVal;
+    public ApiResponse<String> execute() {
+        ApiResponse<String> retVal;
         ApiResponse<List<User>> getUsersResponse = userDao.getAll();
 
         if (getUsersResponse.isSucceeded()) {
@@ -35,8 +35,8 @@ public class SignUpCmd {
         return retVal;
     }
 
-    private ApiResponse<User> createUserIfNotExist(List<User> users) {
-        ApiResponse<User> retVal;
+    private ApiResponse<String> createUserIfNotExist(List<User> users) {
+        ApiResponse<String> retVal;
 
         try {
             createIfNotExistLock.lock();
@@ -46,7 +46,7 @@ public class SignUpCmd {
                 ApiResponse<String> createResponse = userDao.create(userToCreate);
 
                 if (createResponse.isSucceeded()) {
-                    retVal = ApiResponse.createSucceededResponse(null);
+                    retVal = ApiResponse.createSucceededResponse(createResponse.getValue());
                 }
                 else {
                     retVal = ApiResponse.createFailedResponse(createResponse.getMsg());

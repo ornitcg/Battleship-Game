@@ -13,18 +13,11 @@ public class SignInCmd {
         this.user = user;
     }
 
-    public ApiResponse<User> execute() {
-        ApiResponse<User> retVal;
+    public ApiResponse<String> execute() {
+        ApiResponse<String> retVal;
         String userName = user.getName();
 
         ApiResponse<User> userApiResponse = userDao.get(userName);
-
-        /*
-        If the request succeeded, or if it failed (user doesn't exist/failed get response from db) -
-        Then we want to return the response from db
-         */
-        retVal = userApiResponse;
-
         User realUser = userApiResponse.getValue();
 
         if (realUser != null) {
@@ -36,6 +29,12 @@ public class SignInCmd {
                 String msg = String.format("Wrong password for user %s", userName);
                 retVal = ApiResponse.createFailedResponse(msg);
             }
+            else {
+                retVal = ApiResponse.createSucceededResponse(realUser.getId());
+            }
+        }
+        else { //request failed
+            retVal = ApiResponse.createFailedResponse(userApiResponse.getMsg());
         }
 
         return retVal;

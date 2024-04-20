@@ -49,7 +49,7 @@ public class CreateAttackCmd {
         List<Board> gameBoards = getGameBoards();
 
         if (gameBoards != null) {
-            Board opponentBoard = gameBoards.stream().filter(e -> e.getUserId().equals(userId) == false).collect(Collectors.toList()).get(0);
+            Board opponentBoard = gameBoards.stream().filter(e -> e.getUserId().equals(userId) == false).toList().get(0);
             AttackResultEnum attackResult = getAttackResult(opponentBoard);
 
             if (attackResult != null) {
@@ -160,22 +160,27 @@ public class CreateAttackCmd {
         Game game = getGame();
 
         if (game != null) {
-            if (attackResult == AttackResultEnum.MISS) {
-                game.setTurnUserId(opponentId);
-            }
-
-            if (attackResult == AttackResultEnum.SUNK) {
-                Boolean gameOver = isGameOver(boardId);
-
-                if (gameOver != null) {
-                    if (gameOver) {
-                        game.setGameState(GameStateEnum.FINISHED);
-                        game.setWinnerUserId(userId);
-                        game.setLooserUserId(opponentId);
-                        game.setEndTime(LocalDateTime.now());
-                    }
+            Object o = switch (attackResult) {
+                case HIT -> null;
+                case MISS -> {
+                    game.setTurnUserId(opponentId);
+                    yield true; // only for compiling
                 }
-            }
+                case SUNK -> {
+                    Boolean gameOver = isGameOver(boardId);
+
+                    if (gameOver != null) {
+                        if (gameOver) {
+                            game.setGameState(GameStateEnum.FINISHED);
+                            game.setWinnerUserId(userId);
+                            game.setLooserUserId(opponentId);
+                            game.setEndTime(LocalDateTime.now());
+                        }
+                    }
+                    yield true; // only for compiling
+                }
+            };
+
             ApiResponse<String> update = gameDao.update(game, gameId);
             retVal = update.getValue() != null;
         }

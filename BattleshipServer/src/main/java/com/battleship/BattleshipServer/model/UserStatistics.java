@@ -13,7 +13,8 @@ public class UserStatistics {
 
     private List<User> bestScoreUsers;
 
-    //todo yuval - add bestScore of user to the response
+    private Integer userBestScore;
+
     private Integer totalGames;
 
     private Integer numWins;

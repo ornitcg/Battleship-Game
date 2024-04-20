@@ -24,8 +24,8 @@ public class LeaderboardResource {
     If you want a specific amount of best score users, add a query param numBestScores to the request.
     Default will return 10 best score users.
      */
-    @GetMapping("/userStatistics/{userId}")
-    private ApiResponse<UserStatistics> getUserStatistics(@PathVariable String userId,
+    @GetMapping("/userStatistics")
+    private ApiResponse<UserStatistics> getUserStatistics(@RequestParam String userId,
                                                           @RequestParam(value = "numBestScores", required = false) Integer numBestScores) {
         ApiResponse<UserStatistics> retVal;
 

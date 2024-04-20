@@ -13,6 +13,8 @@ public class CreateGameCmd {
     private String userId;
     private GameDao gameDao;
 
+    private static final String FAILED_MSG = "Failed to create game";
+
     public CreateGameCmd(GameDao gameDao, String userId) {
         this.userId = userId;
         this.gameDao = gameDao;
@@ -31,9 +33,32 @@ public class CreateGameCmd {
             if (maybeOpponentUserId.startsWith("user")) {
                 Game game = newGame(maybeOpponentUserId);
                 retVal = gameDao.create(game);
+
+                synchronized (GameResource.gameCreatedForUserIdsLock) {
+                    GameResource.gameCreatedForUserIds.add(maybeOpponentUserId);
+                    GameResource.gameCreatedForUserIdsLock.notifyAll();
+                }
             }
             else {
-                retVal = getGameId();
+                boolean failedToWait = false;
+
+                synchronized (GameResource.gameCreatedForUserIdsLock) {
+                    while (GameResource.gameCreatedForUserIds.contains(userId) == false) {
+                        try {
+                            GameResource.gameCreatedForUserIdsLock.wait();
+                        } catch (InterruptedException e) {
+                            failedToWait = true;
+                        }
+                    }
+
+                    if (failedToWait) {
+                        retVal = ApiResponse.createFailedResponse(FAILED_MSG);
+                    }
+                    else {
+                        GameResource.gameCreatedForUserIds.remove(userId);
+                        retVal = getGameId();
+                    }
+                }
             }
         }
         else {
@@ -55,6 +80,8 @@ public class CreateGameCmd {
         ApiResponse<String> retVal;
 
         synchronized (GameResource.waitingUsersLock) {
+            boolean failedToWait = false;
+
             while (GameResource.waitingUsers.size() < 2 && GameResource.waitingUsers.contains(userId)) {
                 //                System.out.printf("Player %s waiting%n", userId);
                 // Wait until another player is available
@@ -67,11 +94,15 @@ public class CreateGameCmd {
                 Since we first insert user to queue and only after start waiting, there
                 is exactly one player, this user request.
                  */
-                    GameResource.waitingUsers.poll();
+                    GameResource.waitingUsers.remove(userId);
+                    failedToWait = true;
                 }
             }
 
-            if (GameResource.waitingUsers.contains(userId) == false) {
+            if (failedToWait) {
+                retVal = ApiResponse.createFailedResponse(FAILED_MSG);
+            }
+            else if (GameResource.waitingUsers.contains(userId) == false) {
                 // when the opponent found me
                 String msg = "Found opponent and created the game";
                 //                System.out.printf(msg + " for %s%n", userId);
@@ -116,7 +147,7 @@ public class CreateGameCmd {
         ApiResponse<Game> gameForUser = gameDao.getGameForUser(userId);
 
         if (gameForUser.isSucceeded()) {
-            retVal = ApiResponse.createFailedResponse(gameForUser.getValue().getId());
+            retVal = ApiResponse.createSucceededResponse(gameForUser.getValue().getId());
         }
         else {
             retVal = ApiResponse.createFailedResponse(gameForUser.getMsg());

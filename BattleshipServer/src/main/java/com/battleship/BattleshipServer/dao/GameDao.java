@@ -82,23 +82,14 @@ public class GameDao implements IDao<Game> {
         ApiResponse<List<Game>> retVal;
 
         try {
-            List<DbGame> winningGames = jdbcTemplate.query(SELECT + GAMES_TABLE_NAME + "WHERE winnerUserId=?",
-                    new BeanPropertyRowMapper<DbGame>(DbGame.class), userId);
+            List<DbGame> dbAllUserGames = jdbcTemplate.query(SELECT + GAMES_TABLE_NAME + "WHERE winnerUserId=? or " +
+                            "looserUserId=?",
+                    new BeanPropertyRowMapper<DbGame>(DbGame.class), userId, userId);
 
-            try {
-                List<DbGame> loosingGames = jdbcTemplate.query(SELECT + GAMES_TABLE_NAME + "WHERE looserUserId=?",
-                        new BeanPropertyRowMapper<DbGame>(DbGame.class), userId);
-
-                List<Game> allUserGames = new LinkedList<>();
-                allUserGames.addAll(winningGames.stream().map(GameConverter::fromDb).toList());
-                allUserGames.addAll(loosingGames.stream().map(GameConverter::fromDb).toList());
-
+                List<Game> allUserGames = new LinkedList<>(dbAllUserGames.stream().map(GameConverter::fromDb).toList());
                 retVal = ApiResponse.createSucceededResponse(allUserGames);
-            } catch (DataAccessException e) {
-                retVal = ApiResponse.createFailedResponse(GENERAL_ERROR_MSG);
-            }
         } catch (DataAccessException e) {
-            retVal = ApiResponse.createFailedResponse(GENERAL_ERROR_MSG);
+            retVal = ApiResponse.createFailedResponse(e.getMessage());
         }
 
         return retVal;
@@ -134,7 +125,7 @@ public class GameDao implements IDao<Game> {
         } catch (EmptyResultDataAccessException e) {
             retVal = ApiResponse.createFailedResponse(NOT_EXISTS_ERROR_MSG);
         } catch (DataAccessException e) {
-            retVal = ApiResponse.createFailedResponse(GENERAL_ERROR_MSG);
+            retVal = ApiResponse.createFailedResponse(e.getMessage());
         }
 
         return retVal;

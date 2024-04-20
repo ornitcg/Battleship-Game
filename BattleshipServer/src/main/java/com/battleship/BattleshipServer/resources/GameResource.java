@@ -27,11 +27,15 @@ public class GameResource {
     @Autowired
     private ShipDao shipDao;
 
-    public static final Queue<String> waitingUsers = new LinkedList<>();
+    public static Queue<String> waitingUsers = new LinkedList<>();
 
     public static final Object waitingUsersLock = new Object();
 
-    public static final Map<String, Integer> attacks = new HashMap<>();
+    public static Set<String> gameCreatedForUserIds = new HashSet<>();
+
+    public static final Object gameCreatedForUserIdsLock = new Object();
+
+    public static Map<String, Integer> attacks = new HashMap<>();
 
     public static final Object attacksLock = new Object();
 

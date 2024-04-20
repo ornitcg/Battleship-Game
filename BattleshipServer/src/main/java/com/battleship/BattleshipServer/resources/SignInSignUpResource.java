@@ -17,8 +17,8 @@ public class SignInSignUpResource {
     private UserDao userDao;
 
     @GetMapping("/signIn")
-    public ApiResponse<User> signIn(@RequestBody User user) {
-        ApiResponse<User> retVal;
+    public ApiResponse<String> signIn(@RequestBody User user) {
+        ApiResponse<String> retVal;
 
         SignInCmd cmd = new SignInCmd(userDao, user);
         retVal = cmd.execute();
@@ -27,8 +27,8 @@ public class SignInSignUpResource {
     }
 
     @PostMapping("/signUp")
-    private ApiResponse<User> signUp(@RequestBody User userToCreate) {
-        ApiResponse<User> retVal;
+    private ApiResponse<String> signUp(@RequestBody User userToCreate) {
+        ApiResponse<String> retVal;
 
         SignUpCmd cmd = new SignUpCmd(userDao, userToCreate);
         retVal = cmd.execute();

@@ -36,50 +36,44 @@ public class GetUserStatisticsCms {
         ApiResponse<List<Game>> allUserGamesResponse = gameDao.getAllUserGames(userId);
 
         if (allUserGamesResponse.isSucceeded()) {
-            ApiResponse<List<User>> bestScoreUsersResponse = getBestScoreUsers();
+            ApiResponse<List<User>> usersResponse = userDao.getAll();
 
-            if (bestScoreUsersResponse.isSucceeded()) {
+            if (usersResponse.isSucceeded()) {
+                List<User> users = usersResponse.getValue();
+                List<User> bestScoreUsers = getBestScoreUsers(users);
                 List<Game> allUserGames = allUserGamesResponse.getValue();
-                List<User> bestScoreUsers = bestScoreUsersResponse.getValue();
+
+                User user = getUser(users);
 
                 int totalGames = allUserGames.size();
-                int numWins =
-                        allUserGames.stream().filter(e-> e.getWinnerUserId().equals(userId)).toList().size();
+                int numWins = allUserGames.stream().filter(e -> userId.equals(e.getWinnerUserId())).toList().size();
 
-                UserStatistics userStatistics = new UserStatistics(bestScoreUsers, totalGames, numWins);
+                UserStatistics userStatistics = new UserStatistics(bestScoreUsers, user.getBestScore(), totalGames,
+                        numWins);
 
                 retVal = ApiResponse.createSucceededResponse(userStatistics);
+            } else {
+                retVal = ApiResponse.createFailedResponse(usersResponse.getMsg());
             }
-            else {
-                retVal = ApiResponse.createFailedResponse(bestScoreUsersResponse.getMsg());
-            }
-        }
-        else {
+        } else {
             retVal = ApiResponse.createFailedResponse(allUserGamesResponse.getMsg());
         }
 
         return retVal;
     }
 
-    private ApiResponse<List<User>> getBestScoreUsers() {
-        ApiResponse<List<User>> retVal;
-        ApiResponse<List<User>> usersResponse = userDao.getAll();
+    private User getUser(List<User> users) {
+        User retVal = users.stream().filter(e->e.getId().equals(userId)).toList().get(0);
+        return retVal;
+    }
 
-        if (usersResponse.isSucceeded()) {
-            List<User> users = usersResponse.getValue();
-
+    private List<User> getBestScoreUsers(List<User> users) {
+        List<User> retVal;
             /*
             0 is default value for new player. best score is the lowest score,
             so we want to filter users that didn't played yet.
              */
-            List<User> bestScoreUsers =
-                    users.stream().filter(e->e.getBestScore() == 0).sorted(Comparator.comparingInt(User::getBestScore)).limit(numBestScores).collect(Collectors.toList());
-
-            retVal = ApiResponse.createSucceededResponse(bestScoreUsers);
-        } else {
-            retVal = usersResponse;
-        }
-
+        retVal = users.stream().filter(e -> e.getBestScore() != 0).sorted(Comparator.comparingInt(User::getBestScore)).limit(numBestScores).collect(Collectors.toList());
         return retVal;
     }
 }

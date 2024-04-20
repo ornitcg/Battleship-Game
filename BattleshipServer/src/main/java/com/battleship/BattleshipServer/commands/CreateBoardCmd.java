@@ -115,7 +115,7 @@ public class CreateBoardCmd {
             //this is the second user to create the board, so we want to extract from set
             if (BoardResource.createGameBoards.contains(gameId)) {
                 BoardResource.createGameBoards.remove(gameId);
-                notifyAll(); // so second user can stop waiting
+                BoardResource.createGameBoardsLock.notifyAll(); // so second user can stop waiting
             }
             //this is the first user to create the board, so we want him to wait second user
             else {

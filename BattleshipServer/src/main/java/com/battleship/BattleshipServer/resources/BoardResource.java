@@ -31,7 +31,7 @@ public class BoardResource {
     @Autowired
     private ShipDao shipDao;
 
-    public static final Set<String> createGameBoards = new HashSet<>();
+    public static Set<String> createGameBoards = new HashSet<>();
 
     public static final Object createGameBoardsLock = new Object();
 
