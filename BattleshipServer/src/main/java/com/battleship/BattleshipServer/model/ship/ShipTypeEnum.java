@@ -4,8 +4,11 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum ShipTypeEnum {
-    //todo yuvalg - add types when had them
-   TYPE1("type1");
+    BATTLESHIP("battleship"),
+    SUBMARINE("submarine"),
+    CARRIER("carrier"),
+    CRUISER("cruiser"),
+    DESTROYER("destroyer");
 
     private final String name;
 

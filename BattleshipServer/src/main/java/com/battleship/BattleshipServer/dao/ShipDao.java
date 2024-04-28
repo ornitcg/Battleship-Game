@@ -55,7 +55,7 @@ public class ShipDao implements IDao<Ship> {
 
                 Object[] args = new Object[] {ship.getId(), boardId, ship.getPosition(), ship.getType().getName(),
                         ship.getOrientation().getName(),
-                        ship.getSize(), ship.getNumHits() };
+                        ship.getSize(), 0 };
                 batchArgs.add(args);
             }
 
