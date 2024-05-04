@@ -219,7 +219,7 @@ public class CreateAttackCmd {
         if (boardShipsResponse.isSucceeded()) {
             List<Ship> ships = boardShipsResponse.getValue();
             List<Ship> shipsNotSunk =
-                    ships.stream().filter(e -> e.getType().getName().equals(shipType) == false && e.getSize() != e.getNumHits()).toList();
+                    ships.stream().filter(e -> e.getType().getName().equals(shipType) == false || e.getSize() != e.getNumHits()).toList();
 
             retVal = shipsNotSunk.isEmpty();
         }
