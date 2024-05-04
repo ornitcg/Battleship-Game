@@ -4,11 +4,14 @@ import com.battleship.BattleshipServer.dao.BoardDao;
 import com.battleship.BattleshipServer.dao.GameDao;
 import com.battleship.BattleshipServer.dao.ShipDao;
 import com.battleship.BattleshipServer.dao.TileDao;
+import com.battleship.BattleshipServer.logic.CreateAttackResponse;
 import com.battleship.BattleshipServer.model.AttackResultEnum;
 import com.battleship.BattleshipServer.model.Board;
 import com.battleship.BattleshipServer.model.game.Game;
 import com.battleship.BattleshipServer.model.game.GameStateEnum;
+import com.battleship.BattleshipServer.model.ship.OrientationEnum;
 import com.battleship.BattleshipServer.model.ship.Ship;
+import com.battleship.BattleshipServer.model.ship.ShipTypeEnum;
 import com.battleship.BattleshipServer.model.tile.Tile;
 import com.battleship.BattleshipServer.model.tile.TileStateEnum;
 import com.battleship.BattleshipServer.resources.ApiResponse;
@@ -42,22 +45,24 @@ public class CreateAttackCmd {
         this.position = position;
     }
 
-    public ApiResponse<String> execute() {
-        ApiResponse<String> retVal = null;
+    public ApiResponse<CreateAttackResponse> execute() {
+        ApiResponse<CreateAttackResponse> retVal = null;
 
         //list will be null if failed to fetch, else always size=2 when one is player's game board and one opponents
         List<Board> gameBoards = getGameBoards();
 
         if (gameBoards != null) {
             Board opponentBoard = gameBoards.stream().filter(e -> e.getUserId().equals(userId) == false).toList().get(0);
-            AttackResultEnum attackResult = getAttackResult(opponentBoard);
+            CreateAttackResponse attackResponse = getAttackResponse(opponentBoard);
 
-            if (attackResult != null) {
-                boolean succeeded = updateGame(opponentBoard.getId(), opponentBoard.getUserId(), attackResult);
+            if (attackResponse != null) {
+                String attackResult = attackResponse.getAttackResult();
+                boolean succeeded = updateGame(opponentBoard.getId(), opponentBoard.getUserId(),
+                        AttackResultEnum.fromString(attackResult));
 
                 if (succeeded) {
                     insertAttackToSet();
-                    retVal = ApiResponse.createSucceededResponse(attackResult.getName());
+                    retVal = ApiResponse.createSucceededResponse(attackResponse);
                 }
             }
         }
@@ -88,8 +93,8 @@ public class CreateAttackCmd {
         return retVal;
     }
 
-    private AttackResultEnum getAttackResult(Board opponentBoard) {
-        AttackResultEnum retVal = null;
+    private CreateAttackResponse getAttackResponse(Board opponentBoard) {
+        CreateAttackResponse retVal = null;
         String boardId = opponentBoard.getId();
 
         ApiResponse<List<Tile>> boardTilesResponse = tileDao.getBoardTiles(boardId);
@@ -98,35 +103,55 @@ public class CreateAttackCmd {
         if (boardTiles != null) {
             Tile tile = boardTiles.stream().filter(e -> e.getPosition() == position).collect(Collectors.toList()).get(0);
 
-            retVal = getAttackResult(tile);
+            if (tile != null) {
+                retVal = getAttackResponse(tile);
+            }
         }
 
         return retVal;
     }
 
-    private AttackResultEnum getAttackResult(Tile tile) {
-        AttackResultEnum retVal = null;
+    private CreateAttackResponse getAttackResponse(Tile tile) {
+        CreateAttackResponse retVal;
 
         TileStateEnum state = tile.getState();
 
         retVal = switch (state) {
-            case SEA, HIT, MISS -> AttackResultEnum.MISS;
+            case SEA, HIT, MISS -> {
+                AttackResultEnum attackResult = AttackResultEnum.MISS;
+                yield CreateAttackResponse.createResponse(attackResult.getName());
+            }
             case SHIP -> {
-                AttackResultEnum toYield = null;
+                CreateAttackResponse toYield = null;
+                AttackResultEnum attackResult = null;
                 Ship ship = getShip(tile.getShipId());
 
                 if (ship != null) {
                     Integer size = ship.getSize();
-                    Integer numHits = ship.getNumHits();
+                    Integer numHits = ship.getNumHits() + 1;
 
                     if (Objects.equals(size, numHits)) {
-                        toYield = AttackResultEnum.SUNK;
+                        attackResult = AttackResultEnum.SUNK;
                     } else {
                         boolean updated = updateShip(ship);
 
                         if (updated) {
-                            toYield = AttackResultEnum.HIT;
+                            attackResult = AttackResultEnum.HIT;
                         }
+                    }
+
+                    if (attackResult != null) {
+                        toYield = switch (attackResult) {
+                            case HIT -> CreateAttackResponse.createResponse(attackResult.getName());
+                            case SUNK -> {
+                                ShipTypeEnum shipType = ship.getType();
+                                Integer position = ship.getPosition();
+                                OrientationEnum orientation = ship.getOrientation();
+                                yield CreateAttackResponse.createSunkResponse(attackResult.getName(), shipType.getName(), position, orientation.getName());
+                            }
+                            // can't happen
+                            default -> throw new IllegalStateException("Unexpected value: " + attackResult);
+                        };
                     }
                 }
 

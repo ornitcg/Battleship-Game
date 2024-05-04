@@ -5,18 +5,20 @@ import com.battleship.BattleshipServer.dao.ShipDao;
 import com.battleship.BattleshipServer.dao.TileDao;
 import com.battleship.BattleshipServer.model.Board;
 import com.battleship.BattleshipServer.model.GameBoard;
+import com.battleship.BattleshipServer.model.ship.OrientationEnum;
 import com.battleship.BattleshipServer.model.ship.Ship;
 import com.battleship.BattleshipServer.model.tile.Tile;
 import com.battleship.BattleshipServer.resources.ApiResponse;
 import com.battleship.BattleshipServer.resources.BoardResource;
-import com.battleship.BattleshipServer.resources.GameResource;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class CreateBoardCmd {
+
+    private static final Integer BOARD_SIZE = 10;
 
     private final BoardDao boardDao;
     private final TileDao tileDao;
@@ -102,12 +104,50 @@ public class CreateBoardCmd {
     }
 
     private void enrichTilesWithShipId(ArrayList<Tile> board, List<Ship> ships) {
-        Map<Integer, String> shipIdByPosition = ships.stream().collect(Collectors.toMap(Ship::getPosition, Ship::getId));
+        Map<Integer, String> shipIdByPosition = calcShipIdByPosition(ships);
 
         for (Tile tile : board) {
             String shipId = shipIdByPosition.get(tile.getPosition());
             tile.setShipId(shipId);
         }
+    }
+
+    private Map<Integer, String> calcShipIdByPosition(List<Ship> ships) {
+        Map<Integer, String> retVal = new HashMap<>();
+
+        for (Ship ship : ships) {
+            String id = ship.getId();
+            Integer position = ship.getPosition();
+            Integer size = ship.getSize();
+            OrientationEnum orientation = ship.getOrientation();
+
+            /*
+               vertical:
+               if position is 5, and size is 3 -> we need to add positions 5,6,7 with shipId
+               horizontal:
+               if position is 5, and size is 3 -> we need to add positions 5,15,25 with shipId
+            */
+            int toAdd = size - 1;
+
+            Object o = switch (orientation) {
+                case VERTICAL -> {
+                    while (toAdd >= 0) {
+                        retVal.put(position + toAdd, id);
+                        toAdd--;
+                    }
+                    yield true; // only for compiling
+                }
+                case HORIZONTAL -> {
+                    while (toAdd >= 0) {
+                        retVal.put(position + toAdd * BOARD_SIZE, id);
+                        toAdd--;
+                    }
+                    yield false; // only for compiling
+                }
+            };
+        }
+
+        return retVal;
     }
 
     private void insertOrExtractFromCreateBoardsSet(String gameId) {

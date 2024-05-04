@@ -5,6 +5,7 @@ import com.battleship.BattleshipServer.dao.BoardDao;
 import com.battleship.BattleshipServer.dao.GameDao;
 import com.battleship.BattleshipServer.dao.ShipDao;
 import com.battleship.BattleshipServer.dao.TileDao;
+import com.battleship.BattleshipServer.logic.CreateAttackResponse;
 import com.battleship.BattleshipServer.model.GameBoard;
 import com.battleship.BattleshipServer.model.game.Game;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -108,11 +109,11 @@ public class GameResource {
     Send userId + gameId + position to attack, in response one od [hit, miss, sunk]
      */
     @PostMapping("/attack")
-    private ApiResponse<String> createAttack(@RequestParam String userId,
-                                             @RequestParam String gameId,
-                                             @RequestParam Integer position) {
+    private ApiResponse<CreateAttackResponse> createAttack(@RequestParam String userId,
+                                                           @RequestParam String gameId,
+                                                           @RequestParam Integer position) {
 
-        ApiResponse<String> retVal;
+        ApiResponse<CreateAttackResponse> retVal;
 
         CreateAttackCmd cmd = new CreateAttackCmd(gameDao, boardDao, tileDao, shipDao, userId, gameId, position);
         retVal = cmd.execute();
