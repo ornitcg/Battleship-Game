@@ -122,9 +122,9 @@ public class CreateBoardCmd {
             OrientationEnum orientation = ship.getOrientation();
 
             /*
-               vertical:
-               if position is 5, and size is 3 -> we need to add positions 5,6,7 with shipId
                horizontal:
+               if position is 5, and size is 3 -> we need to add positions 5,6,7 with shipId
+               vertical:
                if position is 5, and size is 3 -> we need to add positions 5,15,25 with shipId
             */
             int toAdd = size - 1;
@@ -132,14 +132,14 @@ public class CreateBoardCmd {
             Object o = switch (orientation) {
                 case VERTICAL -> {
                     while (toAdd >= 0) {
-                        retVal.put(position + toAdd, id);
+                        retVal.put(position + toAdd * BOARD_SIZE, id);
                         toAdd--;
                     }
                     yield true; // only for compiling
                 }
                 case HORIZONTAL -> {
                     while (toAdd >= 0) {
-                        retVal.put(position + toAdd * BOARD_SIZE, id);
+                        retVal.put(position + toAdd, id);
                         toAdd--;
                     }
                     yield false; // only for compiling
