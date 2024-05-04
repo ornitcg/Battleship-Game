@@ -57,8 +57,7 @@ public class CreateAttackCmd {
 
             if (attackResponse != null) {
                 String attackResult = attackResponse.getAttackResult();
-                boolean succeeded = updateGame(opponentBoard.getId(), opponentBoard.getUserId(),
-                        AttackResultEnum.fromString(attackResult));
+                boolean succeeded = updateGame(opponentBoard.getId(), opponentBoard.getUserId(), AttackResultEnum.fromString(attackResult));
 
                 if (succeeded) {
                     insertAttackToSet();
@@ -194,13 +193,11 @@ public class CreateAttackCmd {
                 case SUNK -> {
                     Boolean gameOver = isGameOver(boardId);
 
-                    if (gameOver != null) {
-                        if (gameOver) {
-                            game.setGameState(GameStateEnum.FINISHED);
-                            game.setWinnerUserId(userId);
-                            game.setLooserUserId(opponentId);
-                            game.setEndTime(LocalDateTime.now());
-                        }
+                    if (gameOver != null && gameOver) {
+                        game.setGameState(GameStateEnum.FINISHED);
+                        game.setWinnerUserId(userId);
+                        game.setLooserUserId(opponentId);
+                        game.setEndTime(LocalDateTime.now());
                     }
                     yield true; // only for compiling
                 }
@@ -219,7 +216,7 @@ public class CreateAttackCmd {
 
         if (boardShipsResponse.isSucceeded()) {
             List<Ship> ships = boardShipsResponse.getValue();
-            List<Ship> shipsNotSunk = ships.stream().filter(e -> Objects.equals(e.getSize() == null, e.getNumHits())).toList();
+            List<Ship> shipsNotSunk = ships.stream().filter(e -> e.getSize() != e.getNumHits()).toList();
 
             retVal = shipsNotSunk.isEmpty();
         }
