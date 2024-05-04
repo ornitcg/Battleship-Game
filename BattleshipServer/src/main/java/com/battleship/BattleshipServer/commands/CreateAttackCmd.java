@@ -56,8 +56,7 @@ public class CreateAttackCmd {
             CreateAttackResponse attackResponse = getAttackResponse(opponentBoard);
 
             if (attackResponse != null) {
-                String attackResult = attackResponse.getAttackResult();
-                boolean succeeded = updateGame(opponentBoard.getId(), opponentBoard.getUserId(), AttackResultEnum.fromString(attackResult));
+                boolean succeeded = updateGame(opponentBoard.getId(), opponentBoard.getUserId(), attackResponse);
 
                 if (succeeded) {
                     insertAttackToSet();
@@ -179,11 +178,13 @@ public class CreateAttackCmd {
         return retVal;
     }
 
-    private boolean updateGame(String boardId, String opponentId, AttackResultEnum attackResult) {
+    private boolean updateGame(String boardId, String opponentId, CreateAttackResponse attackResponse) {
         boolean retVal = false;
         Game game = getGame();
 
         if (game != null) {
+            AttackResultEnum attackResult = AttackResultEnum.fromString(attackResponse.getAttackResult());
+
             Object o = switch (attackResult) {
                 case HIT -> null;
                 case MISS -> {
@@ -191,7 +192,8 @@ public class CreateAttackCmd {
                     yield true; // only for compiling
                 }
                 case SUNK -> {
-                    Boolean gameOver = isGameOver(boardId);
+                    String shipType = attackResponse.getShipType();
+                    Boolean gameOver = isGameOver(boardId, shipType);
 
                     if (gameOver != null && gameOver) {
                         game.setGameState(GameStateEnum.FINISHED);
@@ -210,13 +212,14 @@ public class CreateAttackCmd {
         return retVal;
     }
 
-    private Boolean isGameOver(String boardId) {
+    private Boolean isGameOver(String boardId, String shipType) {
         Boolean retVal = null;
         ApiResponse<List<Ship>> boardShipsResponse = shipDao.getBoardShips(boardId);
 
         if (boardShipsResponse.isSucceeded()) {
             List<Ship> ships = boardShipsResponse.getValue();
-            List<Ship> shipsNotSunk = ships.stream().filter(e -> e.getSize() != e.getNumHits()).toList();
+            List<Ship> shipsNotSunk =
+                    ships.stream().filter(e -> e.getType().getName().equals(shipType) == false && e.getSize() != e.getNumHits()).toList();
 
             retVal = shipsNotSunk.isEmpty();
         }

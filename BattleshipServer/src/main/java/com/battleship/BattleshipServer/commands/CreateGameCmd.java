@@ -34,18 +34,18 @@ public class CreateGameCmd {
                 Game game = newGame(maybeOpponentUserId);
                 retVal = gameDao.create(game);
 
-                synchronized (GameResource.gameCreatedForUserIdsLock) {
-                    GameResource.gameCreatedForUserIds.add(maybeOpponentUserId);
-                    GameResource.gameCreatedForUserIdsLock.notifyAll();
+                synchronized (GameResource.gameCreatedByUserIdsLock) {
+                    GameResource.gameCreatedByUserIds.put(maybeOpponentUserId, retVal.getValue());
+                    GameResource.gameCreatedByUserIdsLock.notifyAll();
                 }
             }
             else {
                 boolean failedToWait = false;
 
-                synchronized (GameResource.gameCreatedForUserIdsLock) {
-                    while (GameResource.gameCreatedForUserIds.contains(userId) == false) {
+                synchronized (GameResource.gameCreatedByUserIdsLock) {
+                    while (GameResource.gameCreatedByUserIds.containsKey(userId) == false) {
                         try {
-                            GameResource.gameCreatedForUserIdsLock.wait();
+                            GameResource.gameCreatedByUserIdsLock.wait();
                         } catch (InterruptedException e) {
                             failedToWait = true;
                         }
@@ -55,8 +55,8 @@ public class CreateGameCmd {
                         retVal = ApiResponse.createFailedResponse(FAILED_MSG);
                     }
                     else {
-                        GameResource.gameCreatedForUserIds.remove(userId);
-                        retVal = getGameId();
+                        String gameId = GameResource.gameCreatedByUserIds.remove(userId);
+                        retVal = ApiResponse.createSucceededResponse(gameId);
                     }
                 }
             }
@@ -137,21 +137,6 @@ public class CreateGameCmd {
         retVal.setStartTime(currentTime);
         retVal.setGameState(GameStateEnum.IN_PROGRESS);
         retVal.setTurnUserId(opponent);
-
-        return retVal;
-    }
-
-    private ApiResponse<String> getGameId() {
-        ApiResponse<String> retVal;
-
-        ApiResponse<Game> gameForUser = gameDao.getGameForUser(userId);
-
-        if (gameForUser.isSucceeded()) {
-            retVal = ApiResponse.createSucceededResponse(gameForUser.getValue().getId());
-        }
-        else {
-            retVal = ApiResponse.createFailedResponse(gameForUser.getMsg());
-        }
 
         return retVal;
     }

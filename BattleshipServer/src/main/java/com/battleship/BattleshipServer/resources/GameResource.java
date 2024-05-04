@@ -32,9 +32,9 @@ public class GameResource {
 
     public static final Object waitingUsersLock = new Object();
 
-    public static Set<String> gameCreatedForUserIds = new HashSet<>();
+    public static Map<String, String> gameCreatedByUserIds = new HashMap<>();
 
-    public static final Object gameCreatedForUserIdsLock = new Object();
+    public static final Object gameCreatedByUserIdsLock = new Object();
 
     public static Map<String, Integer> attacks = new HashMap<>();
 
