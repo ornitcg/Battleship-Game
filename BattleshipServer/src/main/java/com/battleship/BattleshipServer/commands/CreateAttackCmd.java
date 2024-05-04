@@ -56,7 +56,7 @@ public class CreateAttackCmd {
             CreateAttackResponse attackResponse = getAttackResponse(opponentBoard);
 
             if (attackResponse != null) {
-                boolean succeeded = updateGame(opponentBoard.getId(), opponentBoard.getUserId(), attackResponse);
+                boolean succeeded = updateGame(opponentBoard.getId(), opponentBoard.getUserId(), AttackResultEnum.fromString(attackResponse.getAttackResult()));
 
                 if (succeeded) {
                     insertAttackToSet();
@@ -127,13 +127,12 @@ public class CreateAttackCmd {
                 if (ship != null) {
                     Integer size = ship.getSize();
                     Integer numHits = ship.getNumHits() + 1;
+                    boolean updated = updateShip(ship, numHits);
 
-                    if (Objects.equals(size, numHits)) {
-                        attackResult = AttackResultEnum.SUNK;
-                    } else {
-                        boolean updated = updateShip(ship);
-
-                        if (updated) {
+                    if (updated) {
+                        if (Objects.equals(size, numHits)) {
+                            attackResult = AttackResultEnum.SUNK;
+                        } else {
                             attackResult = AttackResultEnum.HIT;
                         }
                     }
@@ -168,23 +167,21 @@ public class CreateAttackCmd {
         return retVal;
     }
 
-    private boolean updateShip(Ship ship) {
+    private boolean updateShip(Ship ship, Integer numHits) {
         boolean retVal;
 
-        ship.setNumHits(ship.getNumHits() + 1);
+        ship.setNumHits(numHits);
         ApiResponse<String> update = shipDao.update(ship, ship.getId());
         retVal = update.getValue() != null;
 
         return retVal;
     }
 
-    private boolean updateGame(String boardId, String opponentId, CreateAttackResponse attackResponse) {
+    private boolean updateGame(String boardId, String opponentId, AttackResultEnum attackResult) {
         boolean retVal = false;
         Game game = getGame();
 
         if (game != null) {
-            AttackResultEnum attackResult = AttackResultEnum.fromString(attackResponse.getAttackResult());
-
             Object o = switch (attackResult) {
                 case HIT -> null;
                 case MISS -> {
@@ -192,8 +189,7 @@ public class CreateAttackCmd {
                     yield true; // only for compiling
                 }
                 case SUNK -> {
-                    String shipType = attackResponse.getShipType();
-                    Boolean gameOver = isGameOver(boardId, shipType);
+                    Boolean gameOver = isGameOver(boardId);
 
                     if (gameOver != null && gameOver) {
                         game.setGameState(GameStateEnum.FINISHED);
@@ -212,14 +208,13 @@ public class CreateAttackCmd {
         return retVal;
     }
 
-    private Boolean isGameOver(String boardId, String shipType) {
+    private Boolean isGameOver(String boardId) {
         Boolean retVal = null;
         ApiResponse<List<Ship>> boardShipsResponse = shipDao.getBoardShips(boardId);
 
         if (boardShipsResponse.isSucceeded()) {
             List<Ship> ships = boardShipsResponse.getValue();
-            List<Ship> shipsNotSunk =
-                    ships.stream().filter(e -> e.getType().getName().equals(shipType) == false || e.getSize() != e.getNumHits()).toList();
+            List<Ship> shipsNotSunk = ships.stream().filter(e -> e.getSize() != e.getNumHits()).toList();
 
             retVal = shipsNotSunk.isEmpty();
         }
