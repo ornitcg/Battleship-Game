@@ -21,11 +21,14 @@ public enum OrientationEnum {
 
     @JsonCreator
     public static OrientationEnum fromString(String name) {
+        OrientationEnum retVal = null;
+
         for (OrientationEnum state : OrientationEnum.values()) {
             if (state.name.equalsIgnoreCase(name)) {
-                return state;
+                retVal = state;
             }
         }
-        throw new IllegalArgumentException("Unknown enum value: " + name);
+
+        return retVal;
     }
 }

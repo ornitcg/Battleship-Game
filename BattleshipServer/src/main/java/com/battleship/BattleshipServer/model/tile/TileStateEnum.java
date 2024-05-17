@@ -22,11 +22,14 @@ public enum TileStateEnum {
 
     @JsonCreator
     public static TileStateEnum fromString(String name) {
+        TileStateEnum retVal = null;
+
         for (TileStateEnum state : TileStateEnum.values()) {
             if (state.name.equalsIgnoreCase(name)) {
-                return state;
+                retVal = state;
             }
         }
-        throw new IllegalArgumentException("Unknown enum value: " + name);
+
+        return retVal;
     }
 }

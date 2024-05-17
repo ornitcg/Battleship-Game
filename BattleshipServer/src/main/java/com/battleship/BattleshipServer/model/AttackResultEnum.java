@@ -21,11 +21,14 @@ public enum AttackResultEnum {
 
     @JsonCreator
     public static AttackResultEnum fromString(String name) {
+        AttackResultEnum retVal = null;
+
         for (AttackResultEnum state : AttackResultEnum.values()) {
             if (state.name.equalsIgnoreCase(name)) {
-                return state;
+                retVal = state;
             }
         }
-        throw new IllegalArgumentException("Unknown enum value: " + name);
+
+        return retVal;
     }
 }

@@ -5,7 +5,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum GameStateEnum {
     IN_PROGRESS("inProgress"),
-    FINISHED("finished");
+    FINISHED("finished"),
+    ENDED("ended"),
+    PAUSED("paused");
 
     private final String name;
 
@@ -20,11 +22,14 @@ public enum GameStateEnum {
 
     @JsonCreator
     public static GameStateEnum fromString(String name) {
+        GameStateEnum retVal = null;
+
         for (GameStateEnum state : GameStateEnum.values()) {
             if (state.name.equalsIgnoreCase(name)) {
-                return state;
+                retVal = state;
             }
         }
-        throw new IllegalArgumentException("Unknown enum value: " + name);
+
+        return retVal;
     }
 }

@@ -8,6 +8,7 @@ import com.battleship.BattleshipServer.dao.TileDao;
 import com.battleship.BattleshipServer.logic.CreateAttackResponse;
 import com.battleship.BattleshipServer.model.GameBoard;
 import com.battleship.BattleshipServer.model.game.Game;
+import com.battleship.BattleshipServer.model.game.GameStateEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -75,6 +76,36 @@ public class GameResource {
         ApiResponse<String> retVal;
 
         CreateGameCmd cmd = new CreateGameCmd(gameDao, userId);
+        retVal = cmd.execute();
+
+        return retVal;
+    }
+
+    @PutMapping("/endGame/{gameId}")
+    private ApiResponse<String> endGame(@PathVariable String gameId) {
+        ApiResponse<String> retVal;
+
+        ChangeGameStateCmd cmd = new ChangeGameStateCmd(gameDao, gameId, GameStateEnum.ENDED);
+        retVal = cmd.execute();
+
+        return retVal;
+    }
+
+    @PutMapping("/pauseGame/{gameId}")
+    private ApiResponse<String> pauseGame(@PathVariable String gameId) {
+        ApiResponse<String> retVal;
+
+        ChangeGameStateCmd cmd = new ChangeGameStateCmd(gameDao, gameId, GameStateEnum.PAUSED);
+        retVal = cmd.execute();
+
+        return retVal;
+    }
+
+    @PutMapping("/resumeGame/{gameId}")
+    private ApiResponse<String> resumeGame(@PathVariable String gameId) {
+        ApiResponse<String> retVal;
+
+        ChangeGameStateCmd cmd = new ChangeGameStateCmd(gameDao, gameId, GameStateEnum.IN_PROGRESS);
         retVal = cmd.execute();
 
         return retVal;

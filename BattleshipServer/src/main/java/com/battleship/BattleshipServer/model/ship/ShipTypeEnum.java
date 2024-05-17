@@ -23,11 +23,14 @@ public enum ShipTypeEnum {
 
     @JsonCreator
     public static ShipTypeEnum fromString(String name) {
+        ShipTypeEnum retVal = null;
+
         for (ShipTypeEnum state : ShipTypeEnum.values()) {
             if (state.name.equalsIgnoreCase(name)) {
-                return state;
+                retVal = state;
             }
         }
-        throw new IllegalArgumentException("Unknown enum value: " + name);
+
+        return retVal;
     }
 }

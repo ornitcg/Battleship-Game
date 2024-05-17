@@ -36,6 +36,8 @@ public class CreateGameCmd {
 
                 synchronized (GameResource.gameCreatedByUserIdsLock) {
                     GameResource.gameCreatedByUserIds.put(maybeOpponentUserId, retVal.getValue());
+                    GameResource.gameCreatedByUserIds.put(userId, retVal.getValue()); // if the request arrived more
+                    // then once, so the correct thread will get the game id.
                     GameResource.gameCreatedByUserIdsLock.notifyAll();
                 }
             }
@@ -71,8 +73,10 @@ public class CreateGameCmd {
     private void startWaiting() {
         synchronized (GameResource.waitingUsersLock) {
             //            System.out.printf("Player %s start waiting%n", userId);
-            GameResource.waitingUsers.add(userId);
-            GameResource.waitingUsersLock.notifyAll();
+            if (GameResource.waitingUsers.contains(userId) == false) {
+                GameResource.waitingUsers.add(userId);
+                GameResource.waitingUsersLock.notifyAll();
+            }
         }
     }
 
