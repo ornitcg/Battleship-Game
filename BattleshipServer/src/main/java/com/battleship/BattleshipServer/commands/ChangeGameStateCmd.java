@@ -1,7 +1,7 @@
 package com.battleship.BattleshipServer.commands;
 
 import com.battleship.BattleshipServer.dao.GameDao;
-import com.battleship.BattleshipServer.model.game.Game;
+import com.battleship.BattleshipServer.logic.Helper;
 import com.battleship.BattleshipServer.model.game.GameStateEnum;
 import com.battleship.BattleshipServer.resources.ApiResponse;
 
@@ -20,23 +20,7 @@ public class ChangeGameStateCmd {
     }
 
     public ApiResponse<String> execute() {
-        ApiResponse<String> retVal;
-        ApiResponse<Game> getResponse = gameDao.get(gameId);
-
-        if (getResponse.isSucceeded()) {
-            Game game = getResponse.getValue();
-            game.setGameState(gameState);
-
-            ApiResponse<String> updateResponse = gameDao.update(game, gameId);
-
-            if (updateResponse.isSucceeded()) {
-                retVal = updateResponse;
-            } else {
-                retVal = ApiResponse.createFailedResponse(FAILED_MSG);
-            }
-        } else {
-            retVal = ApiResponse.createFailedResponse(FAILED_MSG);
-        }
+        ApiResponse<String> retVal = Helper.changeGameState(gameId, gameState, FAILED_MSG, gameDao);
 
         return retVal;
     }

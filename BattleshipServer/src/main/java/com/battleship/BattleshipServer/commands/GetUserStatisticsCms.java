@@ -5,6 +5,7 @@ import com.battleship.BattleshipServer.dao.UserDao;
 import com.battleship.BattleshipServer.model.User;
 import com.battleship.BattleshipServer.model.UserStatistics;
 import com.battleship.BattleshipServer.model.game.Game;
+import com.battleship.BattleshipServer.model.game.GameStateEnum;
 import com.battleship.BattleshipServer.resources.ApiResponse;
 
 import java.util.Comparator;
@@ -42,11 +43,12 @@ public class GetUserStatisticsCms {
                 List<User> users = usersResponse.getValue();
                 List<User> bestScoreUsers = getBestScoreUsers(users);
                 List<Game> allUserGames = allUserGamesResponse.getValue();
+                List<Game> allUserGamesThatFinished = allUserGames.stream().filter(e->e.getGameState() == GameStateEnum.FINISHED).collect(Collectors.toList());
 
                 User user = getUser(users);
 
-                int totalGames = allUserGames.size();
-                int numWins = allUserGames.stream().filter(e -> userId.equals(e.getWinnerUserId())).toList().size();
+                int totalGames = allUserGamesThatFinished.size();
+                int numWins = allUserGamesThatFinished.stream().filter(e -> userId.equals(e.getWinnerUserId())).toList().size();
 
                 UserStatistics userStatistics = new UserStatistics(bestScoreUsers, user.getBestScore(), totalGames,
                         numWins);

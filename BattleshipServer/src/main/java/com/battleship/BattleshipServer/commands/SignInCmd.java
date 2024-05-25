@@ -17,7 +17,7 @@ public class SignInCmd {
         ApiResponse<String> retVal;
         String userName = user.getName();
 
-        ApiResponse<User> userApiResponse = userDao.get(userName);
+        ApiResponse<User> userApiResponse = userDao.getUserByName(userName);
         User realUser = userApiResponse.getValue();
 
         if (realUser != null) {

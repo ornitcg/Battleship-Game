@@ -1,12 +1,10 @@
 package com.battleship.BattleshipServer.commands;
 
-import com.battleship.BattleshipServer.dao.BoardDao;
-import com.battleship.BattleshipServer.dao.GameDao;
-import com.battleship.BattleshipServer.dao.ShipDao;
-import com.battleship.BattleshipServer.dao.TileDao;
+import com.battleship.BattleshipServer.dao.*;
 import com.battleship.BattleshipServer.logic.CreateAttackResponse;
 import com.battleship.BattleshipServer.model.AttackResultEnum;
 import com.battleship.BattleshipServer.model.Board;
+import com.battleship.BattleshipServer.model.User;
 import com.battleship.BattleshipServer.model.game.Game;
 import com.battleship.BattleshipServer.model.game.GameStateEnum;
 import com.battleship.BattleshipServer.model.ship.OrientationEnum;
@@ -29,17 +27,20 @@ public class CreateAttackCmd {
 
     private final TileDao tileDao;
     private final ShipDao shipDao;
+    private final UserDao userDao;
 
     private final String userId;
     private final String gameId;
 
     private final Integer position;
 
-    public CreateAttackCmd(GameDao gameDao, BoardDao boardDao, TileDao tileDao, ShipDao shipDao, String userId, String gameId, Integer position) {
+    public CreateAttackCmd(GameDao gameDao, BoardDao boardDao, TileDao tileDao, ShipDao shipDao, UserDao userDao,
+                           String userId, String gameId, Integer position) {
         this.gameDao = gameDao;
         this.boardDao = boardDao;
         this.tileDao = tileDao;
         this.shipDao = shipDao;
+        this.userDao = userDao;
         this.userId = userId;
         this.gameId = gameId;
         this.position = position;
@@ -60,6 +61,7 @@ public class CreateAttackCmd {
 
                 if (succeeded) {
                     insertAttackToSet();
+                    updateMovesCounter();
                     retVal = ApiResponse.createSucceededResponse(attackResponse);
                 }
             }
@@ -182,6 +184,8 @@ public class CreateAttackCmd {
         Game game = getGame();
 
         if (game != null) {
+            boolean userUpdated = true;
+
             Object o = switch (attackResult) {
                 case HIT -> null;
                 case MISS -> {
@@ -196,13 +200,41 @@ public class CreateAttackCmd {
                         game.setWinnerUserId(userId);
                         game.setLooserUserId(opponentId);
                         game.setEndTime(LocalDateTime.now());
+
+                        userUpdated = updateUserBestScoreIfNeeded(userId, GameResource.numMovesByUserId.get(userId));
                     }
                     yield true; // only for compiling
                 }
             };
 
-            ApiResponse<String> update = gameDao.update(game, gameId);
-            retVal = update.getValue() != null;
+            if (userUpdated) {
+                ApiResponse<String> update = gameDao.update(game, gameId);
+                retVal = update.getValue() != null;
+            }
+        }
+
+        return retVal;
+    }
+
+    private boolean updateUserBestScoreIfNeeded(String userId, Integer numMoves) {
+        boolean retVal;
+
+        ApiResponse<User> getResponse = userDao.get(userId);
+
+        if (getResponse.isSucceeded()) {
+            User user = getResponse.getValue();
+            Integer currentBestScore = user.getBestScore();
+
+            if (currentBestScore == 0 || currentBestScore > numMoves) {
+                ApiResponse<String> updateResponse = userDao.updateBestScore(userId, numMoves);
+                retVal = updateResponse.isSucceeded();
+            }
+            else { // no need to update
+                retVal = true;
+            }
+        }
+        else {
+            retVal = false;
         }
 
         return retVal;
@@ -227,5 +259,10 @@ public class CreateAttackCmd {
             GameResource.attacks.put(gameId, position);
             GameResource.attacksLock.notifyAll();
         }
+    }
+
+    private void updateMovesCounter() {
+        Integer numMoves = GameResource.numMovesByUserId.get(userId);
+        GameResource.numMovesByUserId.put(userId, numMoves + 1);
     }
 }

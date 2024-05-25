@@ -40,8 +40,11 @@ public class CreateGameCmd {
                     // then once, so the correct thread will get the game id.
                     GameResource.gameCreatedByUserIdsLock.notifyAll();
                 }
-            }
-            else {
+
+                //reset moves counter for new game
+                GameResource.numMovesByUserId.put(userId,0);
+                GameResource.numMovesByUserId.put(maybeOpponentUserId,0);
+            } else {
                 boolean failedToWait = false;
 
                 synchronized (GameResource.gameCreatedByUserIdsLock) {
@@ -55,15 +58,13 @@ public class CreateGameCmd {
 
                     if (failedToWait) {
                         retVal = ApiResponse.createFailedResponse(FAILED_MSG);
-                    }
-                    else {
+                    } else {
                         String gameId = GameResource.gameCreatedByUserIds.remove(userId);
                         retVal = ApiResponse.createSucceededResponse(gameId);
                     }
                 }
             }
-        }
-        else {
+        } else {
             retVal = matchPlayersResponse;
         }
 
@@ -71,8 +72,17 @@ public class CreateGameCmd {
     }
 
     private void startWaiting() {
+         /*
+        when a user creates a game, he inserts himself to the gameIdByUserId map
+        as a protection mechanism in failures.
+        But he will stay in the map if no problem occur, so we want to extract him if he is in it
+        before the next matching
+         */
+        synchronized (GameResource.gameCreatedByUserIdsLock) {
+            GameResource.gameCreatedByUserIds.remove(userId);
+        }
+
         synchronized (GameResource.waitingUsersLock) {
-            //            System.out.printf("Player %s start waiting%n", userId);
             if (GameResource.waitingUsers.contains(userId) == false) {
                 GameResource.waitingUsers.add(userId);
                 GameResource.waitingUsersLock.notifyAll();
@@ -87,7 +97,6 @@ public class CreateGameCmd {
             boolean failedToWait = false;
 
             while (GameResource.waitingUsers.size() < 2 && GameResource.waitingUsers.contains(userId)) {
-                //                System.out.printf("Player %s waiting%n", userId);
                 // Wait until another player is available
                 try {
                     GameResource.waitingUsersLock.wait();
@@ -105,11 +114,9 @@ public class CreateGameCmd {
 
             if (failedToWait) {
                 retVal = ApiResponse.createFailedResponse(FAILED_MSG);
-            }
-            else if (GameResource.waitingUsers.contains(userId) == false) {
+            } else if (GameResource.waitingUsers.contains(userId) == false) {
                 // when the opponent found me
                 String msg = "Found opponent and created the game";
-                //                System.out.printf(msg + " for %s%n", userId);
                 retVal = ApiResponse.createSucceededResponse(msg);
             } else {
             /*
@@ -117,14 +124,8 @@ public class CreateGameCmd {
              We extract the user entered with the request, and its opponent.
              We want to return the opponent id.
              */
-                String user1 = GameResource.waitingUsers.poll();
-                String user2 = GameResource.waitingUsers.poll();
-                String opponent = user1.equals(userId) ? user2 : user1;
-
-                //                System.out.printf("In player %s cmd%n", userId);
-                //                System.out.printf("user1=%s%n", user1);
-                //                System.out.printf("user2=%s%n", user2);
-                //                System.out.printf("opponent=%s%n", opponent);
+                GameResource.waitingUsers.remove(userId);
+                String opponent = GameResource.waitingUsers.poll();
                 retVal = ApiResponse.createSucceededResponse(opponent);
             }
 

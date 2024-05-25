@@ -50,6 +50,19 @@ public class UserDao implements IDao<User> {
         return retVal;
     }
 
+    public ApiResponse<String> updateBestScore(String userId, int bestScore) {
+        ApiResponse<String> retVal;
+
+        try {
+            jdbcTemplate.update(UPDATE + USERS_TABLE_NAME + "SET bestScore=? " + WHERE_ID, new Object[] {bestScore, userId});
+            retVal = ApiResponse.createSucceededResponse(userId);
+        } catch (DataAccessException e) {
+            retVal = ApiResponse.createFailedResponse(GENERAL_ERROR_MSG);
+        }
+
+        return retVal;
+    }
+
     @Override
     public ApiResponse<String> delete(String userId) {
         ApiResponse<String> retVal;
@@ -79,7 +92,23 @@ public class UserDao implements IDao<User> {
         return retVal;
     }
 
-    public ApiResponse<User> get(String userName) {
+    public ApiResponse<User> get(String userId) {
+        ApiResponse<User> retVal;
+
+        try {
+            User user = jdbcTemplate.queryForObject(SELECT + USERS_TABLE_NAME + WHERE_ID ,
+                    new BeanPropertyRowMapper<User>(User.class), userId);
+            retVal = ApiResponse.createSucceededResponse(user);
+        } catch (EmptyResultDataAccessException e) {
+            retVal = ApiResponse.createFailedResponse(NOT_EXISTS_ERROR_MSG);
+        } catch (DataAccessException e) {
+            retVal = ApiResponse.createFailedResponse(GENERAL_ERROR_MSG);
+        }
+
+        return retVal;
+    }
+
+    public ApiResponse<User> getUserByName(String userName) {
         ApiResponse<User> retVal;
 
         try {

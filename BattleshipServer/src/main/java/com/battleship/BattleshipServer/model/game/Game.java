@@ -15,7 +15,7 @@ public class Game {
 
     private String turnUserId;
 
-    private LocalDateTime  startTime;
+    private LocalDateTime startTime;
 
     private LocalDateTime endTime;
 

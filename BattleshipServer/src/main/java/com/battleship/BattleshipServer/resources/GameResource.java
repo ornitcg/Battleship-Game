@@ -1,10 +1,7 @@
 package com.battleship.BattleshipServer.resources;
 
 import com.battleship.BattleshipServer.commands.*;
-import com.battleship.BattleshipServer.dao.BoardDao;
-import com.battleship.BattleshipServer.dao.GameDao;
-import com.battleship.BattleshipServer.dao.ShipDao;
-import com.battleship.BattleshipServer.dao.TileDao;
+import com.battleship.BattleshipServer.dao.*;
 import com.battleship.BattleshipServer.logic.CreateAttackResponse;
 import com.battleship.BattleshipServer.model.GameBoard;
 import com.battleship.BattleshipServer.model.game.Game;
@@ -12,6 +9,7 @@ import com.battleship.BattleshipServer.model.game.GameStateEnum;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.*;
 
 @RestController
@@ -29,6 +27,9 @@ public class GameResource {
     @Autowired
     private ShipDao shipDao;
 
+    @Autowired
+    private UserDao userDao;
+
     public static Queue<String> waitingUsers = new LinkedList<>();
 
     public static final Object waitingUsersLock = new Object();
@@ -41,21 +42,23 @@ public class GameResource {
 
     public static final Object attacksLock = new Object();
 
-    @GetMapping("/opponent/{userId}")
-    private ApiResponse<String> getOpponent(@PathVariable String userId) {
-        ApiResponse<String> retVal;
+    public static Map<String, Integer> numMovesByUserId = new HashMap<>();
 
-        GetOpponentCmd cmd = new GetOpponentCmd(userId);
-        retVal = cmd.execute();
+    /*
+    gameId -> last time said he is alive.
+    If something unexpected happened, as if the phone brakes (something we can't know or
+    predict),  we want to notify the other player. so if one of the players wasn't notified that the game is still
+    alive, the game will end.
+     */
+    public static Map<String, LocalDateTime> aliveGames = new HashMap<>();
 
-        return retVal;
-    }
+    public static final Object aliveGamesLock = new Object();
 
     @DeleteMapping("/opponent/{userId}")
     private ApiResponse<String> getOutOfWaitingList(@PathVariable String userId) {
         ApiResponse<String> retVal;
 
-        GetOutOfWaitingListCmd cmd = new GetOutOfWaitingListCmd(userId);
+        GetOutOfWaitingListCmd cmd = new GetOutOfWaitingListCmd(gameDao, userId);
         retVal = cmd.execute();
 
         return retVal;
@@ -146,7 +149,18 @@ public class GameResource {
 
         ApiResponse<CreateAttackResponse> retVal;
 
-        CreateAttackCmd cmd = new CreateAttackCmd(gameDao, boardDao, tileDao, shipDao, userId, gameId, position);
+        CreateAttackCmd cmd = new CreateAttackCmd(gameDao, boardDao, tileDao, shipDao, userDao, userId, gameId,
+                position);
+        retVal = cmd.execute();
+
+        return retVal;
+    }
+
+    @PutMapping("keepGameAlive/{gameId}")
+    private ApiResponse<String> keepGameAlive(@PathVariable String gameId) {
+        ApiResponse<String> retVal;
+
+        KeepGameAliveCmd cmd = new KeepGameAliveCmd(gameId);
         retVal = cmd.execute();
 
         return retVal;
