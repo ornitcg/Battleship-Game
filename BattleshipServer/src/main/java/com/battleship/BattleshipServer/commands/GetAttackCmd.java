@@ -1,23 +1,21 @@
 package com.battleship.BattleshipServer.commands;
 
-import com.battleship.BattleshipServer.dao.GameDao;
-import com.battleship.BattleshipServer.dao.ShipDao;
 import com.battleship.BattleshipServer.resources.ApiResponse;
 import com.battleship.BattleshipServer.resources.GameResource;
 
 public class GetAttackCmd {
 
-    private String gameId;
+    private String userId;
 
-    public GetAttackCmd(String gameId) {
-        this.gameId = gameId;
+    public GetAttackCmd(String userId) {
+        this.userId = userId;
     }
 
     public ApiResponse<Integer> execute() {
         ApiResponse<Integer> retVal = null;
 
         synchronized (GameResource.attacksLock) {
-            while (GameResource.attacks.containsKey(gameId) == false) {
+            while (GameResource.attacks.containsKey(userId) == false) {
                 try {
                     GameResource.attacksLock.wait();
                 }
@@ -25,12 +23,11 @@ public class GetAttackCmd {
                     retVal = ApiResponse.createFailedResponse("Failed to get attack position");
                 }
             }
-
         }
 
         //there was no problem with the wait
         if (retVal == null) {
-            Integer position = GameResource.attacks.remove(gameId);
+            Integer position = GameResource.attacks.remove(userId);
 
             retVal = ApiResponse.createSucceededResponse(position);
         }

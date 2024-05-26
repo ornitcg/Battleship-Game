@@ -129,10 +129,10 @@ public class GameResource {
     Send gameId, return the position.
      */
     @GetMapping("/attack")
-    private ApiResponse<Integer> getAttack(@RequestParam String gameId) {
+    private ApiResponse<Integer> getAttack(@RequestParam String userId) {
         ApiResponse<Integer> retVal;
 
-        GetAttackCmd cmd = new GetAttackCmd(gameId);
+        GetAttackCmd cmd = new GetAttackCmd(userId);
         retVal = cmd.execute();
 
         return retVal;

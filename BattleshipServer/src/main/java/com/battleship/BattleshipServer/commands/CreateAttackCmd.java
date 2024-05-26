@@ -54,14 +54,15 @@ public class CreateAttackCmd {
 
         if (gameBoards != null) {
             Board opponentBoard = gameBoards.stream().filter(e -> e.getUserId().equals(userId) == false).toList().get(0);
+            String opponentUserId = opponentBoard.getUserId();
             CreateAttackResponse attackResponse = getAttackResponse(opponentBoard);
 
             if (attackResponse != null) {
+                updateMovesCounter();
                 boolean succeeded = updateGame(opponentBoard.getId(), opponentBoard.getUserId(), AttackResultEnum.fromString(attackResponse.getAttackResult()));
 
                 if (succeeded) {
-                    insertAttackToSet();
-                    updateMovesCounter();
+                    insertAttackToSet(opponentUserId);
                     retVal = ApiResponse.createSucceededResponse(attackResponse);
                 }
             }
@@ -254,9 +255,9 @@ public class CreateAttackCmd {
         return retVal;
     }
 
-    private void insertAttackToSet() {
+    private void insertAttackToSet(String opponentUserId) {
         synchronized (GameResource.attacksLock) {
-            GameResource.attacks.put(gameId, position);
+            GameResource.attacks.put(opponentUserId, position);
             GameResource.attacksLock.notifyAll();
         }
     }
