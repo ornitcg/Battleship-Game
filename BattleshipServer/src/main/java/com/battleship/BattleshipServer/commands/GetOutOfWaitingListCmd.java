@@ -17,7 +17,7 @@ public class GetOutOfWaitingListCmd {
     }
 
     public ApiResponse<String> execute() {
-        ApiResponse<String> retVal;
+        ApiResponse<String> retVal = null;
 
         synchronized (GameResource.waitingUsersLock) {
             GameResource.waitingUsers.remove(userId);
@@ -30,12 +30,19 @@ public class GetOutOfWaitingListCmd {
                 String gameId = GameResource.gameCreatedByUserIds.remove(userId);
 
                 //we want to update the game status so the other user will be notified
-                Helper.changeGameState(gameId, GameStateEnum.ENDED, FAILED_MSG, gameDao);
+                ApiResponse<String> response = Helper.changeGameState(gameId, GameStateEnum.ENDED, FAILED_MSG, gameDao);
+
+                if (response.isSucceeded() == false) {
+                    retVal = ApiResponse.createFailedResponse(FAILED_MSG);
+                }
             }
 
         }
 
-        retVal = ApiResponse.createSucceededResponse(String.format("Player %s stopped waiting", userId));
+        if (retVal == null) { // no problem occur
+            retVal = ApiResponse.createSucceededResponse(String.format("Player %s stopped waiting", userId));
+        }
+
         return retVal;
     }
 }
