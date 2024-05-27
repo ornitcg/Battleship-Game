@@ -35,6 +35,9 @@ public class GetGameCmd {
                     isGameUpdated = Helper.changeGameState(gameId, GameStateEnum.ENDED, FAILED_MSG, gameDao);
                 }
             }
+            else {
+                GameResource.aliveGames.put(gameId, LocalDateTime.now());
+            }
         }
 
         if (isGameUpdated != null) {
