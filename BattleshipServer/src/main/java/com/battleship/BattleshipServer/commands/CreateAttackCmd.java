@@ -105,14 +105,14 @@ public class CreateAttackCmd {
             Tile tile = boardTiles.stream().filter(e -> e.getPosition() == position).collect(Collectors.toList()).get(0);
 
             if (tile != null) {
-                retVal = getAttackResponse(tile);
+                retVal = getAttackResponse(tile, boardId);
             }
         }
 
         return retVal;
     }
 
-    private CreateAttackResponse getAttackResponse(Tile tile) {
+    private CreateAttackResponse getAttackResponse(Tile tile, String boardId) {
         CreateAttackResponse retVal;
 
         TileStateEnum state = tile.getState();
@@ -130,13 +130,18 @@ public class CreateAttackCmd {
                 if (ship != null) {
                     Integer size = ship.getSize();
                     Integer numHits = ship.getNumHits() + 1;
-                    boolean updated = updateShip(ship, numHits);
+                    boolean updatedShip = updateShip(ship, numHits);
 
-                    if (updated) {
+                    if (updatedShip) {
                         if (Objects.equals(size, numHits)) {
                             attackResult = AttackResultEnum.SUNK;
                         } else {
                             attackResult = AttackResultEnum.HIT;
+                        }
+                        boolean updatedTile = updateTile(tile, attackResult, boardId);
+
+                        if (updatedTile == false) {
+                            attackResult = null;
                         }
                     }
 
@@ -179,6 +184,22 @@ public class CreateAttackCmd {
 
         return retVal;
     }
+
+    private boolean updateTile(Tile tile, AttackResultEnum attackResult, String boardId) {
+        boolean retVal;
+
+        TileStateEnum newState = switch (attackResult) {
+            case HIT, SUNK -> TileStateEnum.HIT;
+            case MISS -> TileStateEnum.MISS;
+        };
+
+        tile.setState(newState);
+        ApiResponse<String> update = tileDao.update(tile, boardId);
+        retVal = update.getValue() != null;
+
+        return retVal;
+    }
+
 
     private boolean updateGame(String boardId, String opponentId, AttackResultEnum attackResult) {
         boolean retVal = false;
