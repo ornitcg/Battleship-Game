@@ -15,6 +15,8 @@ public class UserStatistics {
 
     private Integer userBestScore;
 
+    private Integer rank;
+
     private Integer totalGames;
 
     private Integer numWins;

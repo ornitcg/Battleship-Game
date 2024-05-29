@@ -41,7 +41,9 @@ public class GetUserStatisticsCms {
 
             if (usersResponse.isSucceeded()) {
                 List<User> users = usersResponse.getValue();
-                List<User> bestScoreUsers = getBestScoreUsers(users);
+                List<User> allBestScoreUsers = getBestScoreUsers(users);
+                List<User> limitedBestScoreUsers = allBestScoreUsers.stream().limit(numBestScores).collect(Collectors.toList());
+                int rank = calcRank(allBestScoreUsers);
                 List<Game> allUserGames = allUserGamesResponse.getValue();
                 List<Game> allUserGamesThatFinished = allUserGames.stream().filter(e->e.getGameState() == GameStateEnum.FINISHED).collect(Collectors.toList());
 
@@ -50,7 +52,7 @@ public class GetUserStatisticsCms {
                 int totalGames = allUserGamesThatFinished.size();
                 int numWins = allUserGamesThatFinished.stream().filter(e -> userId.equals(e.getWinnerUserId())).toList().size();
 
-                UserStatistics userStatistics = new UserStatistics(bestScoreUsers, user.getBestScore(), totalGames,
+                UserStatistics userStatistics = new UserStatistics(limitedBestScoreUsers, user.getBestScore(), rank, totalGames,
                         numWins);
 
                 retVal = ApiResponse.createSucceededResponse(userStatistics);
@@ -64,6 +66,21 @@ public class GetUserStatisticsCms {
         return retVal;
     }
 
+    private int calcRank(List<User> allBestScoreUsers) {
+        int retVal = 0;
+
+        for (User user : allBestScoreUsers) {
+            String currenUserId = user.getId();
+            retVal++;
+
+            if (userId.equals(currenUserId)) {
+                break;
+            }
+        }
+
+        return retVal;
+    }
+
     private User getUser(List<User> users) {
         User retVal = users.stream().filter(e->e.getId().equals(userId)).toList().get(0);
         return retVal;
@@ -71,11 +88,11 @@ public class GetUserStatisticsCms {
 
     private List<User> getBestScoreUsers(List<User> users) {
         List<User> retVal;
-            /*
-            0 is default value for new player. best score is the lowest score,
-            so we want to filter users that didn't played yet.
-             */
-        retVal = users.stream().filter(e -> e.getBestScore() != 0).sorted(Comparator.comparingInt(User::getBestScore)).limit(numBestScores).collect(Collectors.toList());
+        /*
+        0 is default value for new player. best score is the lowest score,
+        so we want to filter users that didn't played yet.
+        */
+        retVal = users.stream().filter(e -> e.getBestScore() != 0).sorted(Comparator.comparingInt(User::getBestScore)).collect(Collectors.toList());
         return retVal;
     }
 }
