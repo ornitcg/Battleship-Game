@@ -1,6 +1,7 @@
 package com.battleship.BattleshipServer.resources;
 
 import com.battleship.BattleshipServer.commands.CreateBoardCmd;
+import com.battleship.BattleshipServer.commands.GetBoardCmd;
 import com.battleship.BattleshipServer.commands.UpdateTileCmd;
 import com.battleship.BattleshipServer.dao.BoardDao;
 import com.battleship.BattleshipServer.dao.ShipDao;
@@ -8,15 +9,9 @@ import com.battleship.BattleshipServer.dao.TileDao;
 import com.battleship.BattleshipServer.model.GameBoard;
 import com.battleship.BattleshipServer.model.tile.Tile;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.awt.*;
 import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Queue;
 import java.util.Set;
 
 @RestController
@@ -40,6 +35,16 @@ public class BoardResource {
         ApiResponse<String> retVal;
 
         CreateBoardCmd cmd = new CreateBoardCmd(boardDao, tileDao, shipDao, gameBoardToCreate);
+        retVal = cmd.execute();
+
+        return retVal;
+    }
+
+    @GetMapping("/board/{boardId}")
+    private ApiResponse<GameBoard> getBoard(@PathVariable String boardId) {
+        ApiResponse<GameBoard> retVal;
+
+        GetBoardCmd cmd = new GetBoardCmd(tileDao, boardId);
         retVal = cmd.execute();
 
         return retVal;
