@@ -116,15 +116,15 @@ public class CreateAttackCmd {
         CreateAttackResponse retVal;
 
         TileStateEnum state = tile.getState();
+        AttackResultEnum attackResult = null;
 
         retVal = switch (state) {
             case SEA, HIT, MISS -> {
-                AttackResultEnum attackResult = AttackResultEnum.MISS;
+                attackResult = AttackResultEnum.MISS;
                 yield CreateAttackResponse.createResponse(attackResult.getName());
             }
             case SHIP -> {
                 CreateAttackResponse toYield = null;
-                AttackResultEnum attackResult = null;
                 Ship ship = getShip(tile.getShipId());
 
                 if (ship != null) {
@@ -137,11 +137,6 @@ public class CreateAttackCmd {
                             attackResult = AttackResultEnum.SUNK;
                         } else {
                             attackResult = AttackResultEnum.HIT;
-                        }
-                        boolean updatedTile = updateTile(tile, attackResult, boardId);
-
-                        if (updatedTile == false) {
-                            attackResult = null;
                         }
                     }
 
@@ -164,6 +159,13 @@ public class CreateAttackCmd {
             }
         };
 
+        if (retVal != null) {
+            boolean updatedTile = updateTile(tile, attackResult, boardId);
+
+            if (updatedTile == false) {
+                retVal = null;
+            }
+        }
         return retVal;
     }
 

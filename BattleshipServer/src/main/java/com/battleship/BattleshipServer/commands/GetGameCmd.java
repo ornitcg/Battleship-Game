@@ -11,7 +11,7 @@ import java.time.LocalDateTime;
 
 public class GetGameCmd {
     private static final String FAILED_MSG = "Failed to get game";
-    private static final Integer MAX_TIME_BEFORE_ENDING_GAME = 20;
+    private static final Integer MAX_TIME_BEFORE_ENDING_GAME = 30;
 
     private GameDao gameDao;
 
