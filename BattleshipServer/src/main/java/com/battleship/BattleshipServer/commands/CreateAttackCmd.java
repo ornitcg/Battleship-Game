@@ -123,20 +123,22 @@ public class CreateAttackCmd {
                 attackResult = AttackResultEnum.MISS;
                 yield CreateAttackResponse.createResponse(attackResult.getName());
             }
-            case HIT -> {
-                attackResult = AttackResultEnum.HIT;
-                yield CreateAttackResponse.createResponse(attackResult.getName());
-            }
-            case SHIP -> {
+            case SHIP, HIT -> {
                 CreateAttackResponse toYield = null;
                 Ship ship = getShip(tile.getShipId());
 
                 if (ship != null) {
                     Integer size = ship.getSize();
                     Integer numHits = ship.getNumHits() + 1;
-                    boolean updatedShip = updateShip(ship, numHits);
 
-                    if (updatedShip) {
+                    boolean shouldUpdateShip = state != TileStateEnum.HIT;
+                    boolean updatedShip = false;
+
+                    if (shouldUpdateShip) {
+                        updatedShip = updateShip(ship, numHits);
+                    }
+
+                    if (shouldUpdateShip == false || updatedShip) {
                         if (Objects.equals(size, numHits)) {
                             attackResult = AttackResultEnum.SUNK;
                         } else {
