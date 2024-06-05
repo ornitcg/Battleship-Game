@@ -119,8 +119,12 @@ public class CreateAttackCmd {
         AttackResultEnum attackResult = null;
 
         retVal = switch (state) {
-            case SEA, HIT, MISS -> {
+            case SEA, MISS -> {
                 attackResult = AttackResultEnum.MISS;
+                yield CreateAttackResponse.createResponse(attackResult.getName());
+            }
+            case HIT -> {
+                attackResult = AttackResultEnum.HIT;
                 yield CreateAttackResponse.createResponse(attackResult.getName());
             }
             case SHIP -> {
