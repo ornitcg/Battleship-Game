@@ -129,13 +129,13 @@ public class CreateAttackCmd {
 
                 if (ship != null) {
                     Integer size = ship.getSize();
-                    Integer numHits = ship.getNumHits() + 1;
+                    Integer numHits = ship.getNumHits();
 
                     boolean shouldUpdateShip = state != TileStateEnum.HIT;
                     boolean updatedShip = false;
 
                     if (shouldUpdateShip) {
-                        updatedShip = updateShip(ship, numHits);
+                        updatedShip = updateShip(ship, ++numHits);
                     }
 
                     if (shouldUpdateShip == false || updatedShip) {
