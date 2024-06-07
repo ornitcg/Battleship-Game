@@ -1,6 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="SmallTextAppearance">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeStepGranularity">2sp</item>
+        <item name="backgroundTint">@null</item>
+    </style>
+
+
     <style name="ButtonTextAppearance">
         <item name="android:textColor">@color/white</item>
         <item name="android:textSize">40sp</item>
@@ -15,8 +29,8 @@
         <item name="autoSizeStepGranularity">2sp</item>
         <item name="backgroundTint">@null</item>
 
-
     </style>
+
 
     <style name="LargeTextViewAppearance">
         <item name="android:textColor">@color/white</item>
@@ -31,8 +45,64 @@
         <item name="autoSizeStepGranularity">2sp</item>
         <item name="backgroundTint">@null</item>
         <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="MediumWhiteTextViewAppearance">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:textSize">35sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="autoSizeMaxTextSize">50sp</item>
+        <item name="autoSizeMinTextSize">12sp</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeStepGranularity">2sp</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:textAlignment">center</item>
+    </style>
 
 
+    <style name="DarkLargeTextViewAppearance">
+        <item name="android:textColor">@color/navy</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="autoSizeMaxTextSize">70sp</item>
+        <item name="autoSizeMinTextSize">12sp</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeStepGranularity">2sp</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:textAlignment">center</item>
+    </style>
 
+    <style name="DarkMediumTextViewAppearance">
+        <item name="android:textColor">@color/navy</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="autoSizeMaxTextSize">50sp</item>
+        <item name="autoSizeMinTextSize">12sp</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeStepGranularity">2sp</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:textAlignment">center</item>
+    </style>
+
+    <style name="MediumTextViewAppearance">
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="autoSizeMaxTextSize">50sp</item>
+        <item name="autoSizeMinTextSize">12sp</item>
+        <item name="autoSizeTextType">uniform</item>
+        <item name="autoSizeStepGranularity">2sp</item>
+        <item name="backgroundTint">@null</item>
+        <item name="android:textAlignment">center</item>
     </style>
 </resources>

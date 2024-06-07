@@ -8,9 +8,6 @@
     <string name="previous">Previous</string>
 
 
-
-
-
     <string name="lorem_ipsum">
         Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
         volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
@@ -63,7 +60,7 @@
     <string name="welcome">"Welcome!"</string>
     <string name="i_m_ready">Ready to Play</string>
     <string name="place_your_fleet">Place your fleet</string>
-    <string name="quit">Quit App</string>
+    <string name="quit">QUIT APP</string>
     <string name="start_playing">START PLAYING</string>
     <string name="watch_leaderboard">WATCH LEADERBOARD</string>
     <string name="choose_option">WHAT WOULD YOU LIKE TO DO?</string>
@@ -80,4 +77,34 @@
     <string name="todo_miss_view">miss view</string>
     <string name="frame_ships_content_description">frame</string>
     <string name="inventory_ships_content_description">inventory</string>
+
+
+    <string name="instructions1">
+        Battleship is a two-player game where players attempt to sink each others fleet of ships.\n\n
+        That is done by guessing their locations on a grid.\n
+        Each player has a fleet of 5 ships and a 10x10 grid ,on which to place them.\n\n
+
+        The objective is to sink all of your opponent ships before they sink all of yours.\n\n
+
+        Start the Game:\n\n
+        On pressing "Start Playing" button, the server will match you with another player.\n
+        Drag your ships to the grid to place them.\n
+        Changing ship orientation is achieved by clicking on it.\n\n
+
+        Rules for placing your ships:\n
+        1.Ships can be placed horizontally or vertically but not diagonally.\n\n
+        2.Ships are not allowed to overlap or be adjacent to each other.\n\n
+        3.ships must not go off the edge of the board.\n\n
+        </string>
+
+    <string name="instructions2">
+        Playing the Game:\n\n
+        1. Players attack by touching out a location the grid.\n
+        2. If the location contains a ship, it is a hit.\n
+        3. If the location does not contain a ship, it is a miss.\n
+        4. The first player to sink all of their opponent ships wins.\n\n
+
+        you score higher if you sink your opponent ships in fewer moves.\n\n\n
+        have fun playing the game!\n\n\n\n\n
+    </string>
 </resources>

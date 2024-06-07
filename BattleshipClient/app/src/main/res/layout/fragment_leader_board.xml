@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/leaderBoardParentLayout"
+    android:layout_marginTop="20dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        style="@style/LargeTextViewAppearance"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:text="LEADERBOARD" />
+
+    <TextView
+        style="@style/MediumWhiteTextViewAppearance"
+        android:layout_width="match_parent"
+        android:layout_height="40dp"
+        android:text="TOP 10" />
+
+    <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/leaderBoardScrollViewId"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/cardsLinearLayoutId"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+            <!-- Card views will be added here dynamically-->
+
+
+
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

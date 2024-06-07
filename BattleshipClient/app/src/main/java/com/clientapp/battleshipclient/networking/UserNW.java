@@ -1,47 +1,150 @@
 package com.clientapp.battleshipclient.networking;
 
-import com.clientapp.battleshipclient.logic.Tile;
-import com.clientapp.battleshipclient.logic.User;
+import android.content.Context;
+import android.util.Log;
 
-import java.util.ArrayList;
+import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.clientapp.battleshipclient.data.User;
+import com.clientapp.battleshipclient.logic.JsonHelper;
+import com.clientapp.battleshipclient.logic.SignLogic;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+
+import lombok.Data;
+
+@Data
 public class UserNW {
-    private String signInEndpoint = "http://localhost:8080/signIn";
-    private String signUpEndpoint = "http://localhost:8080/signUp";
-    private String getGameIdEndpoint = "http://localhost:8080/getGameBoards/{gameId}"; // where i get a gameId from the server
-    private String postCreateBoardEndpoint = "http://localhost:8080/createBoard"; // where i send a board to the server, when user clicks on "I'm ready" button
-//    private String postAttackPositionEndpoint = "http://localhost:8080/attackPosition"; // where i send an attack to the server
-//    private String getTopScoresEndpoint = "http://localhost:8080/getTopScores"; // where i get the top scores from the server
-
+    private RequestQueue requestQueue;
+    private User user = null;
+    private SignLogic.AuthState authenticationState = SignLogic.AuthState.PENDING;
+    Context context;
     // gets users list from server
-    public ArrayList<User> getUsers(){
-        // connect to server
-        // return the list of users
-        return null;  //for now
+
+    public UserNW(Context context, User user) {
+        this.user = user;
+        this.context = context;
+        this.requestQueue = Netcom.getInstance(context).getRequestQueue();
     }
 
-    // update new user to the server (signup)
-    public User.UserState signUp(User user){  //add user
-        // connect to server and request via signup endpoint
-        // analyse server response for success/failure
-        return User.UserState.SIGNUP_SUCCEDED; //for now
+    public static void getScores(Context context, User currPlayer, ICallbacks<JSONObject> callback) {
+        String endpoint = EndpointResources.getScoresEndpoint;
+
+        String finalUrl = "";
+        try {
+            String param1 = "userId=" + URLEncoder.encode(currPlayer.getId(), "UTF-8") + "&";
+            String param2 = "numBestScores=" + 10;
+
+            finalUrl = endpoint + "?" + param1 +   param2;
+            Log.d("myDEBUG UserNW URL", "Final URL with query params: " + finalUrl);
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, finalUrl, null,
+                response -> {
+                    Log.d("myDEBUG UserNW", "getTopUsersScore Response: " + response);
+
+
+                    callback.onResponseSuccess(response);
+                },
+                error -> {
+                    Log.d("myDEBUG UserNW", "getTopUsersScore Error: " + error);
+                    callback.onError(error);
+                }
+        );
+
+        Netcom.getInstance(context).addToRequestQueue(request);
     }
 
-    public User.UserState signIn(User user){ //check user exists
-        // connect to server and request via signIn endpoint
-        // analyse server response for success/failure
-        return User.UserState.SIGNIN_SUCCEDED; //for now
+
+    /*
+    *  Sign up user request
+    *
+    * */
+    public void signUp(User user, ICallbacks<SignLogic.AuthState> callback) {
+        String endpoint = EndpointResources.postSignUpEndpoint;
+
+        JSONObject signData = JsonHelper.createSignJson(user);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, endpoint, signData,
+                response -> { //check response
+                    boolean success = false;
+                    try {
+                        Log.d("myDEBUG signUp", "Response: " + response);
+                        success = response.getBoolean("succeeded");
+                        if (success) {
+                            user.setId(response.getString("value"));
+                            Log.d("myDEBUG signUp", "User ID: " + user);
+                            callback.onResponseSuccess(SignLogic.AuthState.SIGNUP_SUCCEDED);
+                        } else {
+                            callback.onResponseSuccess(SignLogic.AuthState.USER_EXISTS);
+                        }
+                    } catch (JSONException e) {
+                        throw new RuntimeException(e);
+                    }
+                },
+                error -> callback.onError(error)
+        );
+        addToRequestQueue(request);
     }
 
-    public void getUserID(User user) {
-        // connect to server and  send user name and password that were approved
-        // analyse server response for userId
+
+    /*
+    *  Sign in user request
+    * */
+    public void signIn(User user, ICallbacks<SignLogic.AuthState> callback) {
+        String endpoint = EndpointResources.postSignInEndpoint;
+        Log.d("DEBUG", "signIn: " + endpoint);
+
+        JSONObject signData = JsonHelper.createSignJson(user);
+
+        JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, endpoint, signData,
+                response -> {
+                    boolean success = false;
+                    try {
+                        Log.d("DEBUG sign in", "sign in Response: " + response);
+                        success = response.getBoolean("succeeded");
+                        if (success) {
+                            user.setId(response.getString("value"));
+                            Log.d("DEBUG sign in", "User ID: " + user);
+                            callback.onResponseSuccess(SignLogic.AuthState.SIGNIN_SUCCEDED);
+
+                        } else {
+                            String msg = response.getString("msg");
+                            if (msg.equals("Entity doesn't exist"))
+                                callback.onResponseSuccess(SignLogic.AuthState.USER_DOESNT_EXIST);
+                            else if (msg.equals("Wrong password for user " + user.getName()))
+                                callback.onResponseSuccess(SignLogic.AuthState.WRONG_PASSWORD);
+                        }
+                    } catch (JSONException e) {
+                        Log.d("DEBUG sign in", "catch : " + response);
+                        throw new RuntimeException(e);
+                    }
+                },
+                error -> {
+                    Log.d("DEBUG", "Error: " + error);
+                    callback.onError(error);
+                }
+        );
+
+        addToRequestQueue(request);
     }
 
-    public void getGameId(User user) {
-        // connect to server and  send user name and password that were approved
-        // analyse server response for gameId
+
+
+
+
+    private void addToRequestQueue(JsonObjectRequest request) {
+        Netcom.getInstance(context).addToRequestQueue(request);
     }
+
+
 
 
 

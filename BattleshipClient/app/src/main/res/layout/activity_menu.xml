@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+xmlns:app="http://schemas.android.com/apk/res-auto"
+xmlns:tools="http://schemas.android.com/tools"
+android:id="@+id/mainTag"
+android:layout_width="match_parent"
+android:layout_height="match_parent"
+android:background="@drawable/background_sea_water"
+tools:context=".view.activities.MenuActivity">
+
+
+
+        <include layout="@layout/base_layout" />
+
+
+
+        <TextView
+            android:id="@+id/titleViewId"
+            style="@style/LargeTextViewAppearance"
+            android:layout_width="346dp"
+            android:layout_height="75dp"
+            android:layout_marginTop="76dp"
+            android:text="@string/choose_option"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.492"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <Button
+            android:id="@+id/startPlayingBtnId"
+            style="@style/ButtonTextAppearance"
+            android:layout_width="295dp"
+            android:layout_height="59dp"
+            android:layout_marginBottom="84dp"
+            android:background="@drawable/button_selector"
+            android:text="@string/start_playing"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintVertical_bias="0.242" />
+
+        <Button
+            android:id="@+id/goToLeaderboardBtnId"
+            style="@style/ButtonTextAppearance"
+            android:layout_width="295dp"
+            android:layout_height="59dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/button_selector"
+            android:text="@string/watch_leaderboard"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/startPlayingBtnId"
+            />
+
+        <Button
+            android:id="@+id/instructionsBtnId"
+            style="@style/ButtonTextAppearance"
+            android:layout_width="295dp"
+            android:layout_height="59dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/button_selector"
+            android:text="INSTRUCTIONS"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/goToLeaderboardBtnId"
+            />
+
+
+
+        <Button
+            android:id="@+id/quitBtnId"
+            style="@style/ButtonTextAppearance"
+            android:layout_width="295dp"
+            android:layout_height="59dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/button_selector"
+            android:text="@string/quit"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/instructionsBtnId"
+             />
+
+
+
+        <LinearLayout
+            android:id="@+id/waitingForGameId"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical"
+            android:visibility="visible"
+            android:gravity="bottom"
+            android:background="@color/blackTint"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            >
+
+
+                <TextView
+                    android:id="@+id/waitingTextViewId"
+                    style="@style/LargeTextViewAppearance"
+                    android:layout_width="match_parent"
+                    android:layout_height="116dp"
+                    android:gravity="center"
+                    android:padding="5dp"
+                    android:text=""
+                    android:textColor="@color/white"
+
+                    android:textSize="20sp"
+                    app:layout_constraintTop_toBottomOf="@+id/quitBtnId" />
+
+                <Button
+                    android:id="@+id/CancelBtnId"
+                    style="@style/ButtonTextAppearance"
+                    android:layout_width="200dp"
+                    android:layout_height="50dp"
+                    android:layout_gravity="center"
+                    android:layout_marginBottom="40dp"
+                    android:background="@drawable/button_fragments_navigation_custom"
+                    android:text="Cancel" />
+        </LinearLayout>
+
+        <include layout="@layout/yes_no_layout"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

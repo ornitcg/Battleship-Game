@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/mainTag"
+    android:background="@drawable/sign_up_in_img"
+    tools:context=".view.activities.SignActivity">
+
+    <include layout="@layout/base_layout" />
+
+
+    <TextView
+        android:id="@+id/signUpInTitleId"
+        style="@style/LargeTextViewAppearance"
+        android:layout_width="0dp"
+        android:layout_height="78dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="96dp"
+        android:layout_marginEnd="16dp"
+        android:text="SIGN UP / SIGN IN"
+         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/userNameInputViewId"
+        android:layout_width="335dp"
+        android:layout_height="63dp"
+        android:layout_marginTop="40dp"
+        android:background="@color/white"
+        android:cursorVisible="true"
+        android:hint="User Name"
+        android:maxLength="15"
+        android:textAlignment="center"
+        android:singleLine="true"
+        android:imeOptions="actionDone"
+        android:textColor="@color/navy"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signUpInTitleId"
+        tools:includeFontPadding="true"
+        tools:ignore="HardcodedText" />
+
+    <EditText
+        android:id="@+id/userPasswordInputViewId"
+        android:layout_width="335dp"
+        android:layout_height="63dp"
+        android:layout_marginTop="12dp"
+        android:background="@color/white"
+        android:cursorVisible="true"
+        android:singleLine="true"
+        android:hint="Password"
+        android:maxLength="8"
+        android:textAlignment="center"
+        android:textColor="@color/navy"
+        android:imeOptions="actionDone"
+        android:textSize="25sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userNameInputViewId"
+        tools:ignore="HardcodedText" />
+
+    <Button
+        android:id="@+id/signUpBtnId"
+        style="@style/ButtonTextAppearance"
+        android:background="@drawable/button_selector"
+        android:layout_width="203dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="164dp"
+        android:text="SIGN UP"
+        android:onClick="goToMenuActivity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/userPasswordInputViewId"
+        />
+
+    <Button
+        android:id="@+id/signInBtnId"
+        style="@style/ButtonTextAppearance"
+        android:background="@drawable/button_selector"
+        android:layout_width="203dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="20dp"
+        android:text="SIGN IN"
+        android:onClick="goToMenuActivity"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.496"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signUpBtnId"
+        />
+
+    <TextView
+        android:id="@+id/authFailureMsg"
+        style="@style/LargeTextViewAppearance"
+        android:layout_width="300dp"
+        android:layout_height="116dp"
+        android:background="@color/blackTint"
+        android:gravity="center"
+        android:padding="5dp"
+        android:visibility="gone"
+        android:text=""
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/signInBtnId" />
+
+    <include layout="@layout/yes_no_layout"  />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<shape xmlns:android="http://schemas.android.com/apk/res/android">
+    <solid android:color="#FFFFFF"/> <!-- This is the background color of the layout -->
+    <corners android:radius="30dp"/> <!-- This is the radius for the rounded corners -->
+    <stroke android:color="@color/navy" android:width="10dp"/> <!-- This is the navy stroke -->
+</shape>

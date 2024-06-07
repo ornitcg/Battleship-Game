@@ -13,7 +13,7 @@
         android:id="@+id/grid_item_icon"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:src="@drawable/blast"
+        android:src="@drawable/icons8_bang_48"
         android:contentDescription="@string/todo_miss_view" />
 </FrameLayout>
 

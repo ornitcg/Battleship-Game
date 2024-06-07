@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-    <uses-permission android:name="android.permission.INTERNET"/>
+
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
 
     <application
         android:allowBackup="true"
@@ -15,28 +17,23 @@
         android:theme="@style/Theme.BattleshipClient"
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
-
         <activity
-            android:name=".view.activities.BaseActivity"
+            android:name=".view.activities.InstructionsActivity"
             android:exported="false" />
         <activity
-            android:name=".view.activities.ActivePlayActivity"
+            android:name=".view.activities.GameActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.activities.PlaceYourShips"
+            android:name=".view.activities.ArrangeGameBoardActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.activities.LeaderboardAndStats"
+            android:name=".view.activities.LeaderboardAndStatsActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.activities.OptionsActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-        <activity
-            android:name=".view.activities.GameRooms"
+            android:name=".view.activities.MenuActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
 
@@ -46,7 +43,7 @@
             android:exported="true" />
 
         <activity
-            android:name=".view.activities.SignUpSignInActivity"
+            android:name=".view.activities.SignActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

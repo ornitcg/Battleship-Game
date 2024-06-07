@@ -16,7 +16,7 @@ public class SignInSignUpResource {
     @Autowired
     private UserDao userDao;
 
-    @GetMapping("/signIn")
+    @PostMapping("/signIn")
     public ApiResponse<String> signIn(@RequestBody User user) {
         ApiResponse<String> retVal;
 

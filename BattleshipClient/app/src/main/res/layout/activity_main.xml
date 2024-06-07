@@ -2,16 +2,24 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/mainActivityMainId"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@drawable/main_activity_img"
+    android:background="@drawable/background_main_activity"
     app:layout_constrainedHeight="true"
     tools:context=".view.activities.MainActivity">
 
+    <include layout="@layout/base_layout" />
 
-    <include layout="@layout/item_button_toggle_music" />
+<!--    <include layout="@layout/yes_no_layout" />-->
 
+    <include
+        android:id="@+id/exitGameLayoutId"
+        layout="@layout/yes_no_layout" />
+
+    <include
+        android:id="@+id/playAgainLayoutId"
+        layout="@layout/yes_no_layout" />
 
     <TextView
         android:id="@+id/gameTitleId"
@@ -40,8 +48,7 @@
         android:layout_width="295dp"
         android:layout_height="59dp"
         android:layout_marginBottom="64dp"
-        android:background="@drawable/custom_navigation_button_background"
-        android:onClick="goToSignForm"
+        android:background="@drawable/button_selector"
         android:text="@string/Enter"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"

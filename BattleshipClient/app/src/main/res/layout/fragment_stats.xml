@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/statsParentLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/myStatsId"
+        style="@style/MediumTextViewAppearance"
+        android:layout_marginTop="20dp"
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="MY STATS" />
+
+    <TextView
+        android:id="@+id/myNameId"
+        style="@style/SmallTextAppearance"
+        android:layout_marginBottom="20dp"
+
+        android:layout_width="match_parent"
+        android:layout_height="60dp"
+        android:text="MY NAME" />
+
+    <include android:id="@+id/myRankId"
+        layout="@layout/card_view_stats" />
+    <include android:id="@+id/gamesPlayedId"
+        layout="@layout/card_view_stats" />
+    <include android:id="@+id/gamesWonId"
+        layout="@layout/card_view_stats" />
+    <include android:id="@+id/myScoreId"
+        layout="@layout/card_view_stats" />
+
+</LinearLayout>

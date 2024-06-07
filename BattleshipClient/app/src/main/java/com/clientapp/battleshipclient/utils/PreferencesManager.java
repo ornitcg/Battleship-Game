@@ -2,36 +2,48 @@ package com.clientapp.battleshipclient.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.util.Log;
 
 public class PreferencesManager {
-    SharedPreferences prefs;
+    private static PreferencesManager instance;
+    private SharedPreferences prefs;
+    private static Context context;
 
-    public PreferencesManager(Context context) {
-        this.prefs = context.getSharedPreferences("appSettings", Context.MODE_PRIVATE);
+    private PreferencesManager(Context context) {
+//        this.prefs = context.getSharedPreferences("appSettings", Context.MODE_PRIVATE);
+        prefs = context.getApplicationContext().getSharedPreferences("appSettings", Context.MODE_PRIVATE);
+    }
+
+    public static synchronized PreferencesManager getInstance(Context context) {
+        if (instance == null) {
+            instance = new PreferencesManager(context);
+        }
+        return instance;
     }
 
     public boolean isMusicMuted() {
-        boolean isMuted = prefs.getBoolean("isMuted", false);
-        return prefs.getBoolean("isMuted", isMuted);
+        return prefs.getBoolean("isMusicMuted", false);
+    }
+    public boolean isSoundsMuted() {
+        return prefs.getBoolean("isSoundsMuted", false);
     }
 
-    public void setMusicMuted(boolean isMuted) {
-        prefs.edit().putBoolean("isMuted", isMuted).apply();
+    public void setIsMusicMuted(boolean isMuted) {
+        prefs.edit().putBoolean("isMusicMuted", isMuted).apply();
+        Log.d("DEBUG PreferencesManager", "setMusicMuted: " + isMuted);
     }
 
-//    public void setBackgroundFlag(boolean inBackground) {
-//        prefs.edit().putBoolean("inBackground", inBackground).apply();
-//    }
-//    public boolean isInBackground() {
-//        return prefs.getBoolean("inBackground", false);
-//    }
+    public float getVolume() {
+        if (prefs.getBoolean("isSoundsMuted", false)) {
+            return 0f;
+        }
+        return 1f;
+    }
 
-//    public boolean isResumedFromNavigation() {
-//        return prefs.getBoolean("isNavigation", false);
-//    }
-//
-//    public void setResumeType(boolean isNavigation) {
-//        prefs.edit().putBoolean("isNavigation", isNavigation).apply();
-//    }
+    public void setIsSoundsMuted(boolean isMuted) {
+        prefs.edit().putBoolean("isSoundsMuted", isMuted).apply();
+        Log.d("DEBUG PreferencesManager", "setSoundsMuted: " + isMuted);
+    }
+
 
 }
