@@ -1,6 +1,7 @@
 package com.battleship.BattleshipServer.commands;
 
 import com.battleship.BattleshipServer.dao.GameDao;
+import com.battleship.BattleshipServer.logic.GameCreated;
 import com.battleship.BattleshipServer.model.game.Game;
 import com.battleship.BattleshipServer.model.game.GameStateEnum;
 import com.battleship.BattleshipServer.resources.ApiResponse;
@@ -14,6 +15,7 @@ public class CreateGameCmd {
     private GameDao gameDao;
 
     private static final String FAILED_MSG = "Failed to create game";
+    private static final int MINUTES_AGO_TO_CONSIDER_AS_CURRENT_GAME = 5;
 
     public CreateGameCmd(GameDao gameDao, String userId) {
         this.userId = userId;
@@ -23,65 +25,87 @@ public class CreateGameCmd {
     public ApiResponse<String> execute() {
         ApiResponse<String> retVal;
 
-        startWaiting();
-        ApiResponse<String> matchPlayersResponse = matchPlayers();
+        retVal = getGameIfAlreadyCreated();
 
-        if (matchPlayersResponse.isSucceeded()) {
-            String maybeOpponentUserId = matchPlayersResponse.getValue();
+        if (retVal == null) {
+            startWaiting();
+            ApiResponse<String> matchPlayersResponse = matchPlayers();
 
-            // if this is the first user that found the match from this couple, he will create the game for both
-            if (maybeOpponentUserId.startsWith("user")) {
-                Game game = newGame(maybeOpponentUserId);
-                retVal = gameDao.create(game);
+            if (matchPlayersResponse.isSucceeded()) {
+                String maybeOpponentUserId = matchPlayersResponse.getValue();
 
-                synchronized (GameResource.gameCreatedByUserIdsLock) {
-                    GameResource.gameCreatedByUserIds.put(maybeOpponentUserId, retVal.getValue());
-                    GameResource.gameCreatedByUserIds.put(userId, retVal.getValue()); // if the request arrived more
-                    // then once, so the correct thread will get the game id.
-                    GameResource.gameCreatedByUserIdsLock.notifyAll();
-                }
+                // if this is the first user that found the match from this couple, he will create the game for both
+                if (maybeOpponentUserId.startsWith("user")) {
+                    Game game = newGame(maybeOpponentUserId);
+                    retVal = gameDao.create(game);
 
-                //reset moves counter for new game
-                GameResource.numMovesByUserId.put(userId,0);
-                GameResource.numMovesByUserId.put(maybeOpponentUserId,0);
-            } else {
-                boolean failedToWait = false;
+                    synchronized (GameResource.gameCreatedByUserIdsLock) {
+                        GameCreated gameCreated = new GameCreated(retVal.getValue(), LocalDateTime.now());
+                        GameResource.gameCreatedByUserIds.put(maybeOpponentUserId, gameCreated);
+                        GameResource.gameCreatedByUserIds.put(userId, gameCreated); // if the request arrived more
+                        // then once, so the correct thread will get the game id.
+                        GameResource.gameCreatedByUserIdsLock.notifyAll();
+                    }
 
-                synchronized (GameResource.gameCreatedByUserIdsLock) {
-                    while (GameResource.gameCreatedByUserIds.containsKey(userId) == false) {
-                        try {
-                            GameResource.gameCreatedByUserIdsLock.wait();
-                        } catch (InterruptedException e) {
-                            failedToWait = true;
+                    //reset moves counter for new game
+                    GameResource.numMovesByUserId.put(userId, 0);
+                    GameResource.numMovesByUserId.put(maybeOpponentUserId, 0);
+                } else {
+                    boolean failedToWait = false;
+
+                    synchronized (GameResource.gameCreatedByUserIdsLock) {
+                        while (GameResource.gameCreatedByUserIds.containsKey(userId) == false) {
+                            try {
+                                GameResource.gameCreatedByUserIdsLock.wait();
+                            } catch (InterruptedException e) {
+                                failedToWait = true;
+                            }
+                        }
+
+                        if (failedToWait) {
+                            retVal = ApiResponse.createFailedResponse(FAILED_MSG);
+                        } else {
+                            GameCreated gameCreated = GameResource.gameCreatedByUserIds.get(userId);
+                            retVal = ApiResponse.createSucceededResponse(gameCreated.getGameId());
                         }
                     }
+                }
+            } else {
+                retVal = matchPlayersResponse;
+            }
+        }
 
-                    if (failedToWait) {
-                        retVal = ApiResponse.createFailedResponse(FAILED_MSG);
-                    } else {
-                        String gameId = GameResource.gameCreatedByUserIds.remove(userId);
-                        retVal = ApiResponse.createSucceededResponse(gameId);
-                    }
+        return retVal;
+    }
+
+    /*
+    We want to remove user from the map if is here from old game.
+    Also, if one call for match has failed for one of the users, we want to get the game if
+    already created for the other user.
+    The scenario: user 1 call was succeeded, so he extracted user 2 from waiting list.
+                  user 2 call has failed, so he tried again. he is not in the list so if we
+                  won't check if the game already created, he will enter the waiting list again.
+        */
+    private ApiResponse<String> getGameIfAlreadyCreated() {
+        ApiResponse<String> retVal = null;
+
+        synchronized (GameResource.gameCreatedByUserIdsLock) {
+            GameCreated gameCreated = GameResource.gameCreatedByUserIds.remove(userId);
+
+            if (gameCreated != null) {
+                LocalDateTime creationTime = gameCreated.getCreationTime();
+                LocalDateTime minTimeToConsiderAsCurrentGame = LocalDateTime.now().minusMinutes(MINUTES_AGO_TO_CONSIDER_AS_CURRENT_GAME);
+
+                if (creationTime.isAfter(minTimeToConsiderAsCurrentGame)) {
+                    retVal = ApiResponse.createSucceededResponse(gameCreated.getGameId());
                 }
             }
-        } else {
-            retVal = matchPlayersResponse;
         }
 
         return retVal;
     }
 
     private void startWaiting() {
-         /*
-        when a user creates a game, he inserts himself to the gameIdByUserId map
-        as a protection mechanism in failures.
-        But he will stay in the map if no problem occur, so we want to extract him if he is in it
-        before the next matching
-         */
-        synchronized (GameResource.gameCreatedByUserIdsLock) {
-            GameResource.gameCreatedByUserIds.remove(userId);
-        }
-
         synchronized (GameResource.waitingUsersLock) {
             if (GameResource.waitingUsers.contains(userId) == false) {
                 GameResource.waitingUsers.add(userId);

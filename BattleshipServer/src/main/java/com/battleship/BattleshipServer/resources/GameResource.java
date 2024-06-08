@@ -3,6 +3,7 @@ package com.battleship.BattleshipServer.resources;
 import com.battleship.BattleshipServer.commands.*;
 import com.battleship.BattleshipServer.dao.*;
 import com.battleship.BattleshipServer.logic.CreateAttackResponse;
+import com.battleship.BattleshipServer.logic.GameCreated;
 import com.battleship.BattleshipServer.model.GameBoard;
 import com.battleship.BattleshipServer.model.game.Game;
 import com.battleship.BattleshipServer.model.game.GameStateEnum;
@@ -34,7 +35,7 @@ public class GameResource {
 
     public static final Object waitingUsersLock = new Object();
 
-    public static Map<String, String> gameCreatedByUserIds = new HashMap<>();
+    public static Map<String, GameCreated> gameCreatedByUserIds = new HashMap<>();
 
     public static final Object gameCreatedByUserIdsLock = new Object();
 
