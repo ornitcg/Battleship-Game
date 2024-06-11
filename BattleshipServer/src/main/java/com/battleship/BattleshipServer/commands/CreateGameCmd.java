@@ -15,7 +15,7 @@ public class CreateGameCmd {
     private GameDao gameDao;
 
     private static final String FAILED_MSG = "Failed to create game";
-    private static final int MINUTES_AGO_TO_CONSIDER_AS_CURRENT_GAME = 5;
+    private static final int MINUTES_AGO_TO_CONSIDER_AS_CURRENT_GAME = 1;
 
     public CreateGameCmd(GameDao gameDao, String userId) {
         this.userId = userId;
