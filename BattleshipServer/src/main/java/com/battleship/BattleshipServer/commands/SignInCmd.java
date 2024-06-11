@@ -11,7 +11,7 @@ public class SignInCmd {
     private UserDao userDao;
     private User user;
 
-    private static final int MINUTES_AGO_TO_CONSIDER_USER_IN_SYSTEM = 1;
+    private static final int SECONDS_AGO_TO_CONSIDER_USER_IN_SYSTEM = 20;
     private static final String USER_LOGGED_IN_ERROR_MSG = "User is already in the system";
 
     public SignInCmd(UserDao userDao, User user) {
@@ -33,7 +33,8 @@ public class SignInCmd {
                 LocalDateTime lastNotifiedAsAlive = SignInSignUpResource.loggedInUsers.get(realUserId);
 
                 if (lastNotifiedAsAlive != null) { // user notified his alive
-                    LocalDateTime minTimeToConsiderUserLoggedIn = LocalDateTime.now().minusMinutes(MINUTES_AGO_TO_CONSIDER_USER_IN_SYSTEM);
+                    LocalDateTime minTimeToConsiderUserLoggedIn =
+                            LocalDateTime.now().minusSeconds(SECONDS_AGO_TO_CONSIDER_USER_IN_SYSTEM);
 
                     if (lastNotifiedAsAlive.isAfter(minTimeToConsiderUserLoggedIn)) {
                         retVal = ApiResponse.createFailedResponse(USER_LOGGED_IN_ERROR_MSG);
