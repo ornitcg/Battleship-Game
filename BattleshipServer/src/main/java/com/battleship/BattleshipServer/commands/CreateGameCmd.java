@@ -85,6 +85,7 @@ public class CreateGameCmd {
     The scenario: user 1 call was succeeded, so he extracted user 2 from waiting list.
                   user 2 call has failed, so he tried again. he is not in the list so if we
                   won't check if the game already created, he will enter the waiting list again.
+                  we will only return the game if is in progress.
         */
     private ApiResponse<String> getGameIfAlreadyCreated() {
         ApiResponse<String> retVal = null;
@@ -97,7 +98,20 @@ public class CreateGameCmd {
                 LocalDateTime minTimeToConsiderAsCurrentGame = LocalDateTime.now().minusMinutes(MINUTES_AGO_TO_CONSIDER_AS_CURRENT_GAME);
 
                 if (creationTime.isAfter(minTimeToConsiderAsCurrentGame)) {
-                    retVal = ApiResponse.createSucceededResponse(gameCreated.getGameId());
+                    String gameId = gameCreated.getGameId();
+                    ApiResponse<Game> getGameResponse = gameDao.get(gameId);
+
+                    if (getGameResponse.isSucceeded()) {
+                        Game game = getGameResponse.getValue();
+
+                        retVal = switch (game.getGameState()) {
+                            case IN_PROGRESS -> ApiResponse.createSucceededResponse(gameId);
+                            case FINISHED, ENDED, PAUSED -> null;
+                        };
+                    }
+                    else {
+                        retVal = ApiResponse.createFailedResponse(getGameResponse.getMsg());
+                    }
                 }
             }
         }
