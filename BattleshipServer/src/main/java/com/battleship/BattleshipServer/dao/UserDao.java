@@ -12,6 +12,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/*
+*  This class is responsible for all the operations related to the user table in the database.
+* */
 @Repository
 public class UserDao implements IDao<User> {
 

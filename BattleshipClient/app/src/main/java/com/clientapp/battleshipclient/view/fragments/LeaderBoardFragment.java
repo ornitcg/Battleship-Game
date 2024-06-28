@@ -14,16 +14,26 @@ import androidx.cardview.widget.CardView;
 import androidx.fragment.app.Fragment;
 
 import com.clientapp.battleshipclient.R;
-import com.clientapp.battleshipclient.data.User;
+import com.clientapp.battleshipclient.model.User;
 
 import java.util.ArrayList;
 
+
+/*
+*  This class represents the LeaderBoardFragment
+*  It is used to display the best players
+* */
 public class LeaderBoardFragment extends Fragment {
 
     private ArrayList<User> bestUsersList; // Replace with your data type
     private LinearLayout parentLayout; // The parent layout to hold CardViews
 
 
+
+    /*
+     *  This method is called to create a new instance of the LeaderBoardFragment
+     *  It is called to pass data to the fragment
+     * */
     public static LeaderBoardFragment newInstance(ArrayList<User> usersList) {
         LeaderBoardFragment fragment = new LeaderBoardFragment();
         Bundle args = new Bundle();
@@ -33,6 +43,12 @@ public class LeaderBoardFragment extends Fragment {
     }
 
 
+
+
+     /*
+     *  This method is called when the fragment is first created
+     *  It is called after the onAttach method
+     * */
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -73,9 +89,6 @@ public class LeaderBoardFragment extends Fragment {
         }
     }
 
-//    public void setDataList(List<User> dataList) {
-//        this.bestUsersList = dataList;
-//    }
 
 }
 

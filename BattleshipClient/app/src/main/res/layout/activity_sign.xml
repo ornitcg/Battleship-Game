@@ -8,7 +8,7 @@
     android:background="@drawable/sign_up_in_img"
     tools:context=".view.activities.SignActivity">
 
-    <include layout="@layout/base_layout" />
+    <include layout="@layout/layout_base" />
 
 
     <TextView
@@ -101,7 +101,12 @@
         android:background="@color/blackTint"
         android:gravity="center"
         android:padding="5dp"
+        android:textSize="24sp"
         android:visibility="gone"
+        app:autoSizeMaxTextSize="35sp"
+        app:autoSizeMinTextSize="30sp"
+        app:autoSizeStepGranularity="2sp"
+        app:autoSizeTextType="uniform"
         android:text=""
         android:textAlignment="center"
         android:textColor="@color/white"
@@ -110,7 +115,21 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/signInBtnId" />
 
+
+
     <include layout="@layout/yes_no_layout"  />
 
+    <ImageButton
+        android:id="@+id/settingsButtonId"
+        android:layout_width="35dp"
+        android:layout_height="35dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/icon_settings"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        tools:ignore="SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+    <include layout="@layout/layout_settings"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

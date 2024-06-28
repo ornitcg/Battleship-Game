@@ -10,7 +10,7 @@ tools:context=".view.activities.MenuActivity">
 
 
 
-        <include layout="@layout/base_layout" />
+        <include layout="@layout/layout_base" />
 
 
 
@@ -66,7 +66,18 @@ tools:context=".view.activities.MenuActivity">
             app:layout_constraintTop_toBottomOf="@+id/goToLeaderboardBtnId"
             />
 
-
+        <Button
+            android:id="@+id/signOutBtnId"
+            style="@style/ButtonTextAppearance"
+            android:layout_width="295dp"
+            android:layout_height="59dp"
+            android:layout_marginTop="40dp"
+            android:background="@drawable/button_selector"
+            android:text="SIGN OUT"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/instructionsBtnId"
+            />
 
         <Button
             android:id="@+id/quitBtnId"
@@ -78,7 +89,7 @@ tools:context=".view.activities.MenuActivity">
             android:text="@string/quit"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/instructionsBtnId"
+            app:layout_constraintTop_toBottomOf="@+id/signOutBtnId"
              />
 
 

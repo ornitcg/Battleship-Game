@@ -8,21 +8,32 @@ import android.os.IBinder;
 import com.clientapp.battleshipclient.utils.AudioEnum;
 import com.clientapp.battleshipclient.utils.AudioUtils;
 
+
+/*
+*  This class is the service that plays the background music
+*  It is used to play and pause the music
+* */
 public class PlaybackService extends Service {
     public static final String ACTION_PLAY = "com.example.action.PLAY";
     public static final String ACTION_PAUSE = "com.example.action.PAUSE";
     private MediaPlayer mediaPlayer;
     private AudioEnum currentMusicEnum;
 
-    public PlaybackService() {
-    }
 
+    /*
+    *  Overridden method that is called when the service is created
+    * not in use
+    * */
     @Override
     public IBinder onBind(Intent intent) {
         // TODO: Return the communication channel to the service.
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
+    /*
+    *  Overridden method that is called when the service is started
+    * */
+    @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         if (intent == null) {
             return START_STICKY;
@@ -64,6 +75,12 @@ public class PlaybackService extends Service {
         return START_STICKY;
     }
 
+
+    /*
+    *  Overridden method that is called when the service is destroyed
+    * It releases the media player
+    * */
+    @Override
     public void onDestroy() {
         super.onDestroy();
         if (mediaPlayer != null) {

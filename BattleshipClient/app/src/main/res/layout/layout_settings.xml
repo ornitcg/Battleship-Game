@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/settingsViewId"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/blackTint"
+    android:visibility="visible">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="380dp"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="50dp"
+        android:background="@drawable/background_message"
+        app:layout_constraintCircleRadius="20dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/XsettingsBtnId"
+            android:layout_width="38dp"
+            android:layout_height="38dp"
+            android:layout_marginStart="325dp"
+            android:layout_marginTop="16dp"
+            android:background="@android:color/transparent"
+            android:scaleType="centerInside"
+            app:layout_constraintStart_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/icons8_close_50"
+            tools:ignore="ContentDescription,SpeakableTextPresentCheck,TouchTargetSizeCheck" />
+
+        <TextView
+            android:id="@+id/SettingsTitleId"
+            style="@style/DarkMediumTextViewAppearance"
+            android:layout_width="337dp"
+            android:layout_height="43dp"
+            android:layout_marginTop="70dp"
+            android:autoSizeMinTextSize="30dp"
+            android:autoSizeTextType="uniform"
+            android:gravity="center"
+            android:text="CONNECTION SETTINGS"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <LinearLayout
+            android:id="@+id/listId"
+            android:layout_width="360dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/SettingsTitleId">
+
+
+
+
+
+
+
+            <RadioGroup
+                android:id="@+id/radioGroupConnectionTypeId"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="20dp"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent">
+
+                <RadioButton
+                    android:id="@+id/radioButton1"
+                    style="@style/DisabledRadioButton"
+                    android:buttonTint="@color/navy"
+                    android:layout_width="match_parent"
+                    android:layout_height="70dp"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+
+                    android:enabled="false"
+                    android:text="Cloud connection - currently not available"
+                    android:textAlignment="textStart" />
+
+
+
+                <RadioButton
+                    android:id="@+id/defaultIPbtnId"
+                    style="@style/DarkRadioButton"
+                    android:background="@color/white"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:visibility="visible"
+                    android:text="Default IP - 10.0.2.2  works for emulators only"
+                    android:textAlignment="textStart" />
+
+                <RadioButton
+                    android:id="@+id/customDefaultIPbtnId"
+                    style="@style/WhiteRadioButton"
+                    android:background="@color/navy"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Default IP - 10.0.2.2  works for emulators only"
+                    android:textAlignment="textStart" />
+
+                <RadioButton
+                    android:id="@+id/inputIPbutnId"
+                    style="@style/DarkRadioButton"
+                    android:visibility="visible"
+                    android:paddingBottom="10dp"
+                    android:paddingTop="10dp"
+
+                    android:background="@color/white"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Insert your IP"
+                    android:textAlignment="textStart" />
+
+
+
+
+                <RadioButton
+                    android:id="@+id/customInputIPbutnId"
+                    style="@style/WhiteRadioButton"
+                    android:background="@color/navy"
+                    android:visibility="gone"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Insert your IP"
+                    android:textAlignment="textStart" />
+
+
+            </RadioGroup>
+
+            <EditText
+                android:id="@+id/inputIPid"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:background="@drawable/edit_text_background"
+                android:gravity="center"
+                android:hint="IP" />
+        </LinearLayout>
+
+
+        <Button
+            android:id="@+id/acceptBtnId"
+            style="@style/ButtonTextAppearance"
+            android:layout_width="200dp"
+            android:layout_height="59dp"
+            android:layout_gravity="center"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp"
+            android:background="@drawable/button_selector"
+            android:text="ACCEPT"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/listId"
+            app:layout_constraintVertical_bias="1.0" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
+
+

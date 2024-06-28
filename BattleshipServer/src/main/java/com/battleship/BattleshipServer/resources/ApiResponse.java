@@ -18,10 +18,6 @@ public class ApiResponse<T> {
         return new ApiResponse<T>(true, value, "OK");
     }
 
-    public static <T> ApiResponse<T> createSucceededResponse(T value, String msg) {
-        return new ApiResponse<T>(true, value, msg);
-    }
-
     public static <T> ApiResponse<T> createFailedResponse(String msg) {
         return new ApiResponse<T>(false, null, msg);
     }

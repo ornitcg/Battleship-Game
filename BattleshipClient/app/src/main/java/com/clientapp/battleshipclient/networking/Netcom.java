@@ -54,16 +54,6 @@ public class Netcom {
     }
 
 
-    /*
-     *  Method to cancel all requests in the request queue
-     * */
-    public void cancelAllRequests() {
-        requestQueue.cancelAll(new RequestQueue.RequestFilter() {
-            @Override
-            public boolean apply(Request<?> request) {
-                return true;
-            }
-        });
-    }
+
 
 }

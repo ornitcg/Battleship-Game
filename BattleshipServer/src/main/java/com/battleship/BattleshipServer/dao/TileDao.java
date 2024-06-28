@@ -14,6 +14,9 @@ import org.springframework.stereotype.Repository;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ *  This class is responsible for all the operations related to the tiles table in the database.
+ * */
 @Repository
 public class TileDao implements IDao<Tile> {
 

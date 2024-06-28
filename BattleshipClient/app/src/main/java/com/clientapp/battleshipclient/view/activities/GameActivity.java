@@ -1,14 +1,17 @@
 package com.clientapp.battleshipclient.view.activities;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.util.Log;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewTreeObserver;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.GridView;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.core.graphics.Insets;
@@ -16,22 +19,27 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.clientapp.battleshipclient.R;
-import com.clientapp.battleshipclient.data.GameBoard;
-import com.clientapp.battleshipclient.data.Ship.OrientationEnum;
-import com.clientapp.battleshipclient.data.Ship.Ship;
-import com.clientapp.battleshipclient.data.Ship.ShipTypeEnum;
-import com.clientapp.battleshipclient.data.Ship.ShipsResources;
-import com.clientapp.battleshipclient.data.Tile.Tile;
-import com.clientapp.battleshipclient.data.Tile.TileStateEnum;
-import com.clientapp.battleshipclient.data.User;
+import com.clientapp.battleshipclient.logic.AttackResultEnum;
 import com.clientapp.battleshipclient.logic.GameLogic;
+import com.clientapp.battleshipclient.model.Game.GameStateEnum;
+import com.clientapp.battleshipclient.model.GameBoard;
+import com.clientapp.battleshipclient.model.Ship.OrientationEnum;
+import com.clientapp.battleshipclient.model.Ship.Ship;
+import com.clientapp.battleshipclient.model.Ship.ShipTypeEnum;
+import com.clientapp.battleshipclient.model.Tile.Tile;
+import com.clientapp.battleshipclient.model.Tile.TileStateEnum;
+import com.clientapp.battleshipclient.model.User;
 import com.clientapp.battleshipclient.utils.AudioEnum;
 import com.clientapp.battleshipclient.utils.AudioUtils;
-import com.clientapp.battleshipclient.view.UI_utils.GameGridLayoutAdapter;
-import com.clientapp.battleshipclient.view.UI_utils.Messages;
-import com.clientapp.battleshipclient.view.UI_utils.OnSwipeTouchListener;
+import com.clientapp.battleshipclient.view.view_utils.ClientMessages;
+import com.clientapp.battleshipclient.view.view_utils.ExtrasEnum;
+import com.clientapp.battleshipclient.view.view_utils.GameGridLayoutAdapter;
+import com.clientapp.battleshipclient.view.view_utils.OnSwipeTouchListener;
+import com.clientapp.battleshipclient.view.view_utils.PlacementUtils;
+import com.clientapp.battleshipclient.view.view_utils.ShipsConverter;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 import lombok.Getter;
 
@@ -41,11 +49,7 @@ import lombok.Getter;
  * Handles all the view parts of the game
  */
 public class GameActivity extends BaseActivity {
-    private static final String AUTOMATIC_MOVE_MSG = "AUTOMATIC MOVE";
-    private static final String SCORE_MESSAGE = "YOUR SCORE: ";
-    private static final String GOOD_GAME_MESSAGE = "GOOD GAME!";
-    private static final String WIN_MESSAGE = "GAME OVER YOU WON!";
-    private static final String LOST_MESSAGE = "GAME OVER YOU LOST!";
+
     private GridView currPlayerGridView;
     private GridView opponentGridView;
     GameGridLayoutAdapter currPlayerGridLayoutAdapter;
@@ -53,7 +57,6 @@ public class GameActivity extends BaseActivity {
     private GameBoard currPlayerGameBoard;  // contains the data of the tiles
     @Getter
     private GameBoard opponentGameBoard;  // contains the data of the tiles
-    private String currPlayerId;
     private String gameId;
     private GameLogic gameLogic;
     private TextView topMessageTextView;
@@ -61,21 +64,26 @@ public class GameActivity extends BaseActivity {
     private TextView autoAttackMsgView;
     private FrameLayout opponentFrameLayout;
     private FrameLayout currPlayerFrameLayout;
-
     public CountDownTimer countDownTimer;
+    private HashMap<ShipTypeEnum, ImageView> mapShipTypeToView = new HashMap<>();
 
+    private enum Location {BOTTOM, TOP}
 
+    /*
+     *  Overrides the onCreate method from the BaseActivity class
+     *  initializes the game activity
+     * */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        //helps reduce listening on swipes
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
                 | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION
                 | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY);
-        setContentView(R.layout.activity_game);
 
+        setContentView(R.layout.activity_game);
         Intent intent = this.getIntent();
         replaceMusic(AudioEnum.GAME_MUSIC);
-
         topMessageTextView = findViewById(R.id.turnMessageTextViewId);
         autoAttackMsgView = findViewById(R.id.msgTextViewId);
         setSwipeListener();
@@ -94,7 +102,7 @@ public class GameActivity extends BaseActivity {
          *);
          * currPlayerGridView.layout(0, 0, currPlayerGridView.getMeasuredWidth(), currPlayerGridView.getHeight());
          * opponentGridView.layout(0, 0, opponentGridView.getMeasuredWidth(), opponentGridView.getHeight());
-         * setCurrentPlayerShipsViewsOnBoard();
+         *
          */ //note to self
 
         // Method 2: Know when it is ready, and then use the view for whatever.
@@ -102,7 +110,7 @@ public class GameActivity extends BaseActivity {
             @Override
             public void onGlobalLayout() {
                 currPlayerGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
-                setCurrentPlayerShipsViewsOnBoard();
+                setAllShipViewsOnBoard();
             }
         });
         // use the same method for the other grid view too.
@@ -110,12 +118,19 @@ public class GameActivity extends BaseActivity {
             @Override
             public void onGlobalLayout() {
                 opponentGridView.getViewTreeObserver().removeOnGlobalLayoutListener(this);
+                View child = opponentGridView.getChildAt(0);
+                if (child == null || child.isAttachedToWindow()){
+                    return;
+                }
+                child.setVisibility(View.GONE);
+                child.setVisibility(View.VISIBLE);
+                child.setClickable(true);
+                child.setEnabled(true);
                 setOpponentGridClickListeners();
+
             }
         });
 
-        gameLogic = new GameLogic(this, currPlayerGameBoard);
-        gameLogic.setKeepAliveRunnable();
         startGame();
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.mainTag), (v, insets) -> {
@@ -125,6 +140,11 @@ public class GameActivity extends BaseActivity {
         });
     }// onCreate
 
+
+    /*
+     *  Sets the swipe listener on the main view
+     * to enable the swipe gesture detection
+     * */
     private void setSwipeListener() {
         findViewById(R.id.mainTag).setOnTouchListener(new OnSwipeTouchListener(this));
     }
@@ -135,8 +155,8 @@ public class GameActivity extends BaseActivity {
      * to be used for displaying the right ship on the grid
      */
     private void setShipResources() {//initialize the ships maps on the resources
-        ShipsResources.initNameToIdForBottomViews();
-        ShipsResources.initNameToIdForTopViews();
+        ShipsConverter.initNameToIdForBottomViews();
+        ShipsConverter.initNameToIdForTopViews();
     }
 
 
@@ -150,17 +170,19 @@ public class GameActivity extends BaseActivity {
         ArrayList<Tile> tiles = opponentGameBoard.getBoard();
         for (int i = 0; i < tilesCount; i++) {
             View tileView = opponentGridView.getChildAt(i);
+            Log.d("myDEBUG GameActivity", "setOpponentGridClickListeners: " + " i: " + i + "  tileView: " + tileView + " tile state " + tiles.get(i).getState());
             if (tiles.get(i).getState() != TileStateEnum.SEA) {
                 continue;
             }
             tileView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    int position = (int) v.getTag();
+                    int attackPosition = (int) v.getTag();
+                    //log tile view
+                    Log.d("myDEBUG GameActivity", "setOnClickListener attackOpponent: tileView: " + v);
 
-                    Log.d("myDEBUG GameActivity", "attackOpponent: stopCountdown");
-
-                    gameLogic.attackOpponent(gameId, currPlayerId, position);
+                    Log.d("myDEBUG GameActivity", "setOnClickListener attackOpponent: position: " + attackPosition);
+                    gameLogic.attackOpponent(attackPosition);
                 }
             });
         }
@@ -172,8 +194,9 @@ public class GameActivity extends BaseActivity {
      * calls the gameLogic.getGame method via the runGameStatusChecks method
      */
     private void startGame() {
-        Log.d("mymyDEBUG GameActivity", "in playGame");
-        gameLogic.getGame(gameId, currPlayerId);
+        gameLogic = new GameLogic(this, currPlayerGameBoard);
+        Log.d("myDEBUG GameActivity", "in playGame");
+        gameLogic.getGame();
     }
 
 
@@ -190,32 +213,56 @@ public class GameActivity extends BaseActivity {
      *
      * @param isCurrPlayerWinner - true if the current player is the winner
      */
-    public void displayFinalMessage(String gameState, Boolean isCurrPlayerWinner) {
+    public void displayFinalMessage(GameStateEnum gameState, Boolean isCurrPlayerWinner) {
         View messageVIew = findViewById(R.id.messageWrapperLayoutId);
+        setDragListener(messageVIew);
         Button goToMenuButton = findViewById(R.id.backToMenuBtnId);
-        String endGameMsg = "";
+        String endGameMsg;
         switch (gameState) {
-            case "finished":
+            case FINISHED:
                 if (isCurrPlayerWinner) {
-                    displayTopMessage(SCORE_MESSAGE + gameLogic.getAttacksCounter());
-                    endGameMsg = WIN_MESSAGE;
-
+                    displayTopMessage(ClientMessages.SCORE_MESSAGE + gameLogic.getAttacksCounter());
+                    endGameMsg = ClientMessages.WIN_MESSAGE;
                 } else {
-                    displayTopMessage(GOOD_GAME_MESSAGE);
-                    endGameMsg = LOST_MESSAGE;
+                    displayTopMessage(ClientMessages.GOOD_GAME_MESSAGE);
+                    endGameMsg = ClientMessages.LOST_MESSAGE;
                 }
                 break;
-            case "ended":
+            case ENDED:
                 Log.d("myDEBUG ShowFinalMessage", "gameState: " + gameState);
-                endGameMsg = Messages.GAME_ABANDONED;
+                endGameMsg = ClientMessages.GAME_ABORTED;
                 break;
             default:
-                endGameMsg = Messages.GAME_ENDED_CONNECTION;
+                endGameMsg = ClientMessages.GAME_ENDED_CONNECTION;
         }
         Log.d("myDEBUG ShowFinalMessage", "endGameMsg: " + endGameMsg);
         ((TextView) messageVIew.findViewById(R.id.msgTopTextId)).setText(endGameMsg);
         messageVIew.setVisibility(View.VISIBLE);
         setBackToMenuButton(goToMenuButton);
+    }
+
+    private void setDragListener(View messageVIew) {
+        messageVIew.setOnTouchListener(new View.OnTouchListener() {
+
+            @SuppressLint("ClickableViewAccessibility")
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                switch (event.getAction()) {
+                    case MotionEvent.ACTION_DOWN:
+                        // When the user touches the view, we might want to do something here
+                        break;
+                    case MotionEvent.ACTION_MOVE:
+                        // When the user drags the view, we update the view's position
+                        v.setTranslationX(event.getRawX() - (float) v.getWidth() / 2 - (float) v.getWidth() / 4);
+                        v.setTranslationY(event.getRawY() - (float) v.getHeight() - (float) v.getHeight() / 2);
+                        break;
+                    case MotionEvent.ACTION_UP:
+                        // When the user lifts their finger, we might want to do something here
+                        break;
+                }
+                return true;
+            }
+        });
     }
 
 
@@ -234,9 +281,17 @@ public class GameActivity extends BaseActivity {
     }
 
 
+    /**
+     * Overrides the goToMenuActivity method from the BaseActivity class
+     * calls the super method and stops the game
+     *
+     * @param currentPlayer      - the current player
+     * @param shouldReplaceMusic - true if the music should be replaced
+     */
     @Override
     public void goToMenuActivity(User currentPlayer, Boolean shouldReplaceMusic) {
         super.goToMenuActivity(currentPlayer, shouldReplaceMusic);
+        setBrutalDestroy(false);
         GameLogic.gameRunnablesHandler.removeCallbacksAndMessages(null);
     }
 
@@ -246,6 +301,8 @@ public class GameActivity extends BaseActivity {
      */
     private void setGameId() {
         this.gameId = currPlayerGameBoard.getGameId();
+        TextView gameIdDisplay = findViewById(R.id.gameId);
+        gameIdDisplay.setText(gameId);
     }
 
 
@@ -255,20 +312,25 @@ public class GameActivity extends BaseActivity {
      * @param intent - the intent that started the activity
      */
     private void setCurrentPlayerGameBoard(Intent intent) {
-        currPlayerGameBoard = (GameBoard) intent.getSerializableExtra("currPlayerBoard");
-        if (currPlayerGameBoard != null) {
-            currPlayerId = currPlayerGameBoard.getUser().getId(); //for convenience
-        } else {
+        Log.d("myDEBUG GameActivity", "setCurrentPlayerGameBoard: " + ExtrasEnum.GAME_BOARD.getName());
+        currPlayerGameBoard = (GameBoard) intent.getSerializableExtra(ExtrasEnum.GAME_BOARD.getName());
+        if (currPlayerGameBoard == null)
             Log.d("myDEBUG setCurrentPlayerGameBoard", "Error: currPlayerGameBoard is null");
-        }
+
     }
 
 
-    /**
-     * Places the current player (bottom grid) ships views on the board
-     */
-    private void setCurrentPlayerShipsViewsOnBoard() {
-        currPlayerGridLayoutAdapter.setAllShipViewsOnBoard();
+    /*
+     *  Sets the ship view on the grid
+     * */
+    public void setAllShipViewsOnBoard() {
+        ArrayList<Ship> shipList = currPlayerGameBoard.getShips();
+        for (int i = 0; i < shipList.size(); i++) {
+            ImageView shipView = mapShipTypeToView.get(shipList.get(i).getType());
+            PlacementUtils.setShipViewOnGrid(shipList.get(i), shipView, currPlayerGridView);
+            //log ship position
+            Log.d("DEBUG GameGridLayoutAdapter", "setAllShipViewsOnBoard: ship position: " + shipList.get(i).getEdgePosition());
+        }
     }
 
 
@@ -277,12 +339,14 @@ public class GameActivity extends BaseActivity {
      * that through the game will be updated with the attacks results and ships.
      */
     private void setOpponentGameBoard() {
-        opponentGameBoard = new GameBoard(null, gameId); // contructs a board with 100 SEA tiles
+        opponentGameBoard = new GameBoard(null, gameId); // constructs a board with 100 SEA tiles
     }
 
 
     /**
      * Sets the board for wait. fogging its background and disabling the click listeners
+     *
+     * @param message - the message to be displayed at the top of the screen
      */
     public void disableBoardForAttack(String message) {
         stopCountdown();  // Stop any existing countdown first
@@ -298,28 +362,34 @@ public class GameActivity extends BaseActivity {
     public void enableBoardForAttack() {
         stopCountdown();  // Stop any existing countdown first
         startCountDownTimer();
-//        showTurnMessage(" YOUR TURN!");
         setOpponentFrameBackgroundOnAttack(true);
         setOpponentGridClickListeners();
     }
 
-
+    /*
+     * Starts the countdown timer for the current player
+     * displays a message at the top of the screen
+     */
     public void startCountDownTimer() {
         stopCountdown();
         countDownTimer = new CountDownTimer(GameLogic.RANDOM_ATTACK_DELAY_MILLIS, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                topMessageTextView.setText("YOUR TURN! " + millisUntilFinished / 1000);
+                topMessageTextView.setText(ClientMessages.YOUR_TURN + millisUntilFinished / 1000);
             }
 
             @Override
             public void onFinish() {
                 Log.d("myDEBUG GameActivity", "attackOpponent on finish countdown");
-                //display a message for 1 second
+                //display a message for 1 second TODO
             }
         }.start();
     }
 
+
+    /*
+     *  Stops the countdown timer
+     */
     public void stopCountdown() {
         if (countDownTimer != null) {
             countDownTimer.cancel();
@@ -343,8 +413,8 @@ public class GameActivity extends BaseActivity {
     private void setOpponentGridView() { //set empty grid view
         opponentGridView = findViewById(R.id.opponentBoardGridId);
         opponentFrameLayout = findViewById(R.id.shipsOpponentFrameLayoutId);
-//        Log.d("setOpponentGridView mymyDEBUG", "setupGridViews: opponentTilesData size: " + opponentGameBoard.getBoard().size());
-        opponentGridLayoutAdapter = new GameGridLayoutAdapter(this, false, opponentGameBoard, opponentGridView, opponentFrameLayout);
+//        Log.d("setOpponentGridView myDEBUG", "setupGridViews: opponentTilesData size: " + opponentGameBoard.getBoard().size());
+        opponentGridLayoutAdapter = new GameGridLayoutAdapter(this, opponentGameBoard, opponentGridView);
         opponentGridView.setAdapter(opponentGridLayoutAdapter);
     }
 
@@ -356,9 +426,54 @@ public class GameActivity extends BaseActivity {
     private void setCurrentPlayerGridView() { //set grid from my board
         currPlayerGridView = findViewById(R.id.currPlayerBoardGridId);
         currPlayerFrameLayout = findViewById(R.id.shipsCurrPlayerFrameLayoutId);
-        currPlayerGridLayoutAdapter = new GameGridLayoutAdapter(this, true, currPlayerGameBoard, currPlayerGridView, currPlayerFrameLayout);
+        currPlayerGridLayoutAdapter = new GameGridLayoutAdapter(this, currPlayerGameBoard, currPlayerGridView);
         currPlayerGridView.setAdapter(currPlayerGridLayoutAdapter);
-//        Log.d("setCurrentPlayerGridView mymyDEBUG", "setupGridViews: currPlayerTilesData size: " + currPlayerGameBoard.getBoard().size());
+        setMapShipTypeToView(Location.BOTTOM);
+//        Log.d("setCurrentPlayerGridView myDEBUG", "setupGridViews: currPlayerTilesData size: " + currPlayerGameBoard.getBoard().size());
+    }
+
+
+    /*
+     *  Sets the map data structure that maps the ship name to the ship view
+     * @param gridLocation - the location of the grid where the ship is placed
+     * */
+    private void setMapShipTypeToView(Location gridLocation) {
+        ArrayList<Ship> shipList;
+        if (gridLocation.equals(Location.BOTTOM))
+            shipList = currPlayerGameBoard.getShips();
+        else
+            shipList = opponentGameBoard.getShips();
+        for (int i = 0; i < shipList.size(); i++) {
+            Ship ship = shipList.get(i);
+            addShipViewToMap(ship, gridLocation);//
+        }
+    }
+
+
+    /**
+     * Adds the ship view to the map data structure
+     *
+     * @param ship         - the ship to be added
+     * @param gridLocation - the location of the grid where the ship is placed
+     */
+    public void addShipViewToMap(Ship ship, Location gridLocation) {
+        ShipTypeEnum shipType = ship.getType();
+        int shipDrawableId;
+        ImageView shipView;
+        if (gridLocation.equals(Location.TOP)) {
+            shipDrawableId = ShipsConverter.getTopShipIdByType(ShipTypeEnum.valueOf(shipType.toString()));
+            shipView = opponentFrameLayout.findViewById(shipDrawableId);
+
+        } else {
+            shipDrawableId = ShipsConverter.getBottomShipIdByType(ShipTypeEnum.valueOf(shipType.toString()));
+            shipView = currPlayerFrameLayout.findViewById(shipDrawableId);
+
+        }
+        PlacementUtils.shipViewSetOrientationAccordingToData(shipView, ship);
+        shipView.setTag(ship);
+        shipView.setVisibility(View.VISIBLE);
+        mapShipTypeToView.put(shipType, shipView);
+        Log.d("GameGridLayoutAdapter", "addShipViewToMap: shipName: " + shipType + " shipView: " + shipView);
     }
 
 
@@ -385,7 +500,9 @@ public class GameActivity extends BaseActivity {
     }
 
 
-    /* Displays the turn message at the top of the game screen
+    /**
+     * Displays the turn message at the top of the game screen
+     *
      * @param turnMessage - the message to be displayed
      */
     public void displayTopMessage(String turnMessage) {
@@ -397,20 +514,19 @@ public class GameActivity extends BaseActivity {
     /**
      * Updates the opponent board with the attack result
      *
-     * @param position          - the position of the attack
-     * @param attackResult      - the result of the attack (hit, miss, sunk)
-     * @param shipName          - the name of the ship that was sunk
-     * @param orientationString - the orientation of the ship that was sunk
-     * @param shipPosition      - the position of the ship that was sunk
-     * @param state
+     * @param attackPosition - the position of the attack
+     * @param attackResult   - the result of the attack (hit, miss, sunk)
+     * @param shipType       - the name of the ship that was sunk
+     * @param orientation    - the orientation of the ship that was sunk
+     * @param shipPosition   - the position of the ship that was sunk
+     * @param state          - the state of the tile after the attack
      */
-    public void updateOpponentBoard(int position, String attackResult, String shipName, String orientationString, Integer shipPosition, TileStateEnum state) {
-
-        opponentGameBoard.updateTile(position, state);
+    public void updateOpponentBoard(int attackPosition, AttackResultEnum
+            attackResult, ShipTypeEnum shipType, OrientationEnum orientation, Integer
+                                            shipPosition, TileStateEnum state) {
+        opponentGameBoard.updateTile(attackPosition, state);
         opponentGridLayoutAdapter.notifyDataSetChanged();
-        if (attackResult.equals("sunk")) { //TODO maybe add  attckResult.equals("win")
-            ShipTypeEnum shipType = ShipTypeEnum.valueOf(shipName.toUpperCase());
-            OrientationEnum orientation = OrientationEnum.valueOf(orientationString.toUpperCase());
+        if (attackResult.equals(AttackResultEnum.SUNK)) {
             showShipViewOnOpponentBoard(shipPosition, orientation, shipType);
         }
     }
@@ -420,7 +536,7 @@ public class GameActivity extends BaseActivity {
      * updates the board view with the attack result
      */
     public void updateCurrentPlayerBoardView() {
-//        Log.d("mymyDEBUG GameActivity", "updateCurrentPlayerBoard: ");
+//        Log.d("myDEBUG GameActivity", "updateCurrentPlayerBoard: ");
         currPlayerGridLayoutAdapter.notifyDataSetChanged();
     }
 
@@ -433,14 +549,16 @@ public class GameActivity extends BaseActivity {
      * @param orientation - the orientation of the ship
      * @param shipType    - the type of the ship
      */
-    public void showShipViewOnOpponentBoard(int position, OrientationEnum orientation, ShipTypeEnum shipType) {
-        int shipViewId = ShipsResources.getTopShipIdByType(shipType);
-        int shipSize = ShipsResources.getShipSizeByType(shipType);
+    public void showShipViewOnOpponentBoard(int position, OrientationEnum
+            orientation, ShipTypeEnum shipType) {
+        int shipViewId = ShipsConverter.getTopShipIdByType(shipType);
+        int shipSize = ShipsConverter.getShipSizeByType(shipType);
         Ship tempShip = new Ship(shipViewId, shipSize, shipType, orientation);
         tempShip.setEdgePosition(position);
-//        Log.d("mymyDEBUG GameActivity", "showShipViewOnBoard: tempShip: " + tempShip);
-        opponentGridLayoutAdapter.addShipViewToMap(tempShip, "top");  // create a ship and add its view to the map that fits the top grid
-        opponentGridLayoutAdapter.setShipViewOnGrid(tempShip, opponentGridView);
+//        Log.d("myDEBUG GameActivity", "showShipViewOnBoard: tempShip: " + tempShip);
+        addShipViewToMap(tempShip, Location.TOP);  // create a ship and add its view to the map that fits the top grid
+        ImageView shipView = mapShipTypeToView.get(tempShip.getType());
+        PlacementUtils.setShipViewOnGrid(tempShip, shipView, opponentGridView);
     }
 
 
@@ -464,6 +582,7 @@ public class GameActivity extends BaseActivity {
      */
     @Override
     public void exit() {
+        GameLogic.isGameInProgress = false;
         disableGameboard();
         setBrutalDestroy(false);
         GameLogic.notifyGameEnd(this, gameId);
@@ -479,7 +598,7 @@ public class GameActivity extends BaseActivity {
     public void onStop() {
         super.onStop();
         AudioUtils.pauseMusic(GameActivity.this); // mute the music
-        if (!gameLogic.isGameFinished)
+        if (GameLogic.isGameInProgress)
             gameLogic.pauseGame(gameId);
         Log.d("myDEBUG GameActivity", "onStop ");
     }
@@ -504,7 +623,7 @@ public class GameActivity extends BaseActivity {
     @Override
     public void onDestroy() {
         super.onDestroy();
-        Log.d("mymyDEBUG GameActivity", "onDestroy ");
+        Log.d("myDEBUG GameActivity", "onDestroy ");
         if (isBrutalDestroy()) {
             GameLogic.notifyGameEnd(this, gameId);
         }

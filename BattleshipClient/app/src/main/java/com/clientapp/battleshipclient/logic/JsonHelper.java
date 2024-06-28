@@ -2,17 +2,21 @@ package com.clientapp.battleshipclient.logic;
 
 import android.util.Log;
 
-import com.clientapp.battleshipclient.data.GameBoard;
-import com.clientapp.battleshipclient.data.Ship.Ship;
-import com.clientapp.battleshipclient.data.Tile.Tile;
-import com.clientapp.battleshipclient.data.Tile.TileStateEnum;
-import com.clientapp.battleshipclient.data.User;
+import com.clientapp.battleshipclient.model.GameBoard;
+import com.clientapp.battleshipclient.model.Ship.Ship;
+import com.clientapp.battleshipclient.model.Tile.Tile;
+import com.clientapp.battleshipclient.model.Tile.TileStateEnum;
+import com.clientapp.battleshipclient.model.User;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+
+/* This class is responsible for creating JSON objects to be sent to the server
+ * It contains methods to create JSON objects for the game board, the ships and the sign in request
+ */
 
 public class JsonHelper {
 
@@ -21,7 +25,7 @@ public class JsonHelper {
      *  This method creates the whole gameboard in JSON format
      *  to be sent to the server
      * */
-    public static JSONObject createGameBoardJson(GameBoard gameBoard) {
+    public static JSONObject createJsonGameBoard(GameBoard gameBoard) {
         JSONObject gameBoardJson = new JSONObject();
         JSONArray ships = createShipsJson(gameBoard);
         JSONArray board = createBoardJson(gameBoard);
@@ -35,8 +39,6 @@ public class JsonHelper {
         }
         return gameBoardJson;
     }
-
-
 
 
     /*
@@ -90,11 +92,16 @@ public class JsonHelper {
             postData.put("name", user.getName());
             postData.put("password", user.getPassword());
         } catch (Exception error) {
-            Log.e("DEBUG", "Error creating JSON for signin", error);
+            Log.e("DEBUG", "Error creating JSON for signIn", error);
         }
         return postData;
     }
 
+
+    /*
+    *  Extract the board from the response
+    *  @param response: the response from the server
+    * */
     public static ArrayList<Tile> extractBoardFromResponse(String response) {
         ArrayList<Tile> board = new ArrayList<>();
         try {
@@ -106,7 +113,7 @@ public class JsonHelper {
                 int position = tileJson.getInt("position");
                 String state = tileJson.getString("state");
                 String shipId = tileJson.getString("shipId");
-                Tile tile = new Tile(position, TileStateEnum.fromString(state), shipId, null);
+                Tile tile = new Tile(position, TileStateEnum.fromString(state), shipId);
 //                Log.d("myDEBUG GameLogic", "extractBoardFromResponse: " + tile);
                 board.add(tile);
             }

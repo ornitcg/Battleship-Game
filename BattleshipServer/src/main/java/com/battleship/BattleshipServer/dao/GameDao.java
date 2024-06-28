@@ -18,6 +18,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+ *  This class is responsible for all the operations related to the games table in the database.
+ * */
 @Repository
 public class GameDao implements IDao<Game> {
 

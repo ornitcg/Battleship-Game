@@ -12,6 +12,9 @@ import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
+/*
+ *  This class is responsible for all the operations related to the board table in the database.
+ * */
 @Repository
 public class BoardDao implements IDao<Board> {
 

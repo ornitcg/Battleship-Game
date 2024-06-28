@@ -25,7 +25,7 @@
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity
-            android:name=".view.activities.ArrangeGameBoardActivity"
+            android:name=".view.activities.PlacementActivity"
             android:exported="false"
             android:screenOrientation="portrait" />
         <activity

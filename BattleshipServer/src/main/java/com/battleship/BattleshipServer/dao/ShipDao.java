@@ -18,6 +18,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/*
+ *  This class is responsible for all the operations related to the ships table in the database.
+ * */
 @Repository
 public class ShipDao implements IDao<Ship> {
     private static final String SHIPS_TABLE_NAME = "ships ";

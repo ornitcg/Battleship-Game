@@ -1,0 +1,280 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/mainTag"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background_sea_water"
+    tools:context=".view.activities.PlacementActivity">
+
+
+
+    <include layout="@layout/layout_base" />
+
+    <TextView
+        android:id="@+id/placeFleet"
+        android:layout_width="0dp"
+        android:layout_height="59dp"
+        android:layout_marginTop="48dp"
+        android:text="@string/place_your_fleet"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="40sp"
+        android:textStyle="bold|italic"
+        app:autoSizeMaxTextSize="50sp"
+        app:autoSizeMinTextSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <GridView
+        android:id="@+id/currPlayerBoardGridId"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        android:numColumns="10"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/placeFleet" />
+
+    <FrameLayout
+        android:id="@+id/shipsFrameLayoutId"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="12dp"
+        android:layout_marginTop="12dp"
+        android:gravity="center"
+        app:layout_constraintDimensionRatio="1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/placeFleet">
+
+        <ImageView
+            android:id="@+id/ship_length5_top_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/ship_length5"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/ship_length4_top_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/ship_length4"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/ship_length3_1_top_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/ship_length3_1"
+            android:visibility="invisible" />
+
+
+        <ImageView
+            android:id="@+id/ship_length3_2_top_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/ship_length3_2"
+            android:visibility="invisible" />
+
+        <ImageView
+            android:id="@+id/ship_length2_top_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:src="@drawable/ship_length2"
+            android:visibility="visible" />
+
+    </FrameLayout>
+
+    <TextView
+        android:id="@+id/shipInventoryTxtId"
+        android:layout_width="0dp"
+        android:layout_height="30dp"
+        android:layout_marginTop="8dp"
+        android:text="@string/Your_Inventory"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="20sp"
+        android:textStyle="bold|italic"
+        app:autoSizeMaxTextSize="30sp"
+        app:autoSizeMinTextSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/currPlayerBoardGridId" />
+
+    <LinearLayout
+        android:id="@+id/shipsInventoryId"
+        android:layout_width="410dp"
+        android:layout_height="176dp"
+        android:layout_marginTop="8dp"
+        android:gravity="center"
+        android:orientation="horizontal"
+        app:layout_constraintBottom_toTopOf="@+id/ReadyBtnId"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shipInventoryTxtId">
+
+        <ImageView
+            android:id="@+id/ship_length5_bottom_id"
+            android:layout_width="54dp"
+            android:layout_height="match_parent"
+            android:src="@drawable/ship_length5" />
+
+        <ImageView
+            android:id="@+id/ship_length4_bottom_id"
+            android:layout_width="53dp"
+            android:layout_height="wrap_content"
+            android:src="@drawable/ship_length4"
+            tools:ignore="ContentDescription" />
+
+        <ImageView
+            android:id="@+id/ship_length3_1_bottom_id"
+            android:layout_width="46dp"
+            android:layout_height="115dp"
+            android:src="@drawable/ship_length3_1"
+            tools:ignore="ContentDescription" />
+
+
+        <ImageView
+            android:id="@+id/ship_length3_2_bottom_id"
+            android:layout_width="54dp"
+            android:layout_height="111dp"
+            android:src="@drawable/ship_length3_2" />
+
+        <ImageView
+            android:id="@+id/ship_length2_bottom_id"
+            android:layout_width="wrap_content"
+            android:layout_height="91dp"
+            android:src="@drawable/ship_length2" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <ImageButton
+                android:id="@+id/resetShipsID"
+                android:layout_width="54dp"
+                android:layout_height="55dp"
+                android:background="@android:color/transparent"
+                android:paddingLeft="5dp"
+                android:scaleType="fitStart"
+                app:srcCompat="@drawable/icon_return_ships"
+                tools:ignore="SpeakableTextPresentCheck" />
+
+            <ImageButton
+                android:id="@+id/setShipsID"
+                android:layout_width="54dp"
+                android:layout_height="55dp"
+                android:background="@android:color/transparent"
+                android:paddingLeft="5dp"
+                android:scaleType="fitStart"
+                app:srcCompat="@drawable/icon_automatic_placement"
+                tools:ignore="SpeakableTextPresentCheck" />
+        </LinearLayout>
+
+        <!-- Add more ships as needed -->
+    </LinearLayout>
+
+
+    <Button
+        android:id="@+id/ReadyBtnId"
+        style="@style/ButtonTextAppearance"
+        android:layout_width="295dp"
+        android:layout_height="59dp"
+        android:layout_marginTop="40dp"
+        android:background="@drawable/button_selector"
+        android:text="@string/i_m_ready"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/shipsInventoryId"
+        app:layout_constraintVertical_bias="0.078" />
+
+
+    <TextView
+        android:id="@+id/msgTextViewId"
+        style="@style/MediumWhiteTextViewAppearance"
+        android:layout_width="411dp"
+        android:layout_height="83dp"
+        android:background="@color/blackTint"
+        android:gravity="center"
+        android:text="STARTING GAME"
+        android:textAlignment="center"
+        android:textColor="@color/white"
+        android:textSize="24sp"
+        android:visibility="gone"
+        app:autoSizeMaxTextSize="35sp"
+        app:autoSizeMinTextSize="30sp"
+        app:autoSizeStepGranularity="2sp"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@+id/ReadyBtnId"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <LinearLayout
+        android:id="@+id/messageWrapperLayoutId"
+        android:layout_width="327dp"
+        android:layout_height="300dp"
+        android:background="@drawable/background_message"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:visibility="gone"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/shipsFrameLayoutId">
+
+        <TextView
+            android:id="@+id/msgTopTextId"
+            style="@style/DarkMediumTextViewAppearance"
+            android:layout_width="315dp"
+            android:layout_height="200dp"
+            android:gravity="center_vertical"
+            android:text="GAME ENDED BY OPPONENT"
+            android:textAlignment="center"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            tools:ignore="RtlCompat" />
+
+
+
+        <Button
+            android:id="@+id/backToMenuBtnId"
+            style="@style/ButtonTextAppearance"
+            android:layout_width="295dp"
+            android:layout_height="59dp"
+            android:background="@drawable/button_fragments_navigation_custom"
+            android:text="BACK TO MENU"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+    </LinearLayout>
+
+
+    <include layout="@layout/yes_no_layout" />
+
+    <TextView
+        android:id="@+id/gameId"
+        style="@style/SmallTextAppearance"
+        android:layout_width="205dp"
+        android:layout_height="47dp"
+        android:text="gameId"
+        app:autoSizeTextType="uniform"
+
+        app:layout_constraintBottom_toTopOf="@+id/placeFleet"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

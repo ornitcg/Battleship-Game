@@ -7,7 +7,7 @@
         android:id="@+id/grid_item_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/tile_status_highlighted" />
+        android:background="@drawable/tile_status_ship" />
 </FrameLayout>
 
 

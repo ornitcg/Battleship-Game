@@ -1,9 +1,14 @@
 package com.clientapp.battleshipclient.utils;
 
 
+
+/*
+*  This enum is used to store the names of the audio files
+*  It is used to play the audio files in the app
+* */
 public enum AudioEnum {
 
-    ARRANGE_GAMEBOARD("placeShips") ,
+    PLACE_SHIPS("placeShips") ,
     GAME_MUSIC("game"),
     WIN_MUSIC("win"),
     LOSE_MUSIC( "lose"),

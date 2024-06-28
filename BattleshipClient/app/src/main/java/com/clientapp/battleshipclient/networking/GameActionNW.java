@@ -9,25 +9,36 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
-import com.clientapp.battleshipclient.networking.NWutils.CustomRetryPolicy;
+import com.clientapp.battleshipclient.logic.ICallbacks;
+import com.clientapp.battleshipclient.networking.NWutils.EndpointResources;
+import com.clientapp.battleshipclient.networking.NWutils.RequestEnum;
 
 import org.json.JSONObject;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
+
+/*
+* This class is responsible for the game actions such as getting the game state and board
+* and posting an attack
+* It uses the Volley library to make the network requests
+* */
 public class GameActionNW {
-    private static final int getAttackTimeout = 100;
 
-
+    /**
+    *  Method to get a game body that contains all the information about the game
+    * used for constantly updating the game state and board
+    * @param context: the context of the activity
+    * @param gameId: the id of the game
+    * @param callback: the callback to be executed after the request
+    * */
     public static void getGame(Context context, String gameId, ICallbacks<String> callback) {
-        RequestQueue requestQueue = Netcom.getInstance(context).getRequestQueue();
-
-        //log game id
-        Log.d("DEBUG GameLifecycleNW in game request", "gameId: " + gameId);
+        RequestQueue requestQueue = Netcom.getInstance(context).getRequestQueue(); //TODO check if null context here is OK
+        Log.d("nwDEBUG GameLifecycleNW in game request", "gameId: " + gameId);
         String endpoint = EndpointResources.getGameEndpoint;
         String finalUrl = endpoint + gameId;
-        Log.d("DEBUG GameLifecycleNW in game request", "finalUrl: " + finalUrl);
+        Log.d("nwDEBUG GameLifecycleNW in game request", "finalUrl: " + finalUrl);
         StringRequest request = new StringRequest(Request.Method.GET, finalUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
@@ -39,11 +50,20 @@ public class GameActionNW {
                 callback.onError(error);
             }
         });
-        request.setRetryPolicy(new CustomRetryPolicy(1000, 20, 1.2f, "getGame retry"));
+        request.setRetryPolicy(GameLifecycleNW.noRetryPolicy(RequestEnum.GET_GAME.getName()));
         requestQueue.add(request);
+        Log.d("nwDEBUG GameLifecycleNW in game request", "GET_GAME Request added to queue");
     }
 
 
+    /**
+    * Method to post an attack
+    * @param context: the context of the activity
+    * @param gameId: the id of the game
+    * @param currPlayerId: the id of the current player
+    * @param position: the position of the attack
+    * @param callback: the callback to be executed after the request
+    * */
     public static void postAttack(Context context, String gameId, String currPlayerId, int position, ICallbacks<String> callback) {
         RequestQueue requestQueue = Netcom.getInstance(context).getRequestQueue();
         String endpoint = EndpointResources.postAttackEndpoint;
@@ -53,14 +73,14 @@ public class GameActionNW {
             String param2 = "gameId=" + URLEncoder.encode(gameId, "UTF-8") + "&";
             String param3 = "position=" + URLEncoder.encode(String.valueOf(position), "UTF-8");
             finalUrl = endpoint + "?" + param1 + param2 + param3;
-            Log.d("DEBUG postAttack", "Final URL with query params: " + finalUrl);
+            Log.d("nwDEBUG myDEBUG  postAttack", "Final URL with query params: " + finalUrl);
         } catch (UnsupportedEncodingException e) {
             e.printStackTrace();
         }
         StringRequest request = new StringRequest(Request.Method.POST, finalUrl, new Response.Listener<String>() {
             @Override
             public void onResponse(String response) {
-                Log.d("DEBUG GameLifecycleNW in postAttack ", "onResponse: " + response);
+                Log.d("nwDEBUG myDEBUG  GameLifecycleNW in postAttack ", "onResponse: " + response);
                 callback.onResponseSuccess(response);
             }
         }, new Response.ErrorListener() {
@@ -69,76 +89,38 @@ public class GameActionNW {
                 callback.onError(error);
             }
         });
-        Log.d("myDEBUG GameLifecycleNW ", "postAttack request: " + request.toString());
-        request.setRetryPolicy(GameLifecycleNW.noRetryPolicy());
+        request.setRetryPolicy(GameLifecycleNW.noRetryPolicy(RequestEnum.POST_ATTACK.getName()));
         requestQueue.add(request);
-        Log.d("DEBUG gameNW", requestQueue.toString());
+        Log.d("nwDEBUG myDEBUG  GameLifecycleNW in postAttack", "POST_ATTACK Request added to queue");
     }
 
 
     /**
-     * This method sends a GET request to the server to get the attack by opponent.
-     * called when user wants to get the attack.
-     * response is handles using callback methods by the logic layer.
-     */
-    public static void getAttack(Context context, String currPlayerId, ICallbacks<String> callbacks) {
-        RequestQueue requestQueue = Netcom.getInstance(context).getRequestQueue();
-
-        Log.d("DEBUG GameLifecycleNW", " in getAttack: ");
-        String endpoint = EndpointResources.getAttackEndpoint;
-        String finalUrl = "";
-        try {
-//            String param1 = "gameId=" + URLEncoder.encode(gameId, "UTF-8");
-            String param1 = "userId=" + URLEncoder.encode(currPlayerId, "UTF-8");
-
-            finalUrl = endpoint + "?" + param1;
-            Log.d("DEBUG GameLifecycleNW in getAttack", "Final URL with query params: " + finalUrl);
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        }
-        StringRequest request = new StringRequest(Request.Method.GET, finalUrl, new Response.Listener<String>() {
-            @Override
-            public void onResponse(String response) {
-                Log.d("DEBUG GameLifecycleNW in getAttack", "onResponse: " + response);
-                callbacks.onResponseSuccess(response);
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                Log.d("DEBUG GameLifecycleNW in getAttack", "onError: " + error);
-
-                callbacks.onError(error);
-            }
-        });
-
-//        request.setRetryPolicy(GameLifecycleNW.noRetryPolicy());
-        request.setRetryPolicy(new CustomRetryPolicy(100, 30, 1.1f, "getAttack"));
-
-        requestQueue.add(request);
-    }
-
-
+    *  Method to get the board of the game
+    *  @param boardId: the id of the board
+    *  @param callback: the callback to be executed after the request
+    * */
     public static void getBoard(String boardId, ICallbacks<String> callback) {
         String endpoint = EndpointResources.getCurrentBoard;
         String finalUrl = endpoint + boardId;
-        Log.d("DEBUG GameLifecycleNW in getBoard", "Final URL with query params: " + finalUrl);
+        Log.d("nwDEBUG myDEBUG  GameLifecycleNW in getBoard", "Final URL with query params: " + finalUrl);
 
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, finalUrl, null, new Response.Listener<JSONObject>() {
             @Override
             public void onResponse(JSONObject response) {
-                Log.d("DEBUG GameLifecycleNW in getBoard", "onResponse: " + response);
+                Log.d("nwDEBUG myDEBUG  GameLifecycleNW in getBoard", "onResponse: " + response);
                 callback.onResponseSuccess(response.toString());
             }
         }, new Response.ErrorListener() {
             @Override
             public void onErrorResponse(VolleyError error) {
-                Log.e("DEBUG GameLifecycleNW in getBoard", "onErrorResponse: " + error.getMessage());
+                Log.e("nwDEBUG myDEBUG  GameLifecycleNW in getBoard", "onErrorResponse: " + error.getMessage());
                 callback.onError(error);
             }
         });
-
-        request.setRetryPolicy(new CustomRetryPolicy(1000, 10, 1.2f, "getBoard retry"));
+        request.setRetryPolicy(GameLifecycleNW.noRetryPolicy(RequestEnum.GET_BOARD.getName()));
         Netcom.getInstance(null).addToRequestQueue(request);
+        Log.d("nwDEBUG myDEBUG  GameLifecycleNW in getBoard", "GET_BOARD Request added to queue");
     }
 
 

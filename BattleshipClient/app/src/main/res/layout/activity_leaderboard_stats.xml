@@ -18,7 +18,7 @@
 
         <include
             android:id="@+id/include"
-            layout="@layout/base_layout" />
+            layout="@layout/layout_base" />
     </FrameLayout>
 
 
@@ -41,7 +41,7 @@
         <Button
             android:id="@+id/LeaderBoardBtnId"
             style="@style/ButtonTextAppearance"
-            android:background="@drawable/button_fragment_navigation"
+            android:background="@drawable/button_fragment"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="0.5"
@@ -50,11 +50,11 @@
         <Button
             android:id="@+id/statsBtnId"
             style="@style/ButtonTextAppearance"
-            android:background="@drawable/button_fragment_navigation"
-
             android:layout_width="0dp"
+
             android:layout_height="match_parent"
             android:layout_weight="0.5"
+            android:background="@drawable/button_fragment"
             android:text="MY STATS" />
 
 

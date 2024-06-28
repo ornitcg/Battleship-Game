@@ -5,17 +5,24 @@ import android.os.Handler;
 import android.util.Log;
 import android.view.View;
 
-import com.clientapp.battleshipclient.data.GameBoard;
-import com.clientapp.battleshipclient.data.Ship.Ship;
-import com.clientapp.battleshipclient.data.Tile.Tile;
-import com.clientapp.battleshipclient.data.Tile.TileStateEnum;
+import com.clientapp.battleshipclient.model.Game.Game;
+import com.clientapp.battleshipclient.model.Game.GameStateEnum;
+import com.clientapp.battleshipclient.model.GameBoard;
+import com.clientapp.battleshipclient.model.Ship.OrientationEnum;
+import com.clientapp.battleshipclient.model.Ship.Ship;
+import com.clientapp.battleshipclient.model.Ship.ShipTypeEnum;
+import com.clientapp.battleshipclient.model.Tile.Tile;
+import com.clientapp.battleshipclient.model.Tile.TileStateEnum;
 import com.clientapp.battleshipclient.networking.GameActionNW;
 import com.clientapp.battleshipclient.networking.GameLifecycleNW;
-import com.clientapp.battleshipclient.networking.ICallbacks;
+import com.clientapp.battleshipclient.networking.NWutils.RequestEnum;
+import com.clientapp.battleshipclient.networking.NWutils.ServerStrings;
 import com.clientapp.battleshipclient.networking.Netcom;
 import com.clientapp.battleshipclient.utils.AudioEnum;
 import com.clientapp.battleshipclient.utils.AudioUtils;
+import com.clientapp.battleshipclient.view.view_utils.ClientMessages;
 import com.clientapp.battleshipclient.view.activities.GameActivity;
+import com.clientapp.battleshipclient.view.activities.PlacementActivity;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,23 +32,28 @@ import java.util.ArrayList;
 import lombok.Getter;
 import lombok.NonNull;
 
+
+/*
+*  This class is the main logic class for the game
+*  It handles the game state, the attacks, the ships, the boards and the game lifecycle
+* */
 public class GameLogic {
-    private static final String CONNECTION_PROBLEM = "CONNECTION PROBLEM";
-    private static final String OPPONENT_TURN_MESSAGE = "OPPONENT'S TURN";
-    private static final String PAUSE_MESSAGE = "GAME PAUSED";
-    private static final int GET_GAME_DELAY_MILLIS = 500;
+    private static final int GET_GAME_DELAY_MILLIS = 1000;
     public static final int RANDOM_ATTACK_DELAY_MILLIS = 15000;
     private static final int ATTACK_MSG_MILLIS = 2000;
     private final int KEEP_ALIVE_DELAY_MILLIS = 5000;
+    private final int GET_GAME_MAX_TRIES = 10;
 
     private Context context;
-    private GameBoard currPlayerGameBoard = null;
+    private GameBoard currPlayerGameBoard ;
     public static Runnable keepAliveTask;
     public static Runnable getGameRepeatTask;
     public static Handler gameRunnablesHandler = new Handler();
     private boolean isTurnChanged = false;
     private boolean isFirstKeepAliveCalled = false;
-    public boolean isGameFinished = false;
+    public static boolean isGameInProgress = true;
+    private int getGameRetryCounter = 0;
+
     private Runnable randomAttackTask;
     @Getter
     private int attacksCounter = 0;
@@ -54,19 +66,27 @@ public class GameLogic {
     public GameLogic(Context context, GameBoard currPlayerGameBoard) {
         this.context = context;
         this.currPlayerGameBoard = currPlayerGameBoard;
+        setKeepAliveRunnable();
+        setGetGameRepeatRunnable();
         setRandomAttackRunnable();
+    }
 
+    /*
+    *  Sets the getGameRepeatRunnable to run every 1 second
+    *  It is called when the player starts the game
+    * */
+    private void setGetGameRepeatRunnable() {
+        getGameRepeatTask = new Runnable() {
+            @Override
+            public void run() {
+                getGame();
+            }
+        };
     }
 
 
     /*
-     *  This method sends the gameboard to the server by calling the network method createBoard
-     *  on success it goes to the gameActivity
-     * */
-
-
-    /*
-     *  This method is called when the player's turn is timeouted
+     *  This method is called when the player's turn is timed-out
      *  It sends a random attack on the opponent's board    *
      * */
     private void setRandomAttackRunnable() {
@@ -79,65 +99,66 @@ public class GameLogic {
     }
 
 
-
-
-
     /**
      * This method is called repeatedly to get the game state
      */
-    public void getGame(String gameId, String currPlayerUserId) {
+    public void getGame() {
+        String gameId = currPlayerGameBoard.getGameId();
         GameActionNW.getGame(context, gameId, new ICallbacks<String>() { //call network getGame
             @Override
             public void onResponseSuccess(String response) {
                 Log.d("myDEBUG GameLogic", "getGame onResponse: " + response);
                 try {
                     JSONObject jsonResponse = new JSONObject(response);
-                    String value = jsonResponse.getString("value");
-                    if (value != null) {
-                        String turnUserId = new JSONObject(value).getString("turnUserId");
-                        String gameState = new JSONObject(value).getString("gameState");
-                        String winnerUserId = new JSONObject(value).getString("winnerUserId");
-                        handleGameStateFromResponse(currPlayerUserId, gameId, turnUserId, gameState, winnerUserId);
-                    }
+                    String value = jsonResponse.getString(ServerStrings.VALUE);
+                    String turnUserId = new JSONObject(value).getString(ServerStrings.TURN_USER_ID);
+                    String gameState = new JSONObject(value).getString(ServerStrings.GAME_STATE);
+                    String winnerUserId = new JSONObject(value).getString(ServerStrings.WINNER_USER_ID);
+                    Game game = new Game(gameId, turnUserId, GameStateEnum.fromString(gameState), winnerUserId);                    handleGameStateFromResponse(game);
+
+                    getGameRetryCounter = 0;
                 } catch (JSONException e) {
+                    retryGetGame();
                     Log.e("myDEBUG GameLogic", "extractGameStateFromResponse onError from server on getGame: " + e);
                 }
             }//end of onResponse
 
             @Override
             public void onError(Exception e) {
+                retryGetGame();
                 Log.e("myDEBUG GameLogic", "getGame onError from server  : " + e);
             }
         });
     }
 
-
-    /*
-    *  Handles the case when the game is ended by the server
-    * It shows a message to the user and disables the board for attacks.
-    * */
-    public static void handleGameEndedByServer(Context context) {
-        ((GameActivity) context).disableGameboard();
-        ((GameActivity) context).displayFinalMessage(CONNECTION_PROBLEM, false);
+    private void retryGetGame() {
+        if (getGameRetryCounter < GET_GAME_MAX_TRIES && isGameInProgress) {
+            Log.d("myDEBUG GameLogic", "retryGetGame: retrying getGame");
+            getGameRetryCounter++;
+            getGame();
+        } else {
+            Log.d("myDEBUG GameLogic", "retryGetGame max tries achieved: game is ended");
+            handleGameEndedByOpponent();
+        }
     }
 
 
     /*
      *  Calls methods according to the game state
      */
-    private void handleGameStateFromResponse(String currPlayerId, String gameId, String turnUserId, String gameState, String winnerUserId) {
-        Log.d("myDEBUG GameLogic", "handleGameStateResponse: turnUserId: " + turnUserId + " gameState: " + gameState + " winnerUserId: " + winnerUserId);
-        switch (gameState) {
-            case "inProgress":
-                handleGameInProgress(currPlayerId, turnUserId, gameId);
+    private void handleGameStateFromResponse(Game game) {
+        Log.d("myDEBUG GameLogic", "handleGameStateResponse: turnUserId: " + game.getTurnUserId() + " gameState: " + game.getGameState() + " winnerUserId: " + game.getWinnerUserId());
+        switch (game.getGameState()) {
+            case IN_PROGRESS:
+                handleGameInProgress(game.getTurnUserId());
                 break;
-            case "finished":
-                handleGameOver(winnerUserId, currPlayerId, gameState);
+            case FINISHED:
+                handleGameOver(game);
                 break;
-            case "ended":
-                handleGameEndedByOpponent(currPlayerId, gameState);
+            case ENDED:
+                handleGameEndedByOpponent();
                 break;
-            case "paused":
+            case PAUSED:
                 handleGamePaused();
                 break;
             default:
@@ -151,14 +172,14 @@ public class GameLogic {
      *  It shuts down the periodic updates of player being in game
      *  and shows the final message
      * */
-    private void handleGameEndedByOpponent(String currPlayerUserId, String gameState) {
-//        getGameStateRepeatHandler.removeCallbacks(getGameStateRepeatTask);
-        gameRunnablesHandler.removeCallbacks(keepAliveTask);
+    private void handleGameEndedByOpponent() {
+        isGameInProgress = false;
+        gameRunnablesHandler.removeCallbacksAndMessages(null); //null = stop all runnables
         Log.d("myDEBUG GameLogic", "handleGameEnded: game is ended");
         AudioUtils.makeSound(context, AudioEnum.GAME_OVER);
         Log.d("myDEBUG GameLogic", "handleGameEnded: made sound for game over");
         ((GameActivity) context).disableGameboard();
-        ((GameActivity) context).displayFinalMessage(gameState, false);
+        ((GameActivity) context).displayFinalMessage(GameStateEnum.ENDED, false);
     }
 
 
@@ -167,7 +188,8 @@ public class GameLogic {
      * It sets the board for attack or wait depending on the turn
      * and starts the periodic updates of the game state
      */
-    private void handleGameInProgress(String currPlayerId, String turnUserId, String gameId) {
+    private void handleGameInProgress(String turnUserId) {
+        String currPlayerId = currPlayerGameBoard.getUser().getId();
         Log.d("myDEBUG GameLogic", "handleGameInProgress onResponse: currPlayerUserId: " + currPlayerId + " turnUserId: " + turnUserId);
         Log.d("myDEBUG GameLogic", "BEING ATTACKED");
 
@@ -188,7 +210,7 @@ public class GameLogic {
             gameRunnablesHandler.removeCallbacks(keepAliveTask);//stop the periodic updates
             Log.d("myDEBUG GameLogic", "BEING ATTACKED");
             stopCountdown();
-            ((GameActivity) context).disableBoardForAttack(OPPONENT_TURN_MESSAGE);
+            ((GameActivity) context).disableBoardForAttack(ClientMessages.OPPONENT_TURN);
             if (!isFirstKeepAliveCalled) {
                 keepAlive(currPlayerGameBoard.getGameId());
                 isFirstKeepAliveCalled = true;
@@ -200,7 +222,7 @@ public class GameLogic {
 
     /*
      *   Randomizes a position to attack on the opponent's board
-     *   called automatically when the player's turn is timeouted
+     *   called automatically when the player's turn is timed-out
      * */
     private void randomAttack() {
         boolean isAttacked = true;
@@ -210,7 +232,8 @@ public class GameLogic {
             if (((GameActivity) context).getOpponentGameBoard().getBoard().get(randomPosition).getState() == TileStateEnum.SEA)
                 isAttacked = false;
         }
-        attackOpponent(currPlayerGameBoard.getGameId(), currPlayerGameBoard.getUser().getId(), randomPosition);
+        Log.d("myDEBUG GameLogic", "randomAttack: randomPosition: " + randomPosition);
+        attackOpponent(randomPosition);
         ((GameActivity) context).getAutoAttackMsgView().setVisibility(View.VISIBLE);
         new Handler().postDelayed(new Runnable() {
             @Override
@@ -222,19 +245,18 @@ public class GameLogic {
     }
 
 
-
     /*
-    *  Handles the case when the game is paused
-    *  It shows a message to the user and disables the board for attack
-    *  and starts the periodic updates of the game state
-    * */
+     *  Handles the case when the game is paused
+     *  It shows a message to the user and disables the board for attack
+     *  and starts the periodic updates of the game state
+     * */
     private void handleGamePaused() {
-        ((GameActivity) context).disableBoardForAttack(PAUSE_MESSAGE);
+        ((GameActivity) context).disableBoardForAttack(ClientMessages.PAUSE_MESSAGE);
 
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {
-                getGame(currPlayerGameBoard.getGameId(), currPlayerGameBoard.getUser().getId());
+                getGame();
             }
         }, GET_GAME_DELAY_MILLIS);
     }
@@ -246,12 +268,14 @@ public class GameLogic {
      *  plays sound for win or lose
      * and shows the final message
      * */
-    private void handleGameOver(String winnerUserId, String currPlayerUserId, String gameState) {
-        isGameFinished = true;
-        boolean isCurrentPlayerWinner = winnerUserId.equals(currPlayerUserId);
-        gameRunnablesHandler.removeCallbacksAndMessages(null);  //stop all runnables
+    private void handleGameOver(Game game) {
+        Log.d("myDEBUG GameLogic", "handleGameOver: game is finished");
+        isGameInProgress = false;
+
+        boolean isCurrentPlayerWinner = game.getWinnerUserId().equals(currPlayerGameBoard.getUser().getId());
+        gameRunnablesHandler.removeCallbacksAndMessages(null);  //null = stop all runnables
         stopCountdown();
-        getCurrentPlayerBoard(); // another single call to not miss the last 'hit' attack
+        getCurrentPlayerBoard(); // last call to not miss the last 'hit' attack
         AudioUtils.makeSound(context, AudioEnum.GAME_OVER);
         if (isCurrentPlayerWinner) {
             AudioUtils.makeSound(context, AudioEnum.WIN);
@@ -259,7 +283,7 @@ public class GameLogic {
             AudioUtils.makeSound(context, AudioEnum.LOSE_SOUND);
         }
         ((GameActivity) context).disableGameboard();
-        ((GameActivity) context).displayFinalMessage(gameState, isCurrentPlayerWinner);
+        ((GameActivity) context).displayFinalMessage(game.getGameState(), isCurrentPlayerWinner);
     }
 
 
@@ -280,28 +304,21 @@ public class GameLogic {
      * */
     private void getCurrentPlayerBoard() {
         String boardId = currPlayerGameBoard.getBoardId();
-        String currPlayerId = currPlayerGameBoard.getUser().getId();
-        String gameId = currPlayerGameBoard.getGameId();
         Log.d("myDEBUG GameLogic", "in waitForCurrentBoard");
         GameActionNW.getBoard(boardId, new ICallbacks<String>() {
             @Override
             public void onResponseSuccess(String response) {
                 ArrayList<Tile> board = JsonHelper.extractBoardFromResponse(response);
                 int position = findTheAttackedPos(board); //could return -1
-                updateCurrentPlayerBoardData(board, gameId);
+                updateCurrentPlayerBoardData(board);
 
                 if (position != -1)   // only if the opponent has attacked
                     handleBeingAttackedResult(position);
 
                 updateAllShips(board);
 
-                if (!isGameFinished) {
-                    gameRunnablesHandler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            getGame(gameId, currPlayerId);
-                        }
-                    }, GET_GAME_DELAY_MILLIS);
+                if (isGameInProgress) {
+                    gameRunnablesHandler.postDelayed(getGameRepeatTask, GET_GAME_DELAY_MILLIS);
                 }
             }
 
@@ -313,6 +330,10 @@ public class GameLogic {
 
     }
 
+
+    /*
+     *  Updates the ships with the attack result
+     * */
     private void updateAllShips(@NonNull ArrayList<Tile> board) {
         //loop on my ships
         for (Ship ship : currPlayerGameBoard.getShips()) {
@@ -362,8 +383,10 @@ public class GameLogic {
         }
     }
 
-
-    private void updateCurrentPlayerBoardData(ArrayList<Tile> board, String gameId) {
+    /*
+     *  Updates the current player board with the attack result
+     * */
+    private void updateCurrentPlayerBoardData(ArrayList<Tile> board) {
         for (int i = 0; i < board.size(); i++) {
             Tile tile = board.get(i);
             currPlayerGameBoard.getBoard().get(i).setState(tile.getState());
@@ -396,63 +419,73 @@ public class GameLogic {
      *  This method sends the attack on position on the opponent's board to the server
      *  on success it updates the opponent's board
      * */
-    public void attackOpponent(String gameId, String currPlayerUserId, int attackPosition) {
+    public void attackOpponent(int attackPosition) {
         // cancel all requests on queue
-        Netcom.getInstance(context).cancelAllRequests();
-
+        Netcom.getInstance(context).getRequestQueue().cancelAll(RequestEnum.POST_ATTACK.getName());
+        Log.d("myDEBUG GameLogic", "cancelAll on POST_ATTACK ");
         gameRunnablesHandler.removeCallbacks(randomAttackTask);
-        //log removed callbacks
-        Log.d("myDEBUG GameLogic", "attackOpponent: removed randomAttackTask");
-        Log.d("myDEBUG GameLogic", "in attackOpponent");
-        GameActionNW.postAttack(context, gameId, currPlayerUserId, attackPosition, new ICallbacks<String>() {
+        Log.d("myDEBUG GameLogic", "removeCallbacks on randomAttackTask ");
+        GameActionNW.postAttack(context, currPlayerGameBoard.getGameId(), currPlayerGameBoard.getUser().getId(), attackPosition, new ICallbacks<String>() {
             @Override
             public void onResponseSuccess(String response) {
                 Log.d("myDEBUG GameLogic", "attack onResponse:  " + response);
                 attacksCounter++;
-                JSONObject value = null;
+                JSONObject value;
                 try {
-                    value = new JSONObject(response).getJSONObject("value");
-                    String attackResult = value.getString("attackResult");
-                    String shipType = value.getString("shipType");
-                    String orientation = value.getString("orientation");
-                    Log.d("myDEBUG GameLogic", "attack onResponse: attackPos:" + attackPosition + " attackResult: " + attackResult + " shipType: " + shipType + " orientation: " + orientation);
-//                    retryAttackCounter = 0;
-                    handleAttackOpponentResult(attackPosition, attackResult, shipType, orientation, value);
-                    getGame(gameId, currPlayerUserId); //SO player knows if it is his turn
+                    value = new JSONObject(response).getJSONObject(ServerStrings.VALUE);
+                    Log.d("myDEBUG GameLogic", "attack onResponse: value: " + value);
+                    Log.d("myDEBUG GameLogic", "attack onResponse: attackPosition: " + attackPosition);
+                    handleAttackOpponentResult(attackPosition, value);
+                    getGame(); //So player knows if it is his turn
                 } catch (JSONException e) {
                     Log.e("myDEBUG GameLogic", "attack catch  RuntimeException onResponse: " + e);
-//                    retryAttack(attackPosition);
                 }//end of catch
             }//end of onResponse
 
             @Override
             public void onError(Exception e) {
                 Log.e("myDEBUG GameLogic", "attack onError from server on postAttack: " + e);
-//                retryAttack(attackPosition);
             }
         });
     }
 
 
-    private void handleAttackOpponentResult(int attackPosition, String attackResult, String
-            shipType, String orientation, JSONObject value) {
+    /*
+     *  Updates the opponent's board with the attack result
+     *  and plays the sound for the attack result
+     * */
+    private void handleAttackOpponentResult(int attackPosition, JSONObject value) {
         Integer shipPosition = null;
-        TileStateEnum state = TileStateEnum.fromString(attackResult);
-        if (attackResult.equals("sunk")) {
-            state = TileStateEnum.HIT; // special case since there is no tile state as SUNK
+        AttackResultEnum attackResult = null;
+        ShipTypeEnum shipType = null;
+        OrientationEnum orientation = null;
+        TileStateEnum state;
+        try { //some values may be null. In this case, catch the exception
+            attackResult = AttackResultEnum.fromString(value.getString(ServerStrings.ATTACK_RESULT));
+            shipType = ShipTypeEnum.fromString(value.getString(ServerStrings.SHIP_TYPE));
+            orientation = OrientationEnum.fromString(value.getString(ServerStrings.ORIENTATION));
+            shipPosition = value.getInt(ServerStrings.POSITION);
+        } catch (JSONException e) {
+            Log.e("myDEBUG GameLogic", "handleAttackOpponentResult onResponse catch error: " + e);
+        }
+        if (attackResult != null) {
+            if (attackResult.equals(AttackResultEnum.SUNK))
+                state = TileStateEnum.HIT; // special case since there is no tile state as SUNK
+            else
+                state = TileStateEnum.fromString(attackResult.getName());
+
+            Log.d("myDEBUG GameLogic", "handleAttackOpponentResult onResponse: state: " + state);
+            ((GameActivity) context).updateOpponentBoard(attackPosition, attackResult, shipType, orientation, shipPosition, state);
+            AudioEnum audioEnum = AudioEnum.fromString(attackResult.getName());
             try {
-                shipPosition = value.getInt("position"); //TODO could be null  - taken care at catch
-            } catch (JSONException e) {
+                Log.d("myDEBUG GameLogic", "handleAttackOpponentResult onResponse: audioEnum: " + audioEnum);
+                AudioUtils.makeSound(context, audioEnum);
+            } catch (Exception e) {
                 Log.e("myDEBUG GameLogic", "handleAttackResult onResponse catch error: " + e);
             }
+            ((GameActivity) context).updateOpponentBoard(attackPosition, attackResult, shipType, orientation, shipPosition, state);
         }
-        AudioEnum audioEnum = AudioEnum.fromString(attackResult);
-        try {
-            AudioUtils.makeSound(context, audioEnum);
-        } catch (Exception e) {
-            Log.e("myDEBUG GameLogic", "handleAttackResult onResponse catch error: " + e);
-        }
-        ((GameActivity) context).updateOpponentBoard(attackPosition, attackResult, shipType, orientation, shipPosition, state);
+
     }
 
 
@@ -462,15 +495,14 @@ public class GameLogic {
      * */
     public static void notifyGameEnd(Context context, String gameId) {
         gameRunnablesHandler.removeCallbacks(keepAliveTask);
+        gameRunnablesHandler.removeCallbacks(getGameRepeatTask);
+        PlacementActivity.startGameTimeoutRunnablehandler.removeCallbacks(PlacementActivity.startGameTimeoutRunnableTask);
+        Netcom.getInstance(context).getRequestQueue().cancelAll(RequestEnum.CREATE_BOARD.getName());
+        Log.d("myDEBUG GameLogic", "calling notifyGameEnd on gameId : " + gameId);
         GameLifecycleNW.notifyGameEnded(context, gameId, new ICallbacks<String>() {
             @Override
             public void onResponseSuccess(String response) {
                 Log.d("myDEBUG GameLogic", "notifyGameEnd onResponse: " + response);
-                try {
-                    String state = new JSONObject(response).getString("value");
-                } catch (JSONException e) {
-                    Log.e("myDEBUG GameLogic", "notifyGameEnd onResponse catch error: " + e);
-                }
             }
 
             @Override
@@ -491,10 +523,8 @@ public class GameLogic {
             @Override
             public void onResponseSuccess(String response) {
                 try {
-                    String value = new JSONObject(response).getString("value");
-                    if (value.equals("OK")) {
-                    }
-                } catch (JSONException e) {
+                    Log.d("myDEBUG GameLogic", "keepAlive onResponse: " + response);
+                } catch (Exception e) {
                     Log.e("myDEBUG GameLogic", "keepAlive onResponse catch error: " + e);
                 }
             }
@@ -507,6 +537,10 @@ public class GameLogic {
     }
 
 
+    /*
+     * Sets the keepAliveRunnable to run every 5 seconds
+     * It is called when the player starts the game
+     * */
     public void setKeepAliveRunnable() {
         keepAliveTask = new Runnable() {
             @Override
@@ -533,7 +567,6 @@ public class GameLogic {
                 gameRunnablesHandler.removeCallbacks(GameLogic.keepAliveTask);
                 gameRunnablesHandler.removeCallbacks(randomAttackTask);
                 stopCountdown();
-
             }
 
             @Override
@@ -553,7 +586,7 @@ public class GameLogic {
             @Override
             public void onResponseSuccess(String response) {
                 Log.d("myDEBUG GameLogic", "resumeGame onResponse: " + response);
-                getGame(gameId, currPlayerGameBoard.getUser().getId());
+                getGame();
             }
 
             @Override

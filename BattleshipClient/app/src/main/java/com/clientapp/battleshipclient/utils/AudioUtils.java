@@ -10,17 +10,25 @@ import android.widget.ImageButton;
 import com.clientapp.battleshipclient.R;
 import com.clientapp.battleshipclient.Services.PlaybackService;
 
-public class AudioUtils {
+/*
+*  This class is used to manage the audio of the app
+* It is used to play the music and the sounds of the app
+* */
 
+public class AudioUtils {
 
     public static AudioEnum currentMusic = null;
 
+    /*
+    *  This method is used to get the resource id of the music
+    *  It is used to get the music that is played in the app
+    */
     public static int getMusicResId(AudioEnum musicEnum) {
         currentMusic = musicEnum;
         switch (musicEnum) {
             case LOBBY_MUSIC:
                 return R.raw.main_activity_music;
-            case ARRANGE_GAMEBOARD:
+            case PLACE_SHIPS:
                 return R.raw.getting_ready_music;
             case GAME_MUSIC:
                 return R.raw.game_music;
@@ -36,12 +44,10 @@ public class AudioUtils {
 
     }
 
-//    public static enum AudioEnum {
-//        GETTING_READY_MUSIC, GAME_MUSIC, WIN_MUSIC, LOSE_MUSIC, LEADERBOARD_MUSIC, LOBBY_MUSIC
-//    }
 
-    ;
-
+    /*
+    *  Toggles the music on and off
+    * */
     public static void toggleMusic(Context context) {
         //save mute state across app
         PreferencesManager prefs = PreferencesManager.getInstance(context);
@@ -61,6 +67,9 @@ public class AudioUtils {
         context.startService(serviceIntent);
     }
 
+    /*
+    *  Toggles the sounds on and off
+    * */
     public static void toggleSounds(Context context) {
         PreferencesManager prefs = PreferencesManager.getInstance(context);
         boolean isMuted = prefs.isSoundsMuted();
@@ -69,6 +78,9 @@ public class AudioUtils {
         Log.d("myDEBUG AudioUtils", "toggleSounds: " + isMuted);
     }
 
+    /*
+    *  Resumes the music state of the app
+    * */
     public static void resumeMusicState(Context context) {
         PreferencesManager prefs = PreferencesManager.getInstance(context);
         Activity currActivity = (Activity) context;
@@ -87,6 +99,10 @@ public class AudioUtils {
         context.startService(serviceIntent);
     }
 
+    /*
+    *  Plays the music of the app
+    *  It is used to play the music of the app
+    * */
     public static void pauseMusic(Context context) { //no change of button
         Activity currActivity = (Activity) context;
         Intent serviceIntent = new Intent(context, PlaybackService.class);
@@ -94,6 +110,9 @@ public class AudioUtils {
         context.startService(serviceIntent);
     }
 
+    /*
+    *  plays a requested sound
+    * */
     public static void playSound(Context context, MediaPlayer sound) {
         PreferencesManager prefs = PreferencesManager.getInstance(context);
         sound.setVolume(prefs.getVolume(), prefs.getVolume());
@@ -104,14 +123,18 @@ public class AudioUtils {
                 @Override
                 public void onCompletion(MediaPlayer sound) {
                     sound.release();
-                    Log.d("myDEBUG AudioUtils", "onCompletion: " + "sound released");
+//                    Log.d("myDEBUG AudioUtils", "onCompletion: " + "sound released");
                 }
             });
         }
     }
 
+    /*
+    *  This method is used to play a sound
+    *  It is used to play a sound when a ship is hit, sunk, missed, or when the game is over
+    * */
     public static void makeSound(Context context, AudioEnum soundCase) {
-        Log.d("myDEBUG makeSound", "makeSound: soundCase: " + soundCase);
+//        Log.d("myDEBUG makeSound", "makeSound: soundCase: " + soundCase);
         MediaPlayer sound = null;
         switch (soundCase) {
             case HIT:
@@ -137,9 +160,6 @@ public class AudioUtils {
                 break;
         }
         AudioUtils.playSound(context, sound);
-        if (sound == null) {
-            Log.d("myDEBUG AudioUtils", "sound is null");
-        }
 
     }//end makeSound
 }

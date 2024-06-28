@@ -16,8 +16,10 @@ import androidx.core.view.WindowInsetsCompat;
 
 import com.clientapp.battleshipclient.R;
 import com.clientapp.battleshipclient.logic.MenuLogic;
+import com.clientapp.battleshipclient.logic.SignLogic;
 import com.clientapp.battleshipclient.utils.AudioEnum;
 import com.clientapp.battleshipclient.utils.AudioUtils;
+import com.clientapp.battleshipclient.view.view_utils.ClientMessages;
 
 /*
  * This class is the activity for the Options screen
@@ -25,16 +27,16 @@ import com.clientapp.battleshipclient.utils.AudioUtils;
  * and the logic for the buttons
  */
 public class MenuActivity extends BaseActivity {
-
-    private static final long WAITING_VIEW_TIMEOUT_MILLIS = 60000; // 1 minute
+    private static final long WAITING_VIEW_TIMEOUT_MILLIS = 40000; // 1 minute
     private MenuLogic menuLogic;
     private LinearLayout waitingView;
-    private final Handler cancelRequestTimeoutHandler = new Handler();
+    private final Handler cancelMatchRequestTimeoutHandler = new Handler();
     private Runnable cancelRequestTimeoutRunnable;
     private Button startPlayingButton;
     private Button leaderBoardButton;
     private Button instructionsButton;
     private Button quitButton;
+    private Button signOutButton;
 
 
     /*
@@ -48,9 +50,9 @@ public class MenuActivity extends BaseActivity {
         Intent intent = this.getIntent();
         setUserFromIntent(intent);
         String currentPlayerId = getCurrentPlayer().getId();
-        Log.d("DEBUG MenuActivity", "onCreate: " + currentPlayerId);
+        Log.d("myDEBUG MenuActivity", "onCreate: " + currentPlayerId);
         //log all properties of user
-        Log.d("DEBUG MenuActivity", "onCreate: " + getCurrentPlayer().toString());
+        Log.d("myDEBUG MenuActivity", "onCreate: " + getCurrentPlayer().toString());
 
         menuLogic = new MenuLogic(this, getCurrentPlayer());
         setWaitingView();
@@ -71,12 +73,12 @@ public class MenuActivity extends BaseActivity {
     @Override
     protected void initView() {
         super.initView();
-        getXbutton().setVisibility(View.GONE);
+        getXActivityBtn().setVisibility(View.GONE);
     }
 
 
     /*
-     * This method sets the view showing on wainting for opponent match
+     * This method sets the view showing on waiting for opponent match
      * and sets the cancel button listener
      */
     private void setWaitingView() {
@@ -94,18 +96,57 @@ public class MenuActivity extends BaseActivity {
         setStartPlayingButton();
         setWatchLeaderBoardButton();
         setInstructionsButton();
+        setSignOutButton();
         setQuitButton();
     }
 
 
     /*
-     *   This method disables the clickable buttons
+     *  This method sets the listener for the sign out button
+     *  and calls for the method that signs out the user
+     * */
+    private void setSignOutButton() {
+        signOutButton = findViewById(R.id.signOutBtnId);
+        signOutButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AudioUtils.makeSound(MenuActivity.this, AudioEnum.BUTTON);
+                signOut();
+            }
+        });
+    }
+
+
+    /*
+     *  This method is called when the user wants to sign out
+     *  and navigates to the sign activity
+     * */
+    private void signOut() {
+        SignLogic.keepUserHandler.removeCallbacks(SignLogic.keepUserAlivetask);
+        goToSignActivity();
+    }
+
+
+    /*
+     *  This method navigates to the sign activity
+     *  and finishes the current activity
+     * */
+    private void goToSignActivity() {
+        Intent intent = new Intent(MenuActivity.this, SignActivity.class);
+        startActivity(intent);
+        finish();
+    }
+
+
+    /*
+     *  This method disables the clickable buttons
      *  when the user is waiting for an opponent match
      * */
     public void disableClickableButtons() {
         startPlayingButton.setClickable(false);
         leaderBoardButton.setClickable(false);
         instructionsButton.setClickable(false);
+        signOutButton.setClickable(false);
         quitButton.setClickable(false);
     }
 
@@ -124,8 +165,6 @@ public class MenuActivity extends BaseActivity {
                 goToLeaderBoard(v);
             }
         });
-
-
     }
 
 
@@ -135,7 +174,17 @@ public class MenuActivity extends BaseActivity {
      */
     private void setStartPlayingButton() {
         startPlayingButton = findViewById(R.id.startPlayingBtnId);
-        menuLogic.setStartPlayingListener(this, startPlayingButton);
+        startPlayingButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                AudioUtils.makeSound(MenuActivity.this, AudioEnum.BUTTON);
+                startPlayingButton.setClickable(false);
+                Log.d("myDEBUG MenuLogic", "onClick: startPlayingButton");
+                displayWaitingForOpponent();
+                disableClickableButtons();
+                menuLogic.startPlaying();
+            }
+        });
     }
 
 
@@ -144,7 +193,7 @@ public class MenuActivity extends BaseActivity {
      * for the waiting view
      */
     public void cancelRunnable() {
-        cancelRequestTimeoutHandler.removeCallbacks(cancelRequestTimeoutRunnable);
+        cancelMatchRequestTimeoutHandler.removeCallbacks(cancelRequestTimeoutRunnable);
     }
 
 
@@ -190,7 +239,7 @@ public class MenuActivity extends BaseActivity {
         cancelPlayingButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                menuLogic.cancelRequests(MenuActivity.this); //cancels the requests on client and server
+                menuLogic.cancelCreateGame(); //cancels the requests on client and server
                 viewChangeOnRequestCanceled();
             }
         });
@@ -201,7 +250,7 @@ public class MenuActivity extends BaseActivity {
      * This method is called when the request is canceled
      * and hides the waiting view
      */
-    public void viewChangeOnRequestCanceled() {
+    public void viewChangeOnRequestCanceled() {//TODO change this method
         waitingView.setVisibility(View.GONE);
         setButtons();
         cancelRunnable();
@@ -212,11 +261,11 @@ public class MenuActivity extends BaseActivity {
      * This method is called when the an opponent match was found
      * and starts the placement activity
      */
-    public void goToArrangeGameBoardActivity(String gameId) {
-        Intent intent = new Intent(MenuActivity.this, ArrangeGameBoardActivity.class);
+    public void goToPlacementActivity(String gameId) {
+        Intent intent = new Intent(MenuActivity.this, PlacementActivity.class);
         intent.putExtra("currentPlayer", getCurrentPlayer());
         intent.putExtra("gameId", gameId);
-        Log.d("DEBUG MenuActivity", "goToArrangeGameBoardActivity: " + gameId);
+        Log.d("myDEBUG MenuActivity", "goToPlacementActivity: " + gameId);
         startActivity(intent);
         finishAffinity();
     }
@@ -239,19 +288,19 @@ public class MenuActivity extends BaseActivity {
     public void displayWaitingForOpponent() {
         waitingView.setVisibility(View.VISIBLE);
         TextView waitingText = findViewById(R.id.waitingTextViewId);
-        waitingText.setText("WAIT FOR MATCH...");
-        Log.d("DEBUG MenuActivity", "displayWaitingForOpponent: ");
+        waitingText.setText(ClientMessages.WAITING_FOR_OPPONENT);
+        Log.d("myDEBUG MenuActivity", "displayWaitingForOpponent: ");
         //setRunnable
         cancelRequestTimeoutRunnable = new Runnable() {
             @Override
             public void run() {
                 viewChangeOnRequestCanceled();
-                menuLogic.cancelRequests(MenuActivity.this);
+                menuLogic.cancelCreateGame();
                 displayNoMatchFound();
             }
         };
         //run the Runnable after WAITING_VIEW_TIMEOUT_MILLIS
-        cancelRequestTimeoutHandler.postDelayed(cancelRequestTimeoutRunnable, WAITING_VIEW_TIMEOUT_MILLIS);
+        cancelMatchRequestTimeoutHandler.postDelayed(cancelRequestTimeoutRunnable, WAITING_VIEW_TIMEOUT_MILLIS);
 
     }
 
@@ -259,8 +308,8 @@ public class MenuActivity extends BaseActivity {
     /*
      *  This method is called when no match was found
      * */
-    private void displayNoMatchFound() {
-        Log.d("DEBUG MenuActivity", "displayNoMatchFound: ");
+    private void displayNoMatchFound() { // TODO make this a util method
+        Log.d("myDEBUG MenuActivity", "displayNoMatchFound: ");
         waitingView.setVisibility(View.VISIBLE);
         TextView waitingText = findViewById(R.id.waitingTextViewId);
         waitingText.setText("NO MATCH FOUND!");
@@ -274,16 +323,27 @@ public class MenuActivity extends BaseActivity {
     }
 
 
+    /*
+     *  This method is called when the activity is stopped
+     * */
+    @Override
     public void onStop() {
         super.onStop();
     }
 
-
+    /*
+    *  This method is called when the activity is paused
+    * */
+    @Override
     public void onPause() {
         super.onPause();
         AudioUtils.pauseMusic(this);
     }
 
+    /*
+    *  This method is called when the activity is resumed
+    * */
+    @Override
     public void onResume() {
         super.onResume();
         waitingView.setVisibility(View.GONE);
@@ -294,4 +354,4 @@ public class MenuActivity extends BaseActivity {
     }
 
 
-}
+}//

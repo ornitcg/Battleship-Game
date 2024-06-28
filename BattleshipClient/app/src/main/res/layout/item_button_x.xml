@@ -5,7 +5,7 @@
     android:layout_height="wrap_content">
 
     <ImageButton
-        android:id="@+id/XbuttonId"
+        android:id="@+id/XActivityButtonId"
         android:layout_width="34dp"
         android:layout_height="34dp"
         android:layout_marginStart="360dp"

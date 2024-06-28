@@ -7,6 +7,11 @@ import com.battleship.BattleshipServer.resources.ApiResponse;
 
 public class Helper {
 
+
+    /*
+     *  This method is responsible for changing the game state of a game
+     *  Should send - gameId, gameState, failedMsg, gameDao.
+     * */
     public static ApiResponse<String> changeGameState(String gameId, GameStateEnum gameState, String failedMsg, GameDao gameDao) {
         ApiResponse<String> retVal;
         ApiResponse<Game> getResponse = gameDao.get(gameId);

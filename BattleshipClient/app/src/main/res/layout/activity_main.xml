@@ -9,7 +9,7 @@
     app:layout_constrainedHeight="true"
     tools:context=".view.activities.MainActivity">
 
-    <include layout="@layout/base_layout" />
+    <include layout="@layout/layout_base" />
 
 <!--    <include layout="@layout/yes_no_layout" />-->
 

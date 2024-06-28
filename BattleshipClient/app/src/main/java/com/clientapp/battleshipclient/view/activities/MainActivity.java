@@ -11,20 +11,29 @@ import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
 import com.clientapp.battleshipclient.R;
-import com.clientapp.battleshipclient.networking.EndpointResources;
+import com.clientapp.battleshipclient.networking.NWutils.EndpointResources;
 import com.clientapp.battleshipclient.utils.AudioEnum;
 import com.clientapp.battleshipclient.utils.AudioUtils;
 import com.clientapp.battleshipclient.utils.PreferencesManager;
 
+
+/*
+ *  This class represents the main activity of the application
+ *  It is the first activity that is launched when the application is started
+ * */
 public class MainActivity extends BaseActivity {
 
-
+    /*
+     *  This method is called when the activity is first created
+     *  It is called after the onStart method
+     *  It is called after the onRestoreInstanceState method
+     * */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        EndpointResources.initializeEndpoints(this); //initialize the endpoints
+        EndpointResources.initializeEndpoints(""); //initialize the endpoints
         setPreferences(); //first set preferences
 
         setMusicService(AudioEnum.LOBBY_MUSIC); // set the music service
@@ -36,6 +45,11 @@ public class MainActivity extends BaseActivity {
         });
     }
 
+
+    /*
+     *  This method is called to initialize the view
+     *  It is called in the onCreate method
+     * */
     @Override
     protected void initView() { //called here to add the set enter button
         super.initView();
@@ -43,9 +57,9 @@ public class MainActivity extends BaseActivity {
     }
 
 
-
-
-
+    /*
+     *  This method is called to set the preferences
+     * */
     private void setPreferences() {
         PreferencesManager prefs = PreferencesManager.getInstance(this);
         prefs.setIsMusicMuted(false);
@@ -55,6 +69,9 @@ public class MainActivity extends BaseActivity {
     }
 
 
+    /*
+     *  This method is called to set the enter button
+     * */
     private void setEnterButton() {
         Button enterBtn = findViewById(R.id.enterBtnId);
         enterBtn.setOnClickListener(new View.OnClickListener() {
@@ -68,30 +85,44 @@ public class MainActivity extends BaseActivity {
     }
 
 
-
-    public void onStart() {
-        super.onStart();
-        Log.d("DEBUG on Main Activity", "onStart: " + prefs.isMusicMuted());
-    }
+    /*
+     *  Navigate to the sign form
+     * */
     public void goToSignForm(View v) {
         Intent intent = new Intent(MainActivity.this, SignActivity.class);
         startActivity(intent);
         finish();
     }
 
+
+    /*
+     *  This method is called when the activity is visible to the user
+     *  It is called after the onCreate method
+     * */
+    @Override
+    public void onStart() {
+        super.onStart();
+        Log.d("DEBUG on Main Activity", "onStart: " + prefs.isMusicMuted());
+    }
+
+    /*
+     *  Override the onPause method
+     * */
+    @Override
     public void onPause() {
         super.onPause();
         AudioUtils.pauseMusic(MainActivity.this); // mute the music
     }
 
+
+    /*
+     *  Override the onResume method
+     * */
+    @Override
     public void onResume() {
         super.onResume();
         AudioUtils.resumeMusicState(MainActivity.this); // mute the music
     }
 
 
-    public void onDestroy() {
-        super.onDestroy();
-//        stopService(new Intent(this, PlaybackService.class));
-    }
 }

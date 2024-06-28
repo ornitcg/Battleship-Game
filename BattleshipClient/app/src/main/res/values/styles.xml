@@ -1,6 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <style name="DarkRadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="buttonTint">@color/navy</item>
+        <item name="android:textColor">@color/navy</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="autoSizeStepGranularity">2sp</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="backgroundTint">@null</item>
+    </style>
+
+
+    <style name="WhiteRadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="buttonTint">@color/white</item>
+        <item name="android:textColor">@color/white</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="autoSizeStepGranularity">2sp</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="backgroundTint">@null</item>
+    </style>
+
+    <style name="DisabledRadioButton" parent="Widget.AppCompat.CompoundButton.RadioButton">
+        <item name="buttonTint">@color/grey</item>
+        <item name="android:textColor">@color/grey</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textStyle">bold|italic</item>
+        <item name="android:fontFamily">monospace</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textAlignment">center</item>
+        <item name="autoSizeStepGranularity">2sp</item>
+        <item name="android:drawablePadding">10dp</item>
+        <item name="backgroundTint">@null</item>
+    </style>
+
     <style name="SmallTextAppearance">
         <item name="android:textColor">@color/white</item>
         <item name="android:layout_width">wrap_content</item>
