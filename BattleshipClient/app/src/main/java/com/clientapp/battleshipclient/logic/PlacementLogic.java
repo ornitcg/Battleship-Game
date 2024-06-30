@@ -7,7 +7,6 @@ import static android.view.DragEvent.ACTION_DRAG_STARTED;
 import static android.view.DragEvent.ACTION_DROP;
 
 import android.content.Context;
-import android.os.Handler;
 import android.util.Log;
 import android.view.DragEvent;
 import android.widget.ImageView;
@@ -48,18 +47,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class PlacementLogic {
 
-    public static final long START_GAME_TIMEOUT_MILLIS = 30000;
-    public static Handler startGameTimeoutHandler = new Handler();
-    private static int retrySendGameboardCounter;
     private Context context;
     private String gameId;
     private User currentPlayer;
     private HashMap<Integer, Ship> shipCollection;
     private ArrayList<Tile> tilesList;
     private PlacementAdapter placementAdapter;
-    private String lastShipClickedId = "";
-    private int lastShipClickedPosition = -1;
-    private HashSet<String> clickedShipSet = new HashSet<>();
 
     public PlacementLogic(Context context, String gameId, User currentPlayer, HashMap<Integer, Ship> shipCollection, ArrayList<Tile> tilesList, PlacementAdapter gridLayoutAdapter) {
         this.gameId = gameId;
@@ -330,7 +323,7 @@ public class PlacementLogic {
             for (int i = 0; i < shipsSize; i++) {
                 int position = shipTilesPositions.get(i);
                 tilesList.get(position).setState(TileStateEnum.VALID_FOR_DROP);
-                tilesList.get(position).setShipId(String.valueOf(ship.getBottomViewId())); //TODO delete
+                tilesList.get(position).setShipId(String.valueOf(ship.getBottomViewId()));
             }
 //            logTilesStatus("setTilesStatusData"); // used for debugging
             return;
@@ -408,25 +401,6 @@ public class PlacementLogic {
         ship.setPlaced(false);
         ArrayList<Integer> shipPositionsArrayCopy = new ArrayList<>(ship.getShipPositionsArray());
         ship.changeOrientation(); //change the orientation of the ship data
-        //make a copy of shipPositionsArray
-//        if (lastShipClickedId.equals("") || !lastShipClickedId.equals(ship.getId())) { //if it is a new ship
-//            lastShipClickedId = ship.getId();
-//            clickedShipSet.add(lastShipClickedId);
-//            lastShipClickedPosition = ship.getEdgePosition();
-//        } else if (lastShipClickedId.equals(ship.getId())) {
-//            if (clickedShipSet.contains(lastShipClickedId)) //if this ship was clicked anytime before
-//                setShipNewPositions(ship, lastShipClickedPosition, OrientationEnum.EDGE.getName()); //use shift 0
-//            else //if this ship was not clicked before
-//                setShipNewPositions(ship, lastShipClickedPosition, null); //use default shift
-//
-//            if (isValidForDrop(ship)) {
-//                ship.setPlaced(true);
-//                setTilesWithShipAndStatus(ship);
-//                setNearShipTiles(ship);
-//                refreshTiles();
-//                return true;
-//            }
-//        }
 
         Log.d("myDEBUG changeOrientation", "orientationChangeLogic shipPositionsArrayCopy: " + shipPositionsArrayCopy);
 
@@ -523,9 +497,9 @@ public class PlacementLogic {
      * */
     private boolean checkHorizontalAxis(Ship ship, int rotateAxisTilePosition) {
         int min = rotateAxisTilePosition - ship.getSize() + 1;
-        int max = rotateAxisTilePosition + ship.getSize() - 1;
+//        int max = rotateAxisTilePosition + ship.getSize() - 1;
         boolean isValid = false;
-        for (int j = min; j <= max; j++) { // loop on the whole range
+        for (int j = min; j <= rotateAxisTilePosition; j++) { // loop on the whole range
             if (j / 10 != rotateAxisTilePosition / 10) { // if the tile is not in the same row
                 continue;
             }

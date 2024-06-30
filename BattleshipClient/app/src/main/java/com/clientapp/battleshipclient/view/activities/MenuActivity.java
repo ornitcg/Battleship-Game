@@ -27,16 +27,17 @@ import com.clientapp.battleshipclient.view.view_utils.ClientMessages;
  * and the logic for the buttons
  */
 public class MenuActivity extends BaseActivity {
-    private static final long WAITING_VIEW_TIMEOUT_MILLIS = 40000; // 1 minute
+    public static final int WAITING_VIEW_TIMEOUT_MILLIS = 15000;
     private MenuLogic menuLogic;
     private LinearLayout waitingView;
-    private final Handler cancelMatchRequestTimeoutHandler = new Handler();
+    public final Handler cancelMatchRequestTimeoutHandler = new Handler();
     private Runnable cancelRequestTimeoutRunnable;
     private Button startPlayingButton;
     private Button leaderBoardButton;
     private Button instructionsButton;
     private Button quitButton;
     private Button signOutButton;
+
 
 
     /*
@@ -128,7 +129,7 @@ public class MenuActivity extends BaseActivity {
 
 
     /*
-     *  This method navigates to the sign activity
+     *  This method navigates to the sign activity on sign out request
      *  and finishes the current activity
      * */
     private void goToSignActivity() {
@@ -250,7 +251,7 @@ public class MenuActivity extends BaseActivity {
      * This method is called when the request is canceled
      * and hides the waiting view
      */
-    public void viewChangeOnRequestCanceled() {//TODO change this method
+    public void viewChangeOnRequestCanceled() {
         waitingView.setVisibility(View.GONE);
         setButtons();
         cancelRunnable();
@@ -288,7 +289,7 @@ public class MenuActivity extends BaseActivity {
     public void displayWaitingForOpponent() {
         waitingView.setVisibility(View.VISIBLE);
         TextView waitingText = findViewById(R.id.waitingTextViewId);
-        waitingText.setText(ClientMessages.WAITING_FOR_OPPONENT);
+        waitingText.setText(ClientMessages.WAITING_FOR_MATCH);
         Log.d("myDEBUG MenuActivity", "displayWaitingForOpponent: ");
         //setRunnable
         cancelRequestTimeoutRunnable = new Runnable() {
@@ -308,11 +309,11 @@ public class MenuActivity extends BaseActivity {
     /*
      *  This method is called when no match was found
      * */
-    private void displayNoMatchFound() { // TODO make this a util method
+    private void displayNoMatchFound() {
         Log.d("myDEBUG MenuActivity", "displayNoMatchFound: ");
         waitingView.setVisibility(View.VISIBLE);
         TextView waitingText = findViewById(R.id.waitingTextViewId);
-        waitingText.setText("NO MATCH FOUND!");
+        waitingText.setText(ClientMessages.NO_MATCH_FOUND);
         new Handler().postDelayed(new Runnable() {
             @Override
             public void run() {

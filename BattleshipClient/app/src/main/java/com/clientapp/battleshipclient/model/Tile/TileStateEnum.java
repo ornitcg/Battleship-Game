@@ -21,7 +21,7 @@ public enum TileStateEnum {
     }
 
 
-    public static TileStateEnum fromString(String name) { //TODO delete
+    public static TileStateEnum fromString(String name) {
         TileStateEnum retVal = null;
 
         for (TileStateEnum state : TileStateEnum.values()) {

@@ -30,7 +30,8 @@ public class PlacementAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<Tile> tilesList;
-    private HashMap<Integer, View> mStableViews = new HashMap<>();
+    private HashMap<Integer, View> stableViews = new HashMap<>();
+    private OnTileDragListener tileDragListener = null;
 
 
     /*
@@ -92,19 +93,18 @@ public class PlacementAdapter extends BaseAdapter {
     @Override
     public View getView(int position, View tileView, ViewGroup parentContainer) {
         if (tileView == null) {
-            tileView = mStableViews.get(position);
+            tileView = stableViews.get(position);
         }
 
         LayoutInflater tileInflater = LayoutInflater.from(context);
         if (tileView == null) {
-//            tileView = new View(context); // if the tileView is null, create a new tileView
             tileView = tileInflater.inflate(R.layout.item_square_tile_sea, parentContainer, false);
-            mStableViews.put(position, tileView);
+            stableViews.put(position, tileView);
 
             tileView.setTag(position);
             tileView.setOnDragListener((v, event) -> {
-                if (mTileDragListener != null)
-                    return mTileDragListener.onTileDrag(v, event, position);
+                if (tileDragListener != null)
+                    return tileDragListener.onTileDrag(v, event, position);
                 return false;
             });
         }
@@ -146,21 +146,32 @@ public class PlacementAdapter extends BaseAdapter {
 
 
 
-    //for debugging
-    private OnTileDragListener mTileDragListener = null;
-
+    /*
+     *  Sets the tile drag listener for the gridview
+     * */
     public void setTileDragListener(OnTileDragListener listener) {
-        mTileDragListener = listener;
+        tileDragListener = listener;
     }
 
+
+    /*
+     *  Returns the tile drag listener for the gridview
+     * */
     public OnTileDragListener getTileDragListener() {
-        return mTileDragListener;
+        return tileDragListener;
     }
 
+
+    /*
+     *  Returns the gridlayout of the gridview
+     * */
     public ViewGroup getGridLayout() {
-        return (ViewGroup) mStableViews.get(0).getParent();
+        return (ViewGroup) stableViews.get(0).getParent();
     }
 
+    /*
+     *  Interface for the tile drag listener
+     * */
     public interface OnTileDragListener {
         boolean onTileDrag(View v, DragEvent event, int position);
     }

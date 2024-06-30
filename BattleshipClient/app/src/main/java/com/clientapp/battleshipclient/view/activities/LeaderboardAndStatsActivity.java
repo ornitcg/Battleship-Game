@@ -49,8 +49,10 @@ public class LeaderboardAndStatsActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_leaderboard_stats);
-        leaderBoardBtn = findViewById(R.id.LeaderBoardBtnId);
-        statsBtn = findViewById(R.id.statsBtnId);
+
+        initiallizeButtons();
+
+
         Intent intent = this.getIntent();
         currPlayer = (User) intent.getSerializableExtra("currentPlayer");
         leaderBoardAndStatsLogic = new LeaderboardAndStatsLogic(this, currPlayer);
@@ -82,6 +84,18 @@ public class LeaderboardAndStatsActivity extends BaseActivity {
 
             displayLeaderBoardFragment();
         }
+    }
+
+
+    /*
+    *  This method initializes the buttons in the LeaderboardAndStatsActivity
+    *  It sets the Leaderboard button as selected and the My Stats button as not selected
+    * */
+    private void initiallizeButtons() {
+        leaderBoardBtn = findViewById(R.id.LeaderBoardBtnId);
+        statsBtn = findViewById(R.id.statsBtnId);
+        leaderBoardBtn.setBackgroundResource(R.drawable.button_fragment_selected);
+        statsBtn.setBackgroundResource(R.drawable.button_fragment);
     }
 
     /*
@@ -149,7 +163,7 @@ public class LeaderboardAndStatsActivity extends BaseActivity {
      *  The StatsFragment is created with the current stats of the player and displayed in the fragment container
      * */
     private void displayMyStatsFragment(CurrentStats currentStats) {
-        StatsFragment statsFragment = StatsFragment.newInstance(currentStats); //TODO
+        StatsFragment statsFragment = StatsFragment.newInstance(currentStats);
         getSupportFragmentManager().beginTransaction().replace(R.id.fragmentContainerId, statsFragment).addToBackStack(null).commit();
     }
 

@@ -39,7 +39,7 @@ import lombok.NonNull;
 * */
 public class GameLogic {
     private static final int GET_GAME_DELAY_MILLIS = 1000;
-    public static final int RANDOM_ATTACK_DELAY_MILLIS = 15000;
+    public static final int RANDOM_ATTACK_DELAY_MILLIS = 15100;
     private static final int ATTACK_MSG_MILLIS = 2000;
     private final int KEEP_ALIVE_DELAY_MILLIS = 5000;
     private final int GET_GAME_MAX_TRIES = 10;
@@ -209,7 +209,6 @@ public class GameLogic {
             // Opponent turn
             gameRunnablesHandler.removeCallbacks(keepAliveTask);//stop the periodic updates
             Log.d("myDEBUG GameLogic", "BEING ATTACKED");
-            stopCountdown();
             ((GameActivity) context).disableBoardForAttack(ClientMessages.OPPONENT_TURN);
             if (!isFirstKeepAliveCalled) {
                 keepAlive(currPlayerGameBoard.getGameId());

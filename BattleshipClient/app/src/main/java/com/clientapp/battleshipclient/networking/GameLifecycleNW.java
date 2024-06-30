@@ -13,6 +13,7 @@ import com.clientapp.battleshipclient.logic.ICallbacks;
 import com.clientapp.battleshipclient.networking.NWutils.CustomRetryPolicy;
 import com.clientapp.battleshipclient.networking.NWutils.EndpointResources;
 import com.clientapp.battleshipclient.networking.NWutils.RequestEnum;
+import com.clientapp.battleshipclient.view.activities.MenuActivity;
 
 import org.json.JSONObject;
 
@@ -33,7 +34,7 @@ public class GameLifecycleNW {
      * being used on all requests to avoid multiple requests being sent to the server
      */
     public static CustomRetryPolicy noRetryPolicy(Object tag) {
-        int socketTimeout = 5000;
+        int socketTimeout = 60000;
         int maxTries = 0;          // Set to 0 to disable retries
         float backoffMultiplier = 0; // backoff multiplier
         return new CustomRetryPolicy(socketTimeout, maxTries, backoffMultiplier, tag );
@@ -70,7 +71,8 @@ public class GameLifecycleNW {
                 callback.onError(error);
             }
         });
-        request.setRetryPolicy(noRetryPolicy(RequestEnum.CREATE_GAME.getName()) );
+        request.setRetryPolicy(new CustomRetryPolicy( MenuActivity.WAITING_VIEW_TIMEOUT_MILLIS, 0, 0, RequestEnum.CREATE_GAME.getName()));
+
         requestQueue.add(request);
         Log.d("nwDEBUG GameLifecycleNW in request", "CREATE_GAME Request added: " + request);
     }
@@ -83,10 +85,8 @@ public class GameLifecycleNW {
      */
     public static void createBoard(Context context, JSONObject gameBoardJSON, ICallbacks<String> callback) {
         RequestQueue requestQueue = Netcom.getInstance(context).getRequestQueue();
-        Log.d("myDEBUG GameLifecycleNW in getBoardId", "gameBoardJSON: " + gameBoardJSON);
         String endpoint = EndpointResources.postCreateBoardEndpoint;
         Log.d("nwDEBUG finalURL GameLifecycleNW in getBoardId", "finalURL Endpoint: " + endpoint);
-        Log.d("myDEBUG getBoardId", "requesting create board");
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.POST, endpoint, gameBoardJSON,
                 new Response.Listener<JSONObject>() {
                     @Override
@@ -111,8 +111,7 @@ public class GameLifecycleNW {
             }
         });
         //log request
-//        Log.d("myDEBUG GameLifecycleNW in getBoardId", "Request: " + request);
-        request.setRetryPolicy(new CustomRetryPolicy(5000, 0, 0f, RequestEnum.CREATE_BOARD.getName()));
+        request.setRetryPolicy(noRetryPolicy(RequestEnum.CREATE_BOARD.getName()));
         requestQueue.add(request);
         Log.d("myDEBUG GameLifecycleNW in getBoardId", "CREATE_BOARD Request added to queue");
     }

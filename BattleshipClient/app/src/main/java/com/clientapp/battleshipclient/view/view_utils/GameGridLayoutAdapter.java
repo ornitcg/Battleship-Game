@@ -13,13 +13,16 @@ import com.clientapp.battleshipclient.model.Tile.Tile;
 import com.clientapp.battleshipclient.model.Tile.TileStateEnum;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class GameGridLayoutAdapter extends BaseAdapter {
 
     private Context context;
     private ArrayList<Tile> tilesList = new ArrayList<>();
+    private HashMap<Integer, View> stableViews = new HashMap<>();
     GameBoard gameBoard;
     GridView gridView;
+    private OnTileClickListener tileOnClickListener;
 
 
     public GameGridLayoutAdapter(Context context, GameBoard gameBoard, GridView gridView) {
@@ -72,12 +75,17 @@ public class GameGridLayoutAdapter extends BaseAdapter {
     * */
     @Override
     public View getView(int position, View tileView, ViewGroup parentContainer) {
+        if (tileView == null) {
+            tileView = stableViews.get(position);
+        }
+
         LayoutInflater tileInflater = LayoutInflater.from(parentContainer.getContext());
 
         if (tileView == null) {
-//            tileView = new View(context); // if the tileView is null, create a new tileView
             tileView = tileInflater.inflate(R.layout.item_square_tile_sea, parentContainer, false);
+            stableViews.put(position, tileView);
         }
+
         TileStateEnum tileState = tilesList.get(position).getState();
         switch (tileState) {
             case SEA:
@@ -100,11 +108,44 @@ public class GameGridLayoutAdapter extends BaseAdapter {
         }
         int width = parentContainer.getWidth();
         int tileSize = width / 10;
-        ViewGroup.LayoutParams params = new ViewGroup.LayoutParams(tileSize, tileSize);
-        tileView.setLayoutParams(params);
+        ViewGroup.LayoutParams params = tileView.getLayoutParams();
+        params.width = tileSize;
+        params.height = tileSize;
+        tileView.requestLayout();
         tileView.setTag(position);
+        tileView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                OnTileClickListener listener = GameGridLayoutAdapter.this.getOnTileClickListener();
+                if (listener == null)
+                    return;
+
+                listener.onTileClick(position, v);
+            }
+        });
         return tileView;
     }
 
 
+    /*
+    *  Interface for the tile click listener
+    * */
+    public interface OnTileClickListener {
+        void onTileClick(int position, View v);
+    }
+
+
+    /*
+    *  Sets the tile click listener
+    * */
+    public void setOnTileClickListener(OnTileClickListener onTileClickListener) {
+        tileOnClickListener = onTileClickListener;
+    }
+
+    /*
+    *  Gets the tile click listener
+    * */
+    public OnTileClickListener getOnTileClickListener() {
+        return tileOnClickListener;
+    }
 }

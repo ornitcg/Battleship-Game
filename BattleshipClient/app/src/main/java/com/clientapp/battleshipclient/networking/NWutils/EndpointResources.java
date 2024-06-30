@@ -53,7 +53,7 @@ public class EndpointResources {
     public static String putKeepUserAliveEndpoint; // where app keeps user signed in
 
     public final static String DEFAULT_IP = "10.0.2.2";
-//    public final static String DEFAULT_IP = "192.168.1.182"; //TODO: change to the server's ip
+//    public final static String DEFAULT_IP = "192.168.1.182"; // for testing on real devices
 
 
 

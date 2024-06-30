@@ -34,7 +34,7 @@ public class GameActionNW {
     * @param callback: the callback to be executed after the request
     * */
     public static void getGame(Context context, String gameId, ICallbacks<String> callback) {
-        RequestQueue requestQueue = Netcom.getInstance(context).getRequestQueue(); //TODO check if null context here is OK
+        RequestQueue requestQueue = Netcom.getInstance(null).getRequestQueue();
         Log.d("nwDEBUG GameLifecycleNW in game request", "gameId: " + gameId);
         String endpoint = EndpointResources.getGameEndpoint;
         String finalUrl = endpoint + gameId;

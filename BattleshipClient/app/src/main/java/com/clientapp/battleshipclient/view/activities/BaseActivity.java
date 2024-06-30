@@ -289,10 +289,6 @@ public class BaseActivity extends AppCompatActivity implements SwipeGestureListe
      * */
     protected void initializeSoundsToggleButton() {
         toggleSoundsBtn = findViewById(R.id.toggleSoundsBtnId);
-        if (toggleSoundsBtn != null) {
-            Log.d("DEBUG BaseActivity", "initializeSoundsToggleButton: " + toggleSoundsBtn);
-            boolean isSoundsMuted = prefs.isSoundsMuted(); //TODO: check if this is necessary
-        }
     }
 
 

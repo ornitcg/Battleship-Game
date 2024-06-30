@@ -26,7 +26,6 @@ import com.clientapp.battleshipclient.model.GameBoard;
 import com.clientapp.battleshipclient.model.Ship.OrientationEnum;
 import com.clientapp.battleshipclient.model.Ship.Ship;
 import com.clientapp.battleshipclient.model.Ship.ShipTypeEnum;
-import com.clientapp.battleshipclient.model.Tile.Tile;
 import com.clientapp.battleshipclient.model.Tile.TileStateEnum;
 import com.clientapp.battleshipclient.model.User;
 import com.clientapp.battleshipclient.utils.AudioEnum;
@@ -66,6 +65,7 @@ public class GameActivity extends BaseActivity {
     private FrameLayout currPlayerFrameLayout;
     public CountDownTimer countDownTimer;
     private HashMap<ShipTypeEnum, ImageView> mapShipTypeToView = new HashMap<>();
+    private boolean isOpponentGridClickable = true;
 
     private enum Location {BOTTOM, TOP}
 
@@ -87,8 +87,9 @@ public class GameActivity extends BaseActivity {
         topMessageTextView = findViewById(R.id.turnMessageTextViewId);
         autoAttackMsgView = findViewById(R.id.msgTextViewId);
         setSwipeListener();
-        setCurrentPlayerGameBoard(intent); //initial board data comes from intent
+        setCountDownTimer();
 
+        setCurrentPlayerGameBoard(intent); //initial board data comes from intent
         setGameId(); //for convenience
         setOpponentGameBoard(); //opponentId data
         setShipResources();
@@ -122,12 +123,9 @@ public class GameActivity extends BaseActivity {
                 if (child == null || child.isAttachedToWindow()){
                     return;
                 }
+
                 child.setVisibility(View.GONE);
                 child.setVisibility(View.VISIBLE);
-                child.setClickable(true);
-                child.setEnabled(true);
-                setOpponentGridClickListeners();
-
             }
         });
 
@@ -160,32 +158,27 @@ public class GameActivity extends BaseActivity {
     }
 
 
+
     /**
      * Sets the click listeners on the opponent grid tiles
-     * called every time the current player is attacking
      */
-    public void setOpponentGridClickListeners() {
-        //loop over opponentGridView children and set click listeners
-        int tilesCount = opponentGridView.getChildCount();
-        ArrayList<Tile> tiles = opponentGameBoard.getBoard();
-        for (int i = 0; i < tilesCount; i++) {
-            View tileView = opponentGridView.getChildAt(i);
-            Log.d("myDEBUG GameActivity", "setOpponentGridClickListeners: " + " i: " + i + "  tileView: " + tileView + " tile state " + tiles.get(i).getState());
-            if (tiles.get(i).getState() != TileStateEnum.SEA) {
-                continue;
-            }
-            tileView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    int attackPosition = (int) v.getTag();
-                    //log tile view
-                    Log.d("myDEBUG GameActivity", "setOnClickListener attackOpponent: tileView: " + v);
+    public void setupOpponentGridClickListeners() {
+        opponentGridLayoutAdapter.setOnTileClickListener(new GameGridLayoutAdapter.OnTileClickListener() {
+            @Override
+            public void onTileClick(int position, View v) {
+                if (!isOpponentGridClickable)
+                    return;
 
-                    Log.d("myDEBUG GameActivity", "setOnClickListener attackOpponent: position: " + attackPosition);
-                    gameLogic.attackOpponent(attackPosition);
-                }
-            });
-        }
+                if (opponentGameBoard.getBoard().get(position).getState() != TileStateEnum.SEA)
+                    return;
+
+                //log tile view
+                Log.d("myDEBUG GameActivity", "setOnClickListener attackOpponent: tileView: " + v);
+
+                Log.d("myDEBUG GameActivity", "setOnClickListener attackOpponent: position: " + position);
+                gameLogic.attackOpponent(position);
+            }
+        });
     }
 
 
@@ -204,7 +197,7 @@ public class GameActivity extends BaseActivity {
      * Stops the board from being clickable
      */
     public void disableGameboard() {
-        disableClickListeners();
+        isOpponentGridClickable = false;
     }
 
 
@@ -352,7 +345,7 @@ public class GameActivity extends BaseActivity {
         stopCountdown();  // Stop any existing countdown first
         displayTopMessage(message);
         setOpponentFrameBackgroundOnAttack(false);
-        disableClickListeners();
+        disableGameboard();
     }
 
 
@@ -360,30 +353,34 @@ public class GameActivity extends BaseActivity {
      * Sets the board for attack. clearing its background and setting the click listeners
      */
     public void enableBoardForAttack() {
-        stopCountdown();  // Stop any existing countdown first
-        startCountDownTimer();
+//        startCountDownTimer();
+        stopCountdown();
+        if (countDownTimer == null) {
+            setCountDownTimer();
+        }
+        countDownTimer.start();
         setOpponentFrameBackgroundOnAttack(true);
-        setOpponentGridClickListeners();
+        isOpponentGridClickable = true;
     }
 
     /*
      * Starts the countdown timer for the current player
      * displays a message at the top of the screen
      */
-    public void startCountDownTimer() {
-        stopCountdown();
+    public void setCountDownTimer() {
         countDownTimer = new CountDownTimer(GameLogic.RANDOM_ATTACK_DELAY_MILLIS, 1000) {
             @Override
             public void onTick(long millisUntilFinished) {
-                topMessageTextView.setText(ClientMessages.YOUR_TURN + millisUntilFinished / 1000);
+                long secondsLeft = millisUntilFinished / 1000;
+                topMessageTextView.setText(ClientMessages.YOUR_TURN + secondsLeft);
             }
 
             @Override
             public void onFinish() {
                 Log.d("myDEBUG GameActivity", "attackOpponent on finish countdown");
-                //display a message for 1 second TODO
+                stopCountdown();
             }
-        }.start();
+        };
     }
 
 
@@ -393,6 +390,7 @@ public class GameActivity extends BaseActivity {
     public void stopCountdown() {
         if (countDownTimer != null) {
             countDownTimer.cancel();
+            countDownTimer = null;
         }
     }
 
@@ -416,6 +414,8 @@ public class GameActivity extends BaseActivity {
 //        Log.d("setOpponentGridView myDEBUG", "setupGridViews: opponentTilesData size: " + opponentGameBoard.getBoard().size());
         opponentGridLayoutAdapter = new GameGridLayoutAdapter(this, opponentGameBoard, opponentGridView);
         opponentGridView.setAdapter(opponentGridLayoutAdapter);
+
+        setupOpponentGridClickListeners();
     }
 
 
@@ -474,19 +474,6 @@ public class GameActivity extends BaseActivity {
         shipView.setVisibility(View.VISIBLE);
         mapShipTypeToView.put(shipType, shipView);
         Log.d("GameGridLayoutAdapter", "addShipViewToMap: shipName: " + shipType + " shipView: " + shipView);
-    }
-
-
-    /**
-     * Disables the click listeners on the opponent grid
-     * called when the current player is waiting for the opponent to attack
-     */
-    public void disableClickListeners() {
-        //loop on opponentGridView children and enable/disable click listeners
-        for (int i = 0; i < opponentGridView.getChildCount(); i++) {
-            View tileView = opponentGridView.getChildAt(i);
-            tileView.setOnClickListener(null);
-        }
     }
 
 
@@ -630,6 +617,4 @@ public class GameActivity extends BaseActivity {
         finishAffinity();
         disableGameboard();
     }
-
-
 }

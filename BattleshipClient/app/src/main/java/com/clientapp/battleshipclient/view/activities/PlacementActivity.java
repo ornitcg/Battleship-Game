@@ -4,6 +4,7 @@ import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.util.Log;
 import android.view.DragEvent;
@@ -59,6 +60,9 @@ import lombok.Getter;
 public class PlacementActivity extends BaseActivity {
 
     public final int MSG_DISPLAY_MILLIS = 2000;
+    public final int TIME_UNTILL_COUNTDOWN = 30000;
+    public final int TIME_OF_COUNTDOWN = 15500;
+    public final long START_GAME_TIMEOUT_MILLIS = 50000;
     private GridView gridView;
     private PlacementLogic placementLogic;
     private PlacementAdapter gridLayoutAdapter;
@@ -74,10 +78,13 @@ public class PlacementActivity extends BaseActivity {
     private String gameId;
     private Button readyBtn;
     public static Runnable startGameTimeoutRunnableTask;
+    public static Runnable finishPlacementWaitRunnable;
+
     public static Handler startGameTimeoutRunnablehandler = new Handler();
     TextView msgTextView;
     private boolean isDraggingShip = false;
     TextView gameIdDisplay;
+    private CountDownTimer countDownTimer;
 
 
     public enum Target {
@@ -98,13 +105,13 @@ public class PlacementActivity extends BaseActivity {
         msgTextView = findViewById(R.id.msgTextViewId);
         Intent intent = this.getIntent();
         gameId = intent.getStringExtra(ExtrasEnum.GAME_ID.getName());
-        gameIdDisplay = findViewById(R.id.gameId);
-        gameIdDisplay.setText(gameId);
+//        gameIdDisplay = findViewById(R.id.gameId);
+//        gameIdDisplay.setText(gameId);
+        setFinishPlacementWaitTask();
         setUserFromIntent(intent);
         setShipsDataAndViews();  // set data and listeners for the ships
         setupGridView();   // set the adapter to the grid view
         setShipsLongClickListeners();
-//        setShipsOnTouchListeners();
         setShipsOnClickOrientationChange();
         setInventoryDragListeners();
         setBackgroundDragListener();
@@ -134,6 +141,8 @@ public class PlacementActivity extends BaseActivity {
     }
 
 
+
+
     /**
      * Sets the Back to Menu button onClickListener
      */
@@ -144,6 +153,63 @@ public class PlacementActivity extends BaseActivity {
             finishAffinity();
         });
     }
+
+    /*
+     *  This method sets a runnable task for the timeout of the placement of the ships
+     *  if the ships are not placed in time, the game is ended
+     *  and the user is navigated back to the menu activity
+     * */
+    private void setFinishPlacementWaitTask() {
+        finishPlacementWaitRunnable = new Runnable() {
+            @Override
+            public void run() {
+                Log.d("myDEBUG", "finishPlacementWaitRunnable: " + "TIMEOUT START");
+                Netcom.getInstance(null).getRequestQueue().cancelAll(RequestEnum.CREATE_BOARD.getName());
+                Log.d("myDEBUG", "cancelAll on CREATE_BOARD ");
+                startCountdown(TIME_OF_COUNTDOWN);
+                displayMessageForShortTime(ClientMessages.HURRY_UP_MESSAGE);
+            }
+        };
+        startGameTimeoutRunnablehandler.postDelayed(finishPlacementWaitRunnable, TIME_UNTILL_COUNTDOWN);
+    }
+
+    /*
+     *  This method starts the countdown timer
+     *  @param timeOfCountdown - the time of the countdown
+     * */
+    private void startCountdown(int timeOfCountdown) {
+        stopCountdown();
+        countDownTimer = new CountDownTimer(TIME_OF_COUNTDOWN, 1000) {
+            @Override
+            public void onTick(long millisUntilFinished) {
+                long secondsLeft = millisUntilFinished / 1000;
+                Log.d("myDEBUG GameActivity", "attackOpponent on tick countdown" + secondsLeft);
+                msgTextView.setVisibility(View.VISIBLE);
+                msgTextView.setText(ClientMessages.HURRY_UP_MESSAGE + secondsLeft);
+            }
+
+            @Override
+            public void onFinish() {
+                Log.d("myDEBUG GameActivity", "attackOpponent on finish countdown");
+                //display a message for 1 second
+                stopCountdown();
+                msgTextView.setText(ClientMessages.TIMEOUT_MESSAGE);
+                Netcom.getInstance(null).getRequestQueue().cancelAll(RequestEnum.CREATE_BOARD.getName());
+                goToMenuActivity(getCurrentPlayer(), true);
+            }
+        }.start();
+    }
+
+    /*
+     *  Stops the countdown timer
+     */
+    public void stopCountdown() {
+        if (countDownTimer != null) {
+            countDownTimer.cancel();
+            countDownTimer = null;
+        }
+    }
+
 
 
     /*
@@ -158,8 +224,10 @@ public class PlacementActivity extends BaseActivity {
                 if (!placementLogic.areAllShipsPlaced()) {
                     displayMessageForShortTime(ClientMessages.SHIPS_NOT_PLACED_MESSAGE);
                 } else {
+                    stopCountdown();
+                    startGameTimeoutRunnablehandler.removeCallbacks(finishPlacementWaitRunnable);
                     disableShipsClickListeners();
-                    placementLogic.prepareGameBoardForSending(getCurrentPlayer(), gameId, tilesList, shipCollection); //TODO change name
+                    placementLogic.prepareGameBoardForSending(getCurrentPlayer(), gameId, tilesList, shipCollection);
                     waitForStartGame();
                     disableButtons();
                 }
@@ -217,7 +285,7 @@ public class PlacementActivity extends BaseActivity {
         msgTextView.setText(ClientMessages.STARTING_GAME_MESSAGE);
         msgTextView.setVisibility(View.VISIBLE);
         Log.d("myDEBUG", "waitForStartGame message displayed: " + "TIMEOUT START");
-        startGameTimeoutRunnablehandler.postDelayed(startGameTimeoutRunnableTask, PlacementLogic.START_GAME_TIMEOUT_MILLIS);
+        startGameTimeoutRunnablehandler.postDelayed(startGameTimeoutRunnableTask, START_GAME_TIMEOUT_MILLIS);
     }
 
 
@@ -591,7 +659,8 @@ public class PlacementActivity extends BaseActivity {
      *  Ends the game and navigates back to the menu activity
      * */
     @Override
-    protected void exit() { //TODO careful calling this method
+    protected void exit() {
+        stopCountdown();
         GameLogic.notifyGameEnd(this, gameId);
         GameLogic.isGameInProgress = false; //notify the game is aborted
         goToMenuActivity(getCurrentPlayer(), true);

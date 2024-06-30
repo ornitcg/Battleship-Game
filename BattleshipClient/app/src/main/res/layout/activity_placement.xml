@@ -207,7 +207,7 @@
         android:layout_height="83dp"
         android:background="@color/blackTint"
         android:gravity="center"
-        android:text="STARTING GAME"
+        android:text="WAITING FOR OPPONENT..."
         android:textAlignment="center"
         android:textColor="@color/white"
         android:textSize="24sp"
@@ -270,7 +270,7 @@
         android:layout_height="47dp"
         android:text="gameId"
         app:autoSizeTextType="uniform"
-
+        android:visibility="gone"
         app:layout_constraintBottom_toTopOf="@+id/placeFleet"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

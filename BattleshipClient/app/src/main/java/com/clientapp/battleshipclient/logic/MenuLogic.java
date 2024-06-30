@@ -69,6 +69,7 @@ public class MenuLogic {
     /* calls the networking section so cancel the game request*/
     public void cancelCreateGame() {
         Netcom.getInstance(context).getRequestQueue().cancelAll(RequestEnum.CREATE_GAME.name());
+        ((MenuActivity)context).cancelMatchRequestTimeoutHandler.removeCallbacksAndMessages(null);
         Log.d("myDEBUG MenuLogic", "cancelAll on CREATE_GAME ");
         GameLifecycleNW.notifyGameCanceled(context, currPlayer.getId(), new ICallbacks<String>() {
             @Override
@@ -78,7 +79,7 @@ public class MenuLogic {
 
             @Override
             public void onError(Exception e) {
-                //TODO quitGame
+                Log.e("myDEBUG MenuLogic", "cancelCreateGame onError: " + e);
             }
         });
     }

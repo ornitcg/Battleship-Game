@@ -62,7 +62,6 @@ public class LeaderboardAndStatsLogic {
                     populateList(topUsers);
 
                     currentStats = new CurrentStats( currPlayer , rank, userBestScore, numWins, totalGames);
-//                    currentStats = new CurrentStats(1, 17, 40, 45); //TODO delete mock
                     Log.d("myDEBUG LeaderboardAndStatsLogic", "getTopUsers Response: " + topUsersList.toString());
                     dataCallback.onDataRetrieved(topUsersList, currentStats);
                 } catch (JSONException e) {

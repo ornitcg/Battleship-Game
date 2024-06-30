@@ -15,7 +15,7 @@ public class CreateGameCmd {
     private GameDao gameDao;
 
     private static final String FAILED_MSG = "Failed to create game";
-    private static final int MINUTES_AGO_TO_CONSIDER_AS_CURRENT_GAME = 1;
+    private static final int SECONDS_AGO_TO_CONSIDER_AS_CURRENT_GAME = 15;
 
     public CreateGameCmd(GameDao gameDao, String userId) {
         this.userId = userId;
@@ -95,7 +95,7 @@ public class CreateGameCmd {
 
             if (gameCreated != null) {
                 LocalDateTime creationTime = gameCreated.getCreationTime();
-                LocalDateTime minTimeToConsiderAsCurrentGame = LocalDateTime.now().minusMinutes(MINUTES_AGO_TO_CONSIDER_AS_CURRENT_GAME);
+                LocalDateTime minTimeToConsiderAsCurrentGame = LocalDateTime.now().minusSeconds(SECONDS_AGO_TO_CONSIDER_AS_CURRENT_GAME);
 
                 if (creationTime.isAfter(minTimeToConsiderAsCurrentGame)) {
                     String gameId = gameCreated.getGameId();
